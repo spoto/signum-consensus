@@ -1,0 +1,14 @@
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.log
+*.out
+*.vtc
+*~
+main.pdf
+slides/*.nav
+slides/*.snm
+slides/*.vrb
+slides/*.toc
+slides/*.pdf
