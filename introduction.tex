@@ -17,11 +17,48 @@ Cite~\cite{TangZDWLG0L19}.
 
 Cite~\cite{RenD16}.
 
-Cite~\cite{ParkKFGAP18}. Previously Spacecoin, it seems.
+Cite~\cite{ParkKFGAP18}. SpaceMint, previously Spacecoin. Consideration: PoW requires power
+to be allocated if mining is worthwhile. PoS allows one to allocate unused space even if its
+cost is higher than mining, since in any case it would remain unused. More egalitarian:
+general-purpose hardware instead of ASIC. The use of a key for the miners makes it
+impossible to build mining pools, which is said to be good, citing~\cite{MillerKKS15}.
+They say PoS is more difficult to adapt to blockchain because the protocol is a bit
+more complicated than PoW. It lists some problems of PoS: mining multiple chains simultaneously
+(since they are cheap), creating more blocks with the same proof and then choose the most
+favorable. Nothing-at-stake problems. Quality-function to determine the winner, proportional
+to the allocated space. Multiple chains: penalize it. Grinding: make the proof unique, based
+on who wonthe previous round, use
+two chains, for proofs and for transactions, the proofs depends on previous proofs only.
+Previous blocks affect future blocks only in a limited way.
+They provide a game-theoretic model showing that the system is
+a Nash equilibrium.
+It cites proof of storage/retrievability: the verifier must send and keep a big file.
+Some link with Permacoin, which is however still a PoW system with ethical data.
+It cites Burstcoin (now Signum) and its time/memory tradeoff: it is still possible
+to mine thorugh PoW and use only 10\% of the space.
+It talks about a problem with miners hashing 8 million blocks, that does not seem to exist
+anymore, but better check what they mean.
+It cites the Chia Network (proof of space and time), \url{https://www.chia.net/}.
+It calls it proof of sequential work on top of proof of space.
+It says that it is based on completely different theoretical work, that is~\cite{AbusalahACKPR17}.
+Consideration: their mining uses special protocol transactions
+(payments, space commitments, penalties) while Mokamint is completey transaction agnostic.
+Arrival of new miners and penalties for miners are kept in blockchain!
+To avoid mining for different chains, the next challenge is derived from the hash of a block
+(from the proof chain) deep in the past. If two children blocks are created by the same miner,
+a penalty transaction is generated. The transaction includes the two blocks (it is huge!)
+that are consequently signed, which guarantees that it can be verified by nodes that might
+only have one history in the database.
+The same challenge is used for a few consecutive blocks, to fight challenge-grindning attacks.
+The size of their proofs (node pebbling) reaches 3 megabytes. Mokamint's deadline have constant (small size).
+Code of Spacemint: \url{https://github.com/kwonalbert/spacemint}. Just a very limited prototype of a
+proofs of space algorithm. Not maintained in the last nine years.
 
 Cite~\cite{Reyzin23}.
 
 Cite~\cite{DworkN92}.
 
-Code of Spacemint: \url{https://github.com/kwonalbert/spacemint}. Just a very limited prototype of a
-proofs of space algorithm. Not maintained in the last nine years.
+Burstcoin, now Signum: \url{https://wiki.signum.network/}. Rebranded from Burstcoin.
+They call it proof of capacity but it's just proof of space.
+There is a very raw description of the mining algorithm:
+\url{https://wiki.signum.network/signum-plotting-technical-information/index.htm}.
