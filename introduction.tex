@@ -10,8 +10,18 @@ Therefore, using proofs of woek in a network of proofs of space nodes would
 be computationally too expensive. It seems that the memory allocated in the miners
 must also be allocated in the verifiers, for all miners. This would ne practically unfeasable.
 To investigate further.
+This is sometimes called proof of persistent space.
+There is an initialization protocol for each new prover, that is missing in Burstcoin.
 
-Cite~\cite{AtenieseBFG14}.
+Cite~\cite{AtenieseBFG14}. Based on DAGs with high pebbling complexity. There are clear similarities
+with~\cite{DziembowskiFKP15}. They actually cite and compare with each other.
+According to~\cite{DziembowskiFKP15}, this article defines a proof of secure erasure,
+that however they call a proof of space. According to~\cite{DziembowskiFKP15},
+their proof os secure erasure
+implies a proof of space but not the other way round. There does not seem to exist
+any implementation. The issue with the size of the proofs would be identical to that
+of~\cite{DziembowskiFKP15}, because of the use of pebbling graphs.
+This is sometimes called proof of transient space.
 
 Cite~\cite{TangZDWLG0L19}.
 
@@ -54,7 +64,16 @@ The size of their proofs (node pebbling) reaches 3 megabytes. Mokamint's deadlin
 Code of Spacemint: \url{https://github.com/kwonalbert/spacemint}. Just a very limited prototype of a
 proofs of space algorithm. Not maintained in the last nine years.
 
-Cite~\cite{Reyzin23}.
+Cite~\cite{Reyzin23}. It tackles the question: how much does it cost to store only a part of the file?
+When storing less than all of the file, it should be difficult for the prover to recover the
+missing portions of the file when answering queries from the verifier. They define some thresholds
+on the portion kept for the file and on the consequent complexity degradation. Ideally, such thresholds
+should be close to 0, meaning that almost all file must be kept in memory for having no complexity
+explosion. They show that existing solutions have bad constants or can be considered as impractical.
+They say that the initialization protocol of the DAGs prevents most cheating (incomplete calculations).
+The missing pebbles (red nodes) must be calculated later during the execution protocol.
+They provide lower bounds on the cosntants of the initialization protocol so that
+the resulting partial pebbling has thresholds close to 0.
 
 Cite~\cite{DworkN92}.
 
