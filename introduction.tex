@@ -1,5 +1,10 @@
 \section{Introduction}\label{sec:introduction}
 
+Proof of retrievability~\cite{JuelsK07}: a large file
+is sent from the verifier to the prover and the verifier
+check, repeatedly, if the prover keeps that file in storage. It requires to transfer the file
+at the beginning, for each new prover (miner).
+
 Cite~\cite{DziembowskiFKP15}. This seems to be the first description of proofs of space.
 Their algorithm is based on graph pebbling, where a vertex can be pebbled only if the
 its in-going vertices have been pebbled as well. This way they prove a lower bound on the
@@ -21,9 +26,16 @@ their proof os secure erasure
 implies a proof of space but not the other way round. There does not seem to exist
 any implementation. The issue with the size of the proofs would be identical to that
 of~\cite{DziembowskiFKP15}, because of the use of pebbling graphs.
-This is sometimes called proof of transient space.
+This is sometimes called proof of transient space: the puzzle function requires lot of
+memory space to compute, but after computation that space con be freed.
 
-Cite~\cite{TangZDWLG0L19}.
+Cite~\cite{TangZDWLG0L19}. They tackle the problem of miners using the same stored data
+for many chains. This is problematic for newborn chains, since they might get an attack
+from miners (or coalition of miners) that already use a very big data file for mining other,
+mature chains (\emph{newborn attack}). They present a solution over the SpaceMint protocol.
+The idea is that the disk space of a miner can be split for mining on many chains
+simultaneously, but there is an incentive at allocating a space, for each chain, proportional
+to the market value of the chain.
 
 Cite~\cite{RenD16}.
 
