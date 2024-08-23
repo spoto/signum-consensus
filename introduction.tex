@@ -22,7 +22,7 @@ Cite~\cite{AtenieseBFG14}. Based on DAGs with high pebbling complexity. There ar
 with~\cite{DziembowskiFKP15}. They actually cite and compare with each other.
 According to~\cite{DziembowskiFKP15}, this article defines a proof of secure erasure,
 that however they call a proof of space. According to~\cite{DziembowskiFKP15},
-their proof os secure erasure
+their proof of secure erasure
 implies a proof of space but not the other way round. There does not seem to exist
 any implementation. The issue with the size of the proofs would be identical to that
 of~\cite{DziembowskiFKP15}, because of the use of pebbling graphs.
@@ -37,7 +37,12 @@ The idea is that the disk space of a miner can be split for mining on many chain
 simultaneously, but there is an incentive at allocating a space, for each chain, proportional
 to the market value of the chain.
 
-Cite~\cite{RenD16}.
+Cite~\cite{RenD16}. It uses stacked expander graphs, to get simpler, more efficient and
+provably space-hard solutions, than~\cite{AtenieseBFG14} and~\cite{DziembowskiFKP15}.
+It works for both proof of transient space and proof of persistent space.
+It performs a nice comparison of previous proofs of space
+and related techniques (memory-hard functions, proof of secure erasure, provable data possession,
+proof of retrievability).
 
 Cite~\cite{ParkKFGAP18}. SpaceMint, previously Spacecoin. Consideration: PoW requires power
 to be allocated if mining is worthwhile. PoS allows one to allocate unused space even if its
@@ -47,17 +52,17 @@ impossible to build mining pools, which is said to be good, citing~\cite{MillerK
 They say PoS is more difficult to adapt to blockchain because the protocol is a bit
 more complicated than PoW. It lists some problems of PoS: mining multiple chains simultaneously
 (since they are cheap), creating more blocks with the same proof and then choose the most
-favorable. Nothing-at-stake problems. Quality-function to determine the winner, proportional
-to the allocated space. Multiple chains: penalize it. Grinding: make the proof unique, based
-on who wonthe previous round, use
+favorable (block grinding). Nothing-at-stake problems. Quality-function to determine the winner, proportional
+to the allocated space. How to fight block grinding: make the proof unique, based
+on who won the previous round, use
 two chains, for proofs and for transactions, the proofs depends on previous proofs only.
-Previous blocks affect future blocks only in a limited way.
-They provide a game-theoretic model showing that the system is
-a Nash equilibrium.
+How to fight mining on multiple chains: previous blocks affect future blocks only in a limited way.
+They provide a game-theoretic model showing that the system is a Nash equilibrium.
 It cites proof of storage/retrievability: the verifier must send and keep a big file.
 Some link with Permacoin, which is however still a PoW system with ethical data.
-It cites Burstcoin (now Signum) and its time/memory tradeoff: it is still possible
-to mine thorugh PoW and use only 10\% of the space.
+It cites Burstcoin (now Signum) and its time/memory tradeoff:
+``a miner doing a little extra computation can mine at the same
+rate as an honest miner, while using just a small fraction (e.g., 10\%) of the space.''
 It talks about a problem with miners hashing 8 million blocks, that does not seem to exist
 anymore, but better check what they mean.
 It cites the Chia Network (proof of space and time), \url{https://www.chia.net/}.
@@ -71,10 +76,25 @@ To avoid mining for different chains, the next challenge is derived from the has
 a penalty transaction is generated. The transaction includes the two blocks (it is huge!)
 that are consequently signed, which guarantees that it can be verified by nodes that might
 only have one history in the database.
-The same challenge is used for a few consecutive blocks, to fight challenge-grindning attacks.
-The size of their proofs (node pebbling) reaches 3 megabytes. Mokamint's deadline have constant (small size).
+The same challenge is used for a few consecutive blocks, to fight challenge-grinding attacks.
+The size of their proofs (node pebbling) reaches 3 megabytes. This prove is stored in blockchain
+for the initialization of each new miner (which might be expensive) and cheaper proofs
+(100K, thanks to some ``likely sound'' optimations) are reported in each mined block.
+Mokamint's deadline have constant (small size).
 Code of Spacemint: \url{https://github.com/kwonalbert/spacemint}. Just a very limited prototype of a
 proofs of space algorithm. Not maintained in the last nine years.
+
+Cite~\cite{AbusalahACKPR17}. It is the theoretical base of the Chia network.
+They assert that pebbling-based approaches have two main issues: the size of the proof to include in each block
+(megabytes) and the initialization phase for each prover joining a verifier. That is, crypto must be spent even before
+starting mining (the prover is the miner in this context) while Bitcoin allows one
+to start mining and collect crypto on the way.
+They solve these issues (the same is solved in Burstcoin as well).
+They propose a proof of space and time based on challenges about the inversion of a random function,
+overcoming the well-known issue of time-memory trade-offs.
+As concisely stated in~\cite{ParkKFGAP18}, the better the quality of the proof of space, the faster the block can
+be \emph{finalized} by a proof of sequential work, and this
+proof tuple then can be used to create a block.
 
 Cite~\cite{Reyzin23}. It tackles the question: how much does it cost to store only a part of the file?
 When storing less than all of the file, it should be difficult for the prover to recover the
@@ -86,8 +106,15 @@ They say that the initialization protocol of the DAGs prevents most cheating (in
 The missing pebbles (red nodes) must be calculated later during the execution protocol.
 They provide lower bounds on the cosntants of the initialization protocol so that
 the resulting partial pebbling has thresholds close to 0.
+This article tackles a problem that actually affected Burstcoin (its time/memory trade-offs,
+theoretically now solved in Burstcoin). However, proofs in this article donot apply to Burstcoin
+because it is not based on pebbling graphs.
 
-Cite~\cite{DworkN92}.
+Cite~\cite{DworkN92}. The origin of proof of work. Mail senders must compute some
+work to have their email accepted by the recipient. This work includes
+the address of the recipeint and the date of sending, in order to avoid
+work recycling. Typically, it consists in adding extra data at the end of the email
+to that its hash is smaller than a predefined constant.
 
 Burstcoin, now Signum: \url{https://wiki.signum.network/}. Rebranded from Burstcoin.
 They call it proof of capacity but it's just proof of space.
