@@ -1,33 +1,122 @@
 \section{Introduction}\label{sec:introduction}
 
-Proof of retrievability~\cite{JuelsK07}: a large file
-is sent from the verifier to the prover and the verifier
-check, repeatedly, if the prover keeps that file in storage. It requires to transfer the file
-at the beginning, for each new prover (miner).
+A blockchain is a data structure where \emph{transactions} are kept inside blocks.
+Blocks form a chain (a list), where each block $b$ \emph{points} to its previous block $p$
+by referring, inside $b$, to the hash of $p$. Blocks must satisfy some consistency
+rules, called \emph{consensus} rules; for instance, if $b$ refers to a previous bock hash
+$h$ then a block $p$ having that hash must really exist in the chain; moreover, the timestamp
+of $b$ must be larger than that of $p$; the size of $b$ must be smaller than a given threshold and so on.
+The exact nature of the transactions is not relevant in this paper. In general, they are
+requests to update the state of a global abstract machine; this state might be a ledger of
+payments (as in the case of Bitcoin~\cite{Nakamoto08,Antonopoulos17}) or a sort of global RAM where data
+structures can be allocated and subsequently modified (as in the case of Ethereum~\cite{AntonopoulosW18}).
 
-Cite~\cite{DziembowskiFKP15}. This seems to be the first description of proofs of space.
-Their algorithm is based on graph pebbling, where a vertex can be pebbled only if the
-its in-going vertices have been pebbled as well. This way they prove a lower bound on the
-complexity of their algorithm. They prove that that lower bound is valid also if a prover
-wants to use its CPU. They prove that the size of the space used by their algorithm
-is a lower bound to the execution cost of the algorithm if no space is reserved.
-Therefore, using proofs of woek in a network of proofs of space nodes would
-be computationally too expensive. It seems that the memory allocated in the miners
-must also be allocated in the verifiers, for all miners. This would ne practically unfeasable.
-To investigate further.
-This is sometimes called proof of persistent space.
-There is an initialization protocol for each new prover, that is missing in Burstcoin.
+The use of hashes as machine-independent
+pointers allows blockchains to be implemented in a distributed way, in a network of peers.
+Distributions is a desirable property because it entails that data is safely duplicated
+in each peer and that there is no special peer that determines the history of the transactions.
+However, each peer is free to expand the blockchain with new blocks, independently from the other
+peers, so that, in general, there
+are more blocks $b$ that refer to the same previous block $p$ and the blockchain is a tree rather than
+a list of blocks. In order to make a single chain emerge as the \emph{best} chain, a notion of
+chain quality is used: peers have incentives to append blocks to the chain with the highest quality.
+This entails that a peer might replace its current best chain with another, even better chain,
+if it receives the latter from other peers. This event is a \emph{history change}.
 
-Cite~\cite{AtenieseBFG14}. Based on DAGs with high pebbling complexity. There are clear similarities
-with~\cite{DziembowskiFKP15}. They actually cite and compare with each other.
-According to~\cite{DziembowskiFKP15}, this article defines a proof of secure erasure,
-that however they call a proof of space. According to~\cite{DziembowskiFKP15},
-their proof of secure erasure
-implies a proof of space but not the other way round. There does not seem to exist
-any implementation. The issue with the size of the proofs would be identical to that
-of~\cite{DziembowskiFKP15}, because of the use of pebbling graphs.
-This is sometimes called proof of transient space: the puzzle function requires lot of
-memory space to compute, but after computation that space con be freed.
+The above description of a distributed blockchain is still missing a key ingredient. Namely,
+as presented above, each peer is free to generate new blocks at maximal speed, flooding the network
+with new blocks, making difficult the emergence of a best chain and inducing frequent history changes.
+This is not just an efficiency problem but also a security problem: history changes allow
+\emph{double spending}, when the same money is moved in the ledger twice, once in the previous history
+and once in the updated history. The actual genious of Nakamoto~\cite{Nakamoto08} has been to (largely)
+solve these issues in a very elegant way, by exploiting an idea previously developed for combatting
+email spam~\cite{DworkN92}. Namely, he added a consensus rule requiring that the (binary)
+hash of each block $b$ must start with at least $\delta$ zeros, and connected the quality of a chain
+to this hash. This means that the creation of a new block requires to rotate among
+many possible values for a block field, called \emph{nonce}, until the hash of the block satisfies the
+added consensus rule. This makes the creation of new blocks hard
+(for larger $\delta$), makes it impossible to create blocks at arbitrary speed and creates a heavy
+incentive to expanding the best chain, rather than creating alternative histories, since otherwise a peer
+risks spending work (concretely, electricity) for the creation of blocks that will be discarded by the other peers.
+The value $\delta$ is called \emph{difficulty} and is not a constant: it changes in accordance with
+the current, total computational power of the network, in order to keep the block creation rate at a predetermined value.
+The process of finding a good nonce, that induces an
+acceptable block hash, is the \emph{proof of work} algorithm: it is a brute force algorithm, because of the non-correlation
+property of hash functions. A peer that performs the proof of work algorithm is said to \emph{mine}
+a new block and is consequently a block \emph{miner}. Miners get remunerated for their work whenever
+they mine a new block before all other miners. Theoretically, everybody can install a miner peer,
+anonymously, which makes the idea of Bitcoin very democratic.
+
+The proof of work secures a blockchain network, reducing the risk of double spending,
+but comes at the price of energy consumption: the electricity used by the Bitcoin network is said
+to be comparable to that of a medium-sized country; moreover, mining is not egalitarian, because
+it is worthwhile only in countries where electricity is cheap; furthermore, the proof of work algorithm
+is more efficient in dedicated, relatively expensive hardware (such as ASICs),
+which deviates much from the idea of a democratically open network.
+
+In order to overcome the issue with energy consumption, the recent trend in blockchain is to
+replace the proof of work with a proof of stake. This comes in many different flavors, but
+the shared idea is that mining is limited to a (static or dynamic, exclusive or delegatable)
+set of peers, that commit
+some cryptocurrency (a \emph{stake}) to gain the right of mining
+in turn, or according to some alternation protocol. In general, these can be seen
+as Byzantine consensus algorithms, as the one pioneering by
+Tendermint (\url{https://github.com/tendermint/tendermint/wiki}).
+Proof of stake is often criticized for being more centralized and less democratic than proof of work
+(\emph{rich becomes richer}).
+Moreover, it suffers from what we call the \emph{start-up issue}: as long as the cryptocurrency
+of a newborn blockchain has still no value, it is difficult to convince miners to work and
+be updated, since there is no incentive in doing so, initially. Starting and maintaining
+a newborn blockchain becomes a difficult social and organizational problem. Finally, peers of
+a proof of stake blockchain get punished (\emph{slashed}) if they are misbehaving or offline.
+This is problematic if, for instance, a peer is offline but has no fault for that: it might be
+because of a network connectivity issue or a black-out.
+
+Among the alternatives to proof of work and proof of stake, we focus here on proof of space.
+In a proof of space blockchain, peers have the right to mine new blocks (and be renumerated for that) if they dedicate
+a large chunk of disk memory for mining. The energy consumption of proof of space is almost zero
+and no dedicated hardware can be used for mining, currently. Therefore, mining becomes cheap and
+more democratic than with a proof of work.
+The theoretical background of proof of space has been developed, independently,
+in the two seminal papers~\cite{AtenieseBFG14} and~\cite{DziembowskiFKP15},
+that feature similarities but also significant differences. Both are based
+on directed acyclic graphs (DAGs) of high pebbling complexity.
+Pebbling, here, is a directed decoration of the nodes of the DAG with hashes, as in
+a Merkle tree.
+A prover must keep such a (big) DAG and its pebbling on disk, in order to answer, efficiently,
+\emph{challenges} proposed by a verifier, with compact proofs that should convince the verifier that
+the prover is actually keeping the DAG on disk. These proofs are used for mining new blocks,
+instead of the nonce used in the proof of work. A notion of quality is defined for
+the proofs, in such a way that the probability of deriving a proof of high quality increases
+with the size of the DAG, which is an incentive to dedicating more space for mining.
+While~\cite{DziembowskiFKP15} requires space to remain allocated between challenges,
+and is consequently called a proof of \emph{persistent} space, \cite{AtenieseBFG14} requires
+to allocate space only when anwering challenges and is consequently called
+a proof of \emph{transient} space (or a proof of secure erasure, as~\cite{DziembowskiFKP15} calls it).
+Both solutions have an initialization phase when the verifier performs a deeper challenge
+of the prover and stores the resulting proof in blockchain.
+
+%Cite~\cite{DziembowskiFKP15}. This seems to be the first description of proofs of space.
+%Their algorithm is based on graph pebbling, where a vertex can be pebbled only if the
+%its in-going vertices have been pebbled as well. This way they prove a lower bound on the
+%complexity of their algorithm. They prove that that lower bound is valid also if a prover
+%wants to use its CPU. They prove that the size of the space used by their algorithm
+%is a lower bound to the execution cost of the algorithm if no space is reserved.
+%Therefore, using proofs of work in a network of proofs of space nodes would
+%be computationally too expensive.
+%This is sometimes called proof of persistent space.
+%There is an initialization protocol for each new prover, that is missing in Burstcoin.
+
+%Cite~\cite{AtenieseBFG14}. Based on DAGs with high pebbling complexity. There are clear similarities
+%with~\cite{DziembowskiFKP15}. They actually cite and compare with each other.
+%According to~\cite{DziembowskiFKP15}, this article defines a proof of secure erasure,
+%that however they call a proof of space. According to~\cite{DziembowskiFKP15},
+%their proof of secure erasure
+%implies a proof of space but not the other way round. There does not seem to exist
+%any implementation. The issue with the size of the proofs would be identical to that
+%of~\cite{DziembowskiFKP15}, because of the use of pebbling graphs.
+%This is sometimes called proof of transient space: the puzzle function requires lot of
+%memory space to compute, but after computation that space con be freed.
 
 Cite~\cite{TangZDWLG0L19}. They tackle the problem of miners using the same stored data
 for many chains. This is problematic for newborn chains, since they might get an attack
@@ -43,6 +132,11 @@ It works for both proof of transient space and proof of persistent space.
 It performs a nice comparison of previous proofs of space
 and related techniques (memory-hard functions, proof of secure erasure, provable data possession,
 proof of retrievability).
+
+Proof of retrievability~\cite{JuelsK07}: a large file
+is sent from the verifier to the prover and the verifier
+check, repeatedly, if the prover keeps that file in storage. It requires to transfer the file
+at the beginning, for each new prover (miner).
 
 Cite~\cite{ParkKFGAP18}. SpaceMint, previously Spacecoin. Consideration: PoW requires power
 to be allocated if mining is worthwhile. PoS allows one to allocate unused space even if its
