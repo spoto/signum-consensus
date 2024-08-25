@@ -26,7 +26,9 @@ Among the alternatives to proof of work and proof of stake, we focus here on pro
 In a proof of space blockchain, peers have the right to mine new blocks (and be renumerated for that) if they dedicate
 a large chunk of disk memory for mining. The energy consumption of proof of space is almost zero
 and no dedicated hardware can be used for mining, currently. Therefore, mining becomes cheap and
-more democratic than with a proof of work.
+more democratic than with a proof of work
+Moreover, proof of space allows one to capitalize on unused memory, for free,
+while proof of space has always an electricity cost.
 The theoretical background of proof of space has been developed, independently,
 in the two seminal papers~\cite{AtenieseBFG14} and~\cite{DziembowskiFKP15},
 that feature similarities but also significant differences. Both are based
@@ -85,8 +87,8 @@ is initially sent from the verifier to the prover and later the verifier
 challenges, repeatedly, the prover to see if it still keeps the file in storage.
 Its apparent simplicity
 is jeopardized by the fact that big files must be shared among the provers (miners) and
-the verifiers. In the case of a blockchain, it must be shared among \emph{all} (present and future)
-peers, for \emph{all} (past, present and future) miners, or otherwise the peers could not verify the new mined blocks.
+the verifiers. In the case of a blockchain, they must be shared among \emph{all} (present and future)
+peers, for \emph{all} (past, present and future) miners, or otherwise peers could not verify the blocks.
 This is impractical, because of the size of the files and because it complicates the protocol.
 
 %Cite~\cite{DziembowskiFKP15}. This seems to be the first description of proofs of space.
@@ -113,42 +115,49 @@ This is impractical, because of the size of the files and because it complicates
 
 \subsection*{Implementations of Proof of Space}
 
-Cite~\cite{ParkKFGAP18}. SpaceMint, previously Spacecoin. Consideration: PoW requires power
-to be allocated if mining is worthwhile. PoS allows one to allocate unused space even if its
-cost is higher than mining, since in any case it would remain unused. More egalitarian:
-general-purpose hardware instead of ASIC. The use of a key for the miners makes it
-impossible to build mining pools, which is said to be good, citing~\cite{MillerKKS15}.
-They say PoS is more difficult to adapt to blockchain because the protocol is a bit
-more complicated than PoW. It lists some problems of PoS: mining multiple chains simultaneously
-(since they are cheap), creating more blocks with the same proof and then choose the most
-favorable (block grinding). Nothing-at-stake problems. Quality-function to determine the winner, proportional
-to the allocated space. How to fight block grinding: make the proof unique, based
-on who won the previous round, use
-two chains, for proofs and for transactions, the proofs depends on previous proofs only.
-How to fight mining on multiple chains: previous blocks affect future blocks only in a limited way.
-They provide a game-theoretic model showing that the system is a Nash equilibrium.
-It cites proof of storage/retrievability: the verifier must send and keep a big file.
-Some link with Permacoin, which is however still a PoW system with ethical data.
-It cites Burstcoin (now Signum) and its time/memory tradeoff:
-``a miner doing a little extra computation can mine at the same
-rate as an honest miner, while using just a small fraction (e.g., 10\%) of the space.''
-It talks about a problem with miners hashing 8 million blocks, that does not seem to exist
-anymore, but better check what they mean.
-Consideration: their mining uses special protocol transactions
-(payments, space commitments, penalties) while Mokamint is completey transaction agnostic.
-Arrival of new miners and penalties for miners are kept in blockchain!
-To avoid mining for different chains, the next challenge is derived from the hash of a block
-(from the proof chain) deep in the past. If two children blocks are created by the same miner,
-a penalty transaction is generated. The transaction includes the two blocks (it is huge!)
-that are consequently signed, which guarantees that it can be verified by nodes that might
-only have one history in the database.
-The same challenge is used for a few consecutive blocks, to fight challenge-grinding attacks.
-The size of their proofs (node pebbling) reaches 3 megabytes. This prove is stored in blockchain
-for the initialization of each new miner (which might be expensive) and cheaper proofs
-(100K, thanks to some ``likely sound'' optimations) are reported in each mined block.
-Mokamint's deadline have constant (small size).
-Code of Spacemint: \url{https://github.com/kwonalbert/spacemint}. Just a very limited prototype of a
-proofs of space algorithm. Not maintained in the last nine years.
+We are aware of only one implementation of graph-pebbling proof of space:
+SpaceMint~\cite{ParkKFGAP18}, previously Spacecoin.
+It must be stated that SpaceMint is not a distributed blockchain,
+but only a prototype implementation of the proof of space protocol of~\cite{DziembowskiFKP15}.
+Its code (\url{https://github.com/kwonalbert/spacemint}) has not been maintained in the last nine years.
+Nevertheless, this work is very interesting because it states some problems (and solutions) with proof of space
+that are related to its actual game-theory and implementation.
+For instance, it uses the public key of the verifier as a parameter for the creation
+of the graph pebbling, to combat the creation of mining pools, often seen
+negatively~\cite{MillerKKS15}.
+Furthermore, it observes that proof of space, being computationally cheap, introduces
+specific \emph{nothing-at-stake} problems, the most relevant being that:
+%
+\begin{enumerate}
+\item miners might find it profitable to mine multiple chains simultaneously (not only the best chain),
+  hoping to find a better chain with a history change;
+\item miners might find it profitable to mine
+  (and whisper to the peers) many alternative new blocks, each holding
+  different transactions, hoping to find better solutions for the future challenges (\emph{block grinding}).
+\end{enumerate}
+%
+In both cases, miners will end up mining with a mixture of proof of space and proof of work,
+which nullifies the benefits of proof of space.
+In~\cite{ParkKFGAP18}, a solution to the first problem is suggested, where
+previous blocks are forced to affect future blocks only in a limited way
+(the next challenge is derived from the hash of a block deep in the past)
+and where peers get punished if they
+whisper more children blocks of the same father, through a penalty transaction that
+includes the children blocks, for evidence.
+The solution suggested for the second problem, instead, consists in making the challenges
+(and consequently the proofs) independent from the content of the transactions, by splitting the
+blockchain in a proofs blockchain and in a transactions blockchain: only the first is used for mining,
+and the two are bound through a signature with the private key of the miner.
+As a result, the next challenges (and proofs) depend on previous blocks from the proofs blockchain only.
+Moreover, this work includes actual experiments, that provide an estimation of the size of the proofs.
+Namely, those used in the initialization phase are between two and three megabytes, while those used
+in the execution phase can be optimized to around 100 kilobytes. Such proofs must be persistently stored in
+blockchain (for each new miner, in the first case, and for each new block, in the second).
+This makes the size of the blockchain much larger than in the case of Bitcoin, and requires
+that a miner holds cryptocurrency to store proofs even before starting mining.
+We observe that also the use of penalty transactions, internally including blocks, is problematic, since
+transactions are, in turn, included in blocks, which makes it impossible to define
+a maximal block size, a basic security requirement of every blockchain.
 
 %Cite~\cite{DworkN92}. The origin of proof of work. Mail senders must compute some
 %work to have their email accepted by the recipient. This work includes
@@ -164,3 +173,9 @@ It allows smart contracts in ``Java'', in a language called SmartJ. Examples
 can be found at \url{https://github.com/signum-network/signum-smartj}.
 While Hotmoka abstracts away all blockchain details, SmartJ requires programmers to
 manually deal with them.
+
+\cite{ParkKFGAP18} cites Burstcoin and its time/memory tradeoff:
+``a miner doing a little extra computation can mine at the same
+rate as an honest miner, while using just a small fraction (e.g., 10\%) of the space.''
+It talks about a problem with miners hashing 8 million blocks, that does not seem to exist
+anymore, but better check what they mean.
