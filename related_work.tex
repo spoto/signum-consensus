@@ -1,33 +1,18 @@
 \section{Related Work}\label{sec:related_work}
 
-\subsection*{Proof of Stake}
+The proof of work has been developed, originally, for combatting email spam~\cite{DworkN92}:
+mail senders must compute some
+work to have their email accepted by the recipient. This work includes
+the address of the recipient and the date of sending, in order to avoid
+work recycling. Typically, it consists in adding extra data at the end of the email,
+which corresponds to the nonce used in Bitcoin.
+Ethereum started as a proof of work network as well~\cite{AntonopoulosW18} but has later
+moved to a form of proof of stake.
 
-In order to overcome the issue with energy consumption, the recent trend in blockchain is to
-replace the proof of work with a proof of stake. This comes in many different flavors, but
-the shared idea is that mining is limited to a (static or dynamic, exclusive or delegatable)
-set of peers, that commit
-some cryptocurrency (a \emph{stake}) to gain the right of mining
-in turn, or according to some alternation protocol. In general, these can be seen
-as Byzantine consensus algorithms, as the one pioneering by Tendermint~\cite{Tendermint14}.
-Proof of stake is often criticized for being more centralized and less democratic than proof of work
-(\emph{rich becomes richer}).
-Moreover, it suffers from what we call the \emph{start-up issue}: as long as the cryptocurrency
-of a newborn blockchain has still no value, it is difficult to convince miners to work and
-be updated, since there is no incentive in doing so, initially. Starting and maintaining
-a newborn blockchain becomes a difficult social and organizational problem. Finally, peers of
-a proof of stake blockchain get punished (\emph{slashed}) if they are misbehaving or offline.
-This is problematic if, for instance, a peer is offline but has no fault for that: it might be
-because of a network connectivity issue or a black-out.
+Proof of stake can be seen as a
+Byzantine consensus algorithm, as pioneering by Tendermint~\cite{Tendermint14}.
+Most current blockchains use some form of proof of stake, including Ethereum 2.0.
 
-\subsection*{Proof of Space}
-
-Among the alternatives to proof of work and proof of stake, we focus here on proof of space.
-In a proof of space blockchain, peers have the right to mine new blocks (and be renumerated for that) if they dedicate
-a large chunk of disk memory for mining. The energy consumption of proof of space is almost zero
-and no dedicated hardware can be used for mining, currently. Therefore, mining becomes cheap and
-more democratic than with a proof of work
-Moreover, proof of space allows one to capitalize on unused memory, for free,
-while proof of space has always an electricity cost.
 The theoretical background of proof of space has been developed, independently,
 in the two seminal papers~\cite{AtenieseBFG14} and~\cite{DziembowskiFKP15},
 that feature similarities but also significant differences. Both are based
@@ -112,8 +97,6 @@ This is impractical, because of the size of the files and because it complicates
 %This is sometimes called proof of transient space: the puzzle function requires lot of
 %memory space to compute, but after computation that space con be freed.
 
-\subsection*{Implementations of Proof of Space}
-
 We are aware of only one implementation of graph-pebbling proof of space:
 SpaceMint~\cite{ParkKFGAP18}, previously Spacecoin.
 It must be stated that SpaceMint is not a distributed blockchain,
@@ -158,12 +141,6 @@ We observe that also the use of penalty transactions, internally including block
 transactions are, in turn, included in blocks, which makes it impossible to define
 a maximal block size, a basic security requirement of every blockchain.
 
-%Cite~\cite{DworkN92}. The origin of proof of work. Mail senders must compute some
-%work to have their email accepted by the recipient. This work includes
-%the address of the recipeint and the date of sending, in order to avoid
-%work recycling. Typically, it consists in adding extra data at the end of the email
-%to that its hash is smaller than a predefined constant.
-
 Signum~\cite{Signum}, previously Burstcoin, is another implementation of proof of space.
 It is not based on graph pebbling: in its proof of space algorithm, that they
 call proof of capacity, each miner allocates a large file of hashes, called a
@@ -178,13 +155,12 @@ started in 2014, not just a prototype implementation of its protocol. It include
 contract language, called SmartJ. However, Signum has received very little scientific
 attention up to now. There is not even a formalization of its proof of space protocol,
 but only an informal description~\cite{SignumPlotting}.
-We understand that there has been some communication between the authors of~\cite{ParkKFGAP18}
-and the developers of Signum. Namely, \cite{ParkKFGAP18} states that Burstcoin has some
+In~\cite{ParkKFGAP18}, they state that Burstcoin has some
 time/memory tradeoffs (``a miner doing a little extra computation can mine at the same
 rate as an honest miner, while using just a small fraction (\emph{e.g.}, 10\%) of the space''),
-that the developers of Signum assert to have solved. Similarly, the latest version of Signum
+which the developers of Signum assert to have solved. Moreover, the latest version of Signum
 seems to have separated data in a proofs blockchain and a transactions blockchain,
-following the idea in~\cite{ParkKFGAP18}. However, there is no evidence that this has been done
+following the same idea from~\cite{ParkKFGAP18}. However, there is no evidence that this has been done
 correctly.
 %Examples can be found at \url{https://github.com/signum-network/signum-smartj}.
 %While Hotmoka abstracts away all blockchain details, SmartJ requires programmers to
