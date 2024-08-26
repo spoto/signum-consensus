@@ -8,8 +8,7 @@ the shared idea is that mining is limited to a (static or dynamic, exclusive or 
 set of peers, that commit
 some cryptocurrency (a \emph{stake}) to gain the right of mining
 in turn, or according to some alternation protocol. In general, these can be seen
-as Byzantine consensus algorithms, as the one pioneering by
-Tendermint (\url{https://github.com/tendermint/tendermint/wiki}).
+as Byzantine consensus algorithms, as the one pioneering by Tendermint~\cite{Tendermint14}.
 Proof of stake is often criticized for being more centralized and less democratic than proof of work
 (\emph{rich becomes richer}).
 Moreover, it suffers from what we call the \emph{start-up issue}: as long as the cryptocurrency
@@ -78,7 +77,7 @@ starting mining. Compare this with Bitcoin, for instance, that allows one to sta
 and \emph{later} collect cryptocurrency on the way. This is a barrier to the arrival of new
 miners, that is, a limitation of democracy.
 This is why~\cite{AbusalahACKPR17} proposes an alternative technology, which is the
-theoretical background of the Chia network (\url{https://www.chia.net/}):
+theoretical background of the Chia network~\cite{Chia}:
 a proof of sequential work on top of a proof of space, based on challenges
 about the inversion of a random function, for which it has been solved
 the well-known issue of time-memory trade-offs. This is not, however, a pure proof of space.
@@ -119,7 +118,7 @@ We are aware of only one implementation of graph-pebbling proof of space:
 SpaceMint~\cite{ParkKFGAP18}, previously Spacecoin.
 It must be stated that SpaceMint is not a distributed blockchain,
 but only a prototype implementation of the proof of space protocol of~\cite{DziembowskiFKP15}.
-Its code (\url{https://github.com/kwonalbert/spacemint}) has not been maintained in the last nine years.
+Its code~\cite{SpaceMintCode} has not been maintained in the last nine years.
 Nevertheless, this work is very interesting because it states some problems (and solutions) with proof of space
 that are related to its actual game-theory and implementation.
 For instance, it uses the public key of the verifier as a parameter for the creation
@@ -165,17 +164,27 @@ a maximal block size, a basic security requirement of every blockchain.
 %work recycling. Typically, it consists in adding extra data at the end of the email
 %to that its hash is smaller than a predefined constant.
 
-Burstcoin, now Signum: \url{https://wiki.signum.network/}. Rebranded from Burstcoin.
-They call it proof of capacity but it's just proof of space.
-There is a very raw description of the mining algorithm:
-\url{https://wiki.signum.network/signum-plotting-technical-information/index.htm}.
-It allows smart contracts in ``Java'', in a language called SmartJ. Examples
-can be found at \url{https://github.com/signum-network/signum-smartj}.
-While Hotmoka abstracts away all blockchain details, SmartJ requires programmers to
-manually deal with them.
-
-\cite{ParkKFGAP18} cites Burstcoin and its time/memory tradeoff:
-``a miner doing a little extra computation can mine at the same
-rate as an honest miner, while using just a small fraction (e.g., 10\%) of the space.''
-It talks about a problem with miners hashing 8 million blocks, that does not seem to exist
-anymore, but better check what they mean.
+Signum~\cite{Signum}, previously Burstcoin, is another implementation of proof of space.
+It is not based on graph pebbling: in its proof of space algorithm, that they
+call proof of capacity, each miner allocates a large file of hashes, called a
+\emph{plot} file. Peers that want to mine new blocks contact miner(s) to ask for a
+\emph{deadline}\ie for a compact data structure with a quality measure (its waiting time) that
+is inversely proportional to the size of the plot file used by the miner(s). Such deadline is
+inserted in the new mined blocks as its proof of space. The simplicity of the protocol
+follows from the fact that there is no initialization phase: each miner creates its plot file
+independently and off-line: it is not shared and no initial big proof is stored in
+blockchain, as it was the case, instead, for SpaceMint. Moreover, Signum is a full-fledged blockchain,
+started in 2014, not just a prototype implementation of its protocol. It includes a smart
+contract language, called SmartJ. However, Signum has received very little scientific
+attention up to now. There is not even a formalization of its proof of space protocol,
+but only an informal description~\cite{SignumPlotting}.
+We understand that there has been some communication between the authors of~\cite{ParkKFGAP18}
+and the developers of Signum. Namely, \cite{ParkKFGAP18} states that Burstcoin has some
+time/memory tradeoffs (``a miner doing a little extra computation can mine at the same
+rate as an honest miner, while using just a small fraction (\emph{e.g.}, 10\%) of the space''),
+that the developers of Signum assert to have solved. Similarly, the latest version of Signum
+seems to have separated data in a proofs blockchain and a transactions blockchain,
+following the idea in~\cite{ParkKFGAP18}. However, there is no evidence that this has been done
+correctly.
+%Examples can be found at \url{https://github.com/signum-network/signum-smartj}.
+%While Hotmoka abstracts away all blockchain details, SmartJ requires programmers to
