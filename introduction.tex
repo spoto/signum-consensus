@@ -1,81 +1,96 @@
 \section{Introduction}\label{sec:introduction}
 
-A blockchain is a list of \emph{blocks} that contain \emph{transactions}.
-Each block $b$ \emph{points} to its previous block $p$
-by referring to the hash of $p$. Blocks satisfy some \emph{consensus} rules;
-for instance, the timestamp
-of $b$ must be larger than that of $p$; the size of $b$ is bounded by a maximal block size and so on.
-The exact nature of the transactions is not relevant here. In general, they are
-requests to update the state of a global abstract machine; this state might be a ledger of
-payments (as in Bitcoin~\cite{Nakamoto08,Antonopoulos17}) or a sort of global RAM where data
-structures can be allocated and modified (as in Ethereum~\cite{AntonopoulosW18}).
+A blockchain is a list of \emph{blocks}.
+Each block $b$ refers to a previous block $p$ through its hash.
+Blocks satisfy some consistency or \emph{consensus} rules.
+Blocks hold \emph{transactions}, whose exact nature is not relevant here.
+In general, they are requests to update the state of a global abstract machine:
+a ledger of payments (as in Bitcoin~\cite{Nakamoto08,Antonopoulos17})
+or a sort of global RAM where data structures can be allocated and modified
+(as in Ethereum~\cite{AntonopoulosW18}).
 By using hashes as machine-independent
 pointers, blockchains can be distributed in a network of peers.
-This is desirable since it entails that data is safely duplicated
-in each peer and that there is no special peer that determines the transactions history.
-However, peers are free to expand the blockchain at will, independently from the other
+This is desirable since data gets safely duplicated
+in each peer and there is no special peer that determines the
+transactions history.
+However, peers are free to expand the blockchain at will, independently from other
 peers, and the blockchain becomes a tree rather than a list.
 A notion of chain quality is used to incentivize peers to append blocks to the highest-quality chain
 (the \emph{best} chain).
 Therefore, a peer might replace its current best chain with another, even better chain,
-in what ia called a \emph{history change}.
+a so called \emph{history change}.
 
-As presented above, peers are free to generate new blocks at maximal speed, flooding the network
-with new blocks, making difficult the emergence of a best chain and inducing frequent history changes.
+As presented above, peers are free to generate new blocks at maximal speed, flood the network
+with new blocks and make difficult the emergence of a best chain, with frequent history changes.
 This is an efficiency and a security issue: history changes allow
-\emph{double spending}, when the same money is moved in the ledger twice, once in the previous history
-and once in the updated history. The actual genious of Nakamoto~\cite{Nakamoto08} (largely) solved
-this issue with an extra consensus rule, that requires blocks to a have a binary hash
-that starts with at least $\delta$ zeros, directly bound to the quality of the chain.
-This means that the creation of a new block runs a \emph{proof of work} algorithm that rotates the
-many possible values for a block field, called \emph{nonce}, until the hash of the block satisfies the
-consensus rule. This makes the creation of new blocks hard
-(for large $\delta$), makes it impossible to create blocks at arbitrary speed and introduces a heavy
-incentive to expanding the best chain, rather than creating alternative histories, or otherwise a peer
-risks spending work (concretely, electricity) for creating blocks that will be discarded
+\emph{double spending}, when the same money is moved in the ledger twice, once in the current history
+and once in the updated history. The actual genious of Nakamoto~\cite{Nakamoto08} was to
+(largely) solve this issue with a consensus rule requiring blocks to have a binary hash
+that starts with at least $\delta$ zeros, directly bound to the quality of a chain.
+Therefore, the creator peer (\emph{miner}) of a new block runs a \emph{proof of work} algorithm
+that rotates the many possible values for a block field, called \emph{nonce}, until
+the hash of the block satisfies the consensus rule. This makes the creation of new blocks hard
+(for large $\delta$), makes it impossible to create blocks at arbitrary speed and introduces an
+incentive to expanding the best chain, rather than creating alternative histories, since
+otherwise a peer
+risks spending work (concretely, electricity) for creating blocks discarded
 by the other peers. The \emph{proof of work} is a brute-force algorithm,
-because of the non-correlation
-property of hash functions. A peer that performs it is said to \emph{mine}
-a new block. Miners get remunerated for their work whenever
-they mine a new block before all other miners.
+because of the non-correlation property of hash functions.
+A miner gets remunerated for its work whenever it finds a new block before all other miners.
 
-The proof of work comes at the price of energy consumption:
-the electricity used by Bitcoin is said
-to be comparable to that of a medium-sized country; moreover, mining is not egalitarian, because
-it is worthwhile only in countries where electricity is cheap; furthermore, the proof of work
+But the proof of work consumes energy: Bitcoin is said to consume as much electricity as
+a medium-sized country; moreover, mining is not egalitarian, being
+worthwhile only in countries where electricity is cheap; furthermore, the proof of work
 runs more efficiently in dedicated, relatively expensive hardware (such as ASICs),
 which deviates much from the idea of a democratic and open network.
-Therefore, the trend in blockchain technilogy is towards a\emph{proof of stake}.
-This comes in many different flavors, but
+Therefore, the current trend is towards a\emph{proof of stake}.
+This comes in different flavors, but
 the shared idea is that mining is limited to a (static or dynamic, exclusive or delegatable)
-set of peers, that commit some collateral (a \emph{stake}) to gain the right of mining
-in turn, or according to some alternation protocol.
-Proof of stake has been criticized for being more centralized and less democratic than proof of work
+set of peers, that \emph{stake} some collateral to have the right of mining.
+Proof of stake has been criticized for being more centralized and less democratic
 (\emph{rich becomes richer}).
-Moreover, it suffers from what we call the \emph{start-up issue}: as long as the cryptocurrency
-of a newborn blockchain has still no value, it is difficult to convince miners to work and
+Moreover, it suffers from what we call a \emph{start-up issue}: as long as the cryptocurrency
+of a newborn blockchain has still no value, it is hard to convince miners to work and
 be updated, since there is no incentive in doing so, initially. Starting and maintaining
-a newborn blockchain becomes a difficult social and organizational problem. Finally, miners in
+a newborn blockchain becomes a social and organizational problem. Finally, miners in
 a proof of stake blockchain get punished (\emph{slashed}) if they misbehave or are offline, which
 might be perceived as unjust if it is the consequence of a network connectivity issue or black-out.
 
 An alternative to proof of work and proof of stake is
 \emph{proof of space}~\cite{AtenieseBFG14,DziembowskiFKP15}, where
-peers gain the right to mine (and
-be renumerated for that) if they can prove to have dedicated a large chunk of disk memory for that.
+miners must dedicate a large chunk of disk memory for mining.
 Its energy consumption is almost zero and no special
-hardware can be used for mining, currently. Therefore, mining becomes cheap
-and more democratic. Moreover, proof of space allows
+hardware helps for mining, currently: the technology is both cheap
+and democratic. Moreover, proof of space allows
 one to capitalize on unused memory, for free, while proof of space has always an
 inherent electricity cost. Most theoretical formalizations of proof of space are
-based on challenges against trees of high pebbling complexity. However, no actual blockchain
+based on challenges against graphs of high pebbling complexity. However, no actual blockchain
 has ever been built using such theory, and only a prototype and non-maintained
-implementation of the protocol exists~\cite{ParkKFGAP18}. This is possibly so because of the
-complex protocol, that requires an initialization phase for each new miner that joins the network,
-to write a quite large proof (megabytes) in blockchain. The only fully-fledged implementation
-of a blockchain based on proof of space is Signum~\cite{Signum}. However, it comes without
-any formal definition or statement.
-There are hints that the authors of~\cite{ParkKFGAP18} have informed the developers of Signum of
-theoretical issues in their work, that the latters assert to have solved.
-Moreover, the latest version of Signum asserts to use ideas from~\cite{ParkKFGAP18} to solve
-other theoretical issues. But nothing has been proved nor published about it.
+implementation of the protocol exists~\cite{ParkKFGAP18}. This is maybe because of the
+complex protocol, with an initialization phase
+that writes a quite large proof (megabytes) in blockchain,
+for each new miner that joins the network.
+The only fully-fledged blockchain
+implementation based on proof of space is Signum~\cite{Signum}, but it is not
+based on graph pebbling and misses any formalization.
+There are hints that the authors of~\cite{ParkKFGAP18} have warned the developers of Signum about
+theoretical issues, that the latters have allegedly solved,
+but nothing has been proved nor published about it.
+
+The contributions of this paper are
+%
+\begin{itemize}
+\item a formalization of the proof of space algorithm of Signum;
+\item a proof that the issues found by the authors of~\cite{ParkKFGAP18} have been fixed;
+\item an improvement that protects against newborn attacks~\cite{TangZDWLG0L19}.
+\end{itemize}
+%
+These results are relevant since they show that the only implementation
+of a blockchain based on proof of space is actually supported by a sound theory.
+
+We leveraged the very informal description of Signum's algorithm~\cite{SignumPlotting},
+its source code~\cite{SignumSource} and the Discord chat of the project, where we contacted
+its developers. However, most of our questions remained unanswered there.
+
+The rest of this paper is organized as follows.
+Sec.~\ref{sec:related_work} discusses related work.
