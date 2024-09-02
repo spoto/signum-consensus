@@ -61,7 +61,7 @@ starting mining. Compare this with Bitcoin, for instance, that allows one to sta
 and \emph{later} collect cryptocurrency on the way. This is a barrier to the arrival of new
 miners, that is, a limit to democracy.
 This is why~\cite{AbusalahACKPR17} proposes an alternative technology, which is the
-theoretical background of the Chia network~\cite{Chia}:
+theoretical background of the Chia network~\cite{CohenP19,Chia}:
 a proof of sequential work on top of a proof of space, based on challenges
 about the inversion of a random function, for which it has been solved
 the well-known issue about time-memory trade-offs. This is not, however, a pure proof of space.
@@ -134,7 +134,11 @@ previous blocks are forced to affect future blocks only in a limited way
 and where peers get punished if they are found to have
 created more children blocks for the same father, through a penalty transaction that
 includes the children blocks, for evidence.
-The solution suggested for the second problem, instead, consists in making the challenges
+The same problem is considered in~\cite{CohenP19}, and their solution has been
+to use the same challenge for several consecutive blocks, since it is
+unlikely that a challenge will be good for many consecutive blocks.
+The solution that~\cite{ParkKFGAP18} suggests
+for the second problem, instead, consists in making the challenges
 (and consequently the proofs) independent from the content of the transactions, by splitting the
 blockchain in a proofs blockchain and in a transactions blockchain: only the first is used for mining,
 and the two are connected with the signature of the miner.
