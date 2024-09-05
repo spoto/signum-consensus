@@ -1,49 +1,99 @@
 \section{Nonces and Plots}\label{sec:nonces_and_plots}
 
-\newcommand{\hashsize}{{h_{\mathit{size}}}}
-\newcommand{\numberofscoops}{{\#\mathit{scoops}}}
-\newcommand{\noncesize}{{\mathit{nonce}_{\mathit{size}}}}
-\newcommand{\nonce}{{\mathit{nonce}}}
-\newcommand{\seed}{{\mathit{seed}}}
-\newcommand{\finalhash}{{h_{\mathit{final}}}}
+This section formalizes the notion of nonce and plot, together with their
+algorithmic construction. Tab.~\ref{tab:notations} collects some notations,
+introduced here and used throughout the paper.
+It also reports the specific choices
+made in~\cite{SignumPlotting} for such notations, but this paper remains parametric
+\wrt them.
 
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+  \textbf{notation} & \textbf{meaning} & \textbf{in~\cite{SignumPlotting}}\\\hline\hline
+
+  $\append$ & concatenation of sequences of bytes & \\\hline
+  $\numberofscoops$ & number of scoops contained in a nonce & $4096$\\\hline
+
+  $h_\deadline$ & hashing function for computing nonces, plots and deadlines & shabal256\\\hline
+
+  $h_\generation$ & hashing function for computing the generations of challenges & shabal256\\\hline
+
+  $\kappa$ & maximal number of bytes fed to $h_\deadline$ & $4096$\\\hline
+
+\end{tabular}
+\end{center}
+\caption{Notations used in our formalization and their specific instantiations
+  used in~\cite{SignumPlotting}.}
+\label{tab:notations}
+\end{table}
+%
+\begin{definition}[bytes concatenation $\bowtie$]
+  Sequences of bytes are concatenated by $\bowtie$. We abuse notation
+  and apply $\bowtie$ to natural numbers as well, meaning that
+  the big-endian byte representation of the numbers gets concatenated.
+\end{definition}
+%
 The definition of nonces and plots is parametric \wrt a hashing
-function $h:\mathit{byte}^*\to\mathit{byte}^\hashsize$ used for their creation.
-
-A \emph{scoop} is a pair of hashes. A \emph{nonce} $n$ is a list of
-$\numberofscoops>0$ scoops or, equivalenty, a list of $2\times\numberofscoops$
-hashes $n_1,\ldots,n_{2\times\numberofscoops-1}$ or, equivalently, a list of
-$\noncesize=2\times\numberofscoops\times\hashsize$ bytes.
-The construction of a nonce is parametric \wrt the number
-of the nonce and a sequence of bytes, called \emph{prolog}.
-That construction if defined through an algotihm, that
-uses a constant $\kappa>0$ to limit its computational cost, avoiding
-hashing very large chunks of data\footnote{In~\cite{SignumPlotting},
-$\kappa$ is fixed to $4096$, but we leave it parametric here.}
-
-\begin{definition}[$\nonce(\nu,\pi)$]
-  Let $\nu\in\mathbb{N}$ and $\pi\in\mathit{byte}^*$. 
-  The $\nu$th nonce with prolog $\pi$, written
-  $\nonce(\nu,\pi)$, is constructed as follows.
+function $h_\deadline$ used for their creation.
+%
+\begin{definition}[hashing function]
+  A \emph{hashing function} $h$ of $\size>0$
+  is a total map $h:\mathit{byte}^*\to\mathit{byte}^\size$, where
+  $\mathit{byte}^\size$ is a sequence of $\size$ bytes, called a \emph{hash} for $h$.
+  If $h$ is a hashing function, then $\size(h)$ is its size.
+\end{definition}
+%
+\begin{definition}[scoop, nonce]
+  A \emph{scoop} is a pair of hashes for $h_\deadline$. A \emph{nonce} $n$ is a list of
+  $\numberofscoops>0$ scoops or, equivalenty, a list of $2\times\numberofscoops$
+  hashes $n_1,\ldots,n_{2\times\numberofscoops-1}$ for $h_\deadline$ or, equivalently, a sequence of
+  $2\times\numberofscoops\times\size(h_\deadline)$ bytes.
+\end{definition}
+%
+The construction of a nonce is parametric \wrt the non-negative progressive number
+$n$ of the nonce and a sequence $\pi$ of bytes, called \emph{prolog}.
+That construction if defined through an algorithm, that
+uses a constant $\kappa>0$ to limit its computational cost, to avoid hashing
+very large chunks of data.
+%
+\begin{definition}[$\nonce(n,\pi)$]
+  Let $n\in\mathbb{N}$ and $\pi\in\mathit{byte}^*$. 
+  The $n$th nonce with prolog $\pi$, written
+  $\nonce(n,\pi)$, is constructed as follows.
   %
   \begin{enumerate}
-  \item Let $\seed=\pi\append\nu$.
+  \item Let $\seed=\pi\append n$.
   \item For each $i$ from $2\times\numberofscoops-1$ to $0$, let
-    $x$ by the first\footnote{In~\cite{SignumPlotting}, it is said to
+    $x$ be the first\footnote{In~\cite{SignumPlotting}, it is said to
   take the \emph{last} $\kappa$ bytes, but an inspection of their code
   shows that they actually take the \emph{first} $\kappa$ bytes. They
   probably use \emph{last} here in the sense of \emph{more recently computed}.}
     $\kappa$ bytes of
     \[
-    \left(\append_{j=i+1}^{2\times\numberofscoops-1}\nonce(\nu,\pi)_j\right)\append\seed
+    \left(\append_{j=i+1}^{2\times\numberofscoops-1}\nonce(n,\pi)_j\right)\append\seed
     \]
-    and assign $\nonce(\nu,\pi)_i=h(x)$.
+    and assign $\nonce(n,\pi)_i=h(x)$.
   \item Define
     \[
-    \finalhash=h\left(\left(\append_{j=0}^{2\times\numberofscoops-1}\nonce(\nu,\pi)_j\right)\append\seed\right)
+    \finalhash=h\left(\left(\append_{j=0}^{2\times\numberofscoops-1}\nonce(n,\pi)_j\right)\append\seed\right).
     \]
   \item For each $i$ from $0$ to $2\times\numberofscoops-1$, reassign
-    $\nonce(\nu,\pi)_i$ to $\nonce(\nu,\pi)_i\xor\finalhash$.
-  \item 
+    $\nonce(n,\pi)_i$ to $\nonce(n,\pi)_i\xor\finalhash$.
+  \item For each odd $i$ from $1$ to $2\times\numberofscoops-1$, swap
+    $\nonce(n,\pi)_i$ with $\nonce(n,\pi)_{2\times\numberofscoops-i}$.
   \end{enumerate}
+\end{definition}
+%
+A \emph{plot} is a set of nonces for a finite subset of progressive numbers,
+all for the same prolog. Both the prolog and the progressive of each nonce
+is recorded in the plot.
+%
+\begin{definition}[$\plot(S,\pi)$]
+  Let $S\subset\mathbb{N}$ be finite and $\pi\in\mathit{byte}^*$.
+  The \emph{plot} for $S$ and $\pi$, written $\plot(S,\pi)$, is
+  \[
+  \plot(S,\pi)=\left<\pi,\left\{\left<n,\nonce(n,\pi)\right>\left|\;n\in S\right.\right\}\right>.
+  \]
 \end{definition}
