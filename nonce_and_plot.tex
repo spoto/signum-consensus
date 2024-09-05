@@ -1,0 +1,49 @@
+\section{Nonces and Plots}\label{sec:nonces_and_plots}
+
+\newcommand{\hashsize}{{h_{\mathit{size}}}}
+\newcommand{\numberofscoops}{{\#\mathit{scoops}}}
+\newcommand{\noncesize}{{\mathit{nonce}_{\mathit{size}}}}
+\newcommand{\nonce}{{\mathit{nonce}}}
+\newcommand{\seed}{{\mathit{seed}}}
+\newcommand{\finalhash}{{h_{\mathit{final}}}}
+
+The definition of nonces and plots is parametric \wrt a hashing
+function $h:\mathit{byte}^*\to\mathit{byte}^\hashsize$ used for their creation.
+
+A \emph{scoop} is a pair of hashes. A \emph{nonce} $n$ is a list of
+$\numberofscoops>0$ scoops or, equivalenty, a list of $2\times\numberofscoops$
+hashes $n_1,\ldots,n_{2\times\numberofscoops-1}$ or, equivalently, a list of
+$\noncesize=2\times\numberofscoops\times\hashsize$ bytes.
+The construction of a nonce is parametric \wrt the number
+of the nonce and a sequence of bytes, called \emph{prolog}.
+That construction if defined through an algotihm, that
+uses a constant $\kappa>0$ to limit its computational cost, avoiding
+hashing very large chunks of data\footnote{In~\cite{SignumPlotting},
+$\kappa$ is fixed to $4096$, but we leave it parametric here.}
+
+\begin{definition}[$\nonce(\nu,\pi)$]
+  Let $\nu\in\mathbb{N}$ and $\pi\in\mathit{byte}^*$. 
+  The $\nu$th nonce with prolog $\pi$, written
+  $\nonce(\nu,\pi)$, is constructed as follows.
+  %
+  \begin{enumerate}
+  \item Let $\seed=\pi\append\nu$.
+  \item For each $i$ from $2\times\numberofscoops-1$ to $0$, let
+    $x$ by the first\footnote{In~\cite{SignumPlotting}, it is said to
+  take the \emph{last} $\kappa$ bytes, but an inspection of their code
+  shows that they actually take the \emph{first} $\kappa$ bytes. They
+  probably use \emph{last} here in the sense of \emph{more recently computed}.}
+    $\kappa$ bytes of
+    \[
+    \left(\append_{j=i+1}^{2\times\numberofscoops-1}\nonce(\nu,\pi)_j\right)\append\seed
+    \]
+    and assign $\nonce(\nu,\pi)_i=h(x)$.
+  \item Define
+    \[
+    \finalhash=h\left(\left(\append_{j=0}^{2\times\numberofscoops-1}\nonce(\nu,\pi)_j\right)\append\seed\right)
+    \]
+  \item For each $i$ from $0$ to $2\times\numberofscoops-1$, reassign
+    $\nonce(\nu,\pi)_i$ to $\nonce(\nu,\pi)_i\xor\finalhash$.
+  \item 
+  \end{enumerate}
+\end{definition}

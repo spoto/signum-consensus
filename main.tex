@@ -44,14 +44,16 @@
 \newcommand{\codeid}[1]{\ifmmode{\mbox{\codesize\ttfamily{#1}}}\else{\codesize\ttfamily #1}\fi}
 
 \newcommand{\todo}[1]{{\color{red}\bfseries [[#1]]}}
+\DeclareMathOperator*{\append}{\bowtie}
 
 \newcommand{\fs}[1]{\todo{FS: #1}}
+\newcommand*\xor{\oplus}
 
 % Reduce padding for \boxed
 \setlength{\fboxsep}{.5\fboxsep}
 
-\newcommand{\wrt}{\textit{w.r.t.\ }}
-\newcommand{\ie}{, \textit{i.e.}, }
+\newcommand{\wrt}{\textit{wrt.\ }}
+\newcommand{\ie}{, \textit{ie.}, }
 %
 \begin{document}
 %
@@ -71,6 +73,7 @@
 
 \input{introduction}
 \input{related_work}
+\input{nonce_and_plot}
 %\input{conclusion}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
