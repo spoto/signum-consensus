@@ -1,6 +1,13 @@
 \section{Challenges and Deadlines}\label{sec:challenges_and_deadlines}
 
-\begin{definition}[challenge]
-  A \emph{challenge} is a pair $\langle n,\delta\rangle$ where
-  $0\le n<\numberofscoops$ and $\delta\in\mathit{byte}^*$.
+\begin{definition}[Challenge]\label{def:challenge}
+  The set of \emph{challenges} is
+  \[
+  \Challenges=\left\{\langle\scoopnumber,\data\rangle\left|
+  \begin{array}{l}
+    0\le\scoopnumber<\numberofscoops\\
+    \text{and }\data\in\mathit{byte}^*
+  \end{array}
+  \right.\right\}.
+  \]
 \end{definition}
