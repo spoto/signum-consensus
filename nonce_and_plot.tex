@@ -32,9 +32,11 @@ made in~\cite{SignumPlotting} for such notations, but this paper remains paramet
 \begin{definition}[Concatenation operator $\bowtie$]
   Sequences are concatenated by $\bowtie$. The same $\bowtie$
   is used to concated a sequence to a element or an element to a sequence.
-  In the cases of sequences of bytes, we abuse notation
-  and apply $\bowtie$ to natural numbers as well, meaning that
-  the big-endian byte representation of the numbers gets concatenated.
+\end{definition}
+%
+\begin{definition}[$\nattobe$ and $\betonat$]
+  The operators $\nattobe$ and $\betonat$ transform natural numbers
+  into their big-endian representation, and vice versa.
 \end{definition}
 %
 \begin{definition}[Hashing function]
@@ -89,7 +91,7 @@ very large chunks of data.
   where the hashes $h_0,\ldots,h_{2\times\numberofscoops-1}$ are constructed as follows.
   %
   \begin{enumerate}
-  \item Let $\seed=\pi\append p$.
+  \item Let $\seed=\pi\append\nattobe(p)$.
   \item For each $i$ from $2\times\numberofscoops-1$ to $0$,
     let\footnote{In~\cite{SignumPlotting}, it is said to
     take the \emph{last} $\kappa$ bytes, but an inspection of their code

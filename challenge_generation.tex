@@ -1,0 +1,32 @@
+\section{Challenge Generation}\label{sec:challenge_generation}
+%
+Challenges are generated in sequence, for each block of the blockchain.
+Namely, a first challenge is hardcoded in the genesis block of the blockchain;
+the challenge for the son(s) of a block $b$ is then computed
+from a portion of $b$ that we call \emph{trunk} of $b$, borrowing this terminology
+from~\cite{CohenP19}. In particular, that challenge is \emph{not}
+computed from the transactions in the full block $b$,
+in order to avoid block-grinding attacks (Sec.~\ref{sec:related_work}).
+Since the full block structure is not used for the proof of space, we do not give a formal definition
+here for them.
+%
+\begin{definition}\label{def:block}
+  The set of \emph{trunks} of blocks is
+  \[
+  \Trunks=\left\{\langle\height,\deadline\rangle\left|\;\height\in\mathbb{N}\text{ and }\deadline\in\Deadlines\right.\right\}.
+  \]
+  \emph{Blocks} include a trunk and extra data, such as a sequence of transactions.
+\end{definition}
+%
+The following algorithm shows how a challenge is derived from a trunk.
+%
+\begin{alg}[$\challenge(\trunk)$]\label{alg:challenge_from_signature}
+  Let $\trunk\in\Trunks$. The \emph{challenge for $\trunk$} is
+  \[
+  \challenge(\trunk)=\langle\betonat(h_\generation(\sigma\append(\trunk.\height+1)))\text{ mod }\numberofscoops,\sigma\rangle
+  \]
+  where
+  \[
+  \sigma=h_\generation(\trunk.\deadline.\challenge.\sigma\append\trunk.\deadline.\pi).  
+  \]
+\end{alg}

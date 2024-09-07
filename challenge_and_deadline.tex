@@ -8,14 +8,17 @@ the \emph{smallest} deadline for each nonce in the plot.
 \begin{definition}[Challenge]\label{def:challenge}
   The set of \emph{challenges} is
   \[
-  \Challenges=\left\{\langle\scoopnumber,\data\rangle\left|
+  \Challenges=\left\{\langle\scoopnumber,\sigma\rangle\left|
   \begin{array}{l}
     0\le\scoopnumber<\numberofscoops\\
-    \text{and }\data\in\mathit{byte}^*
+    \text{and $\sigma$ is a hash for $h_\generation$}
   \end{array}
   \right.\right\}.
   \]
+  The $\sigma$ component of a challenge is said to be its \emph{generation signature}.
 \end{definition}
+%
+In the following, generation signature will be used as a synonym of hash for $h_\generation$.
 %
 \begin{definition}[Deadline]\label{def:deadline}
   The set of \emph{deadlines} is
@@ -43,7 +46,7 @@ The following algorithm shows how a nonce answers a challenge with a deadline.
   \]
   where
   \[
-  \mathit{value}=h_\deadline(\nonce.\scoops[\challenge.\scoopnumber]\append\challenge.\data).
+  \mathit{value}=h_\deadline(\nonce.\scoops[\challenge.\scoopnumber]\append\challenge.\sigma).
   \]
 \end{alg}
 %
