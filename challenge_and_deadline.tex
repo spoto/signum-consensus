@@ -1,5 +1,10 @@
 \section{Challenges and Deadlines}\label{sec:challenges_and_deadlines}
 
+A \emph{challenge} specifies a query that can be asked to a nonce.
+The answer will be a \emph{deadline}.
+Challenges will be applied to plots as well, by taking
+the \emph{smallest} deadline for each nonce in the plot.
+%
 \begin{definition}[Challenge]\label{def:challenge}
   The set of \emph{challenges} is
   \[
@@ -11,3 +16,44 @@
   \right.\right\}.
   \]
 \end{definition}
+%
+\begin{definition}[Deadline]\label{def:deadline}
+  The set of \emph{deadlines} is
+  \[
+  \Deadlines=\left\{
+  \langle p,\pi,\mathit{value},\challenge\rangle
+  \left|\begin{array}{l}
+  \pi\in\Prologs,\ p\in\mathbb{N}\\
+  \mathit{value}\text{ is a hash for }h_\deadline\\
+  \text{and }\challenge\in\Challenges
+  \end{array}
+  \right.
+  \right\}
+  \]
+  Deadlines are totally ordered by increasing value.
+\end{definition}
+%
+The following algorithm shows how a nonce answers a challenge with a deadline.
+%
+\begin{alg}[$\deadline(\nonce,\pi,\challenge)$]\label{alg:deadline_from_nonce}
+  Given $\nonce\in\Nonces$, $\pi\in\Prologs$ and $\challenge\in\Challenges$, the
+  \emph{deadline computed from $\nonce$ for $\pi$ and $\challenge$} is
+  \[
+  \deadline(\nonce,\pi,\challenge)=\langle\nonce.p,\pi,\mathit{value},\challenge\rangle
+  \]
+  where
+  \[
+  \mathit{value}=h_\deadline(\nonce.\scoops[\challenge.\scoopnumber]\append\challenge.\data).
+  \]
+\end{alg}
+%
+Alg.~\ref{alg:deadline_from_nonce} is extended to plots. Remember that plots are non-empty
+(Def.~\ref{def:plot}) and that deadlines are ordered by their value.
+%
+\begin{alg}[$\deadline(\plot,\challenge)$]\label{alg:deadline_from_plot}
+  Given $\plot\in\Plots$ and $\challenge\in\Challenges$, the \emph{deadline computed
+  from $\plot$ for $\challenge$} is
+  \[
+  \deadline(\plot,\challenge)=\min\limits_{\nonce\in\plot.\nonces}\deadline(\nonce,\plot.\pi,\challenge).
+  \]
+\end{alg}

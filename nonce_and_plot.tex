@@ -47,7 +47,7 @@ made in~\cite{SignumPlotting} for such notations, but this paper remains paramet
 The definition of nonces and plots is parametric \wrt a hashing
 function $h_\deadline$ used for their creation.
 A \emph{scoop} is a pair of hashes.
-A \emph{nonce} is a non-negative \emph{progressive number} $n$, and
+A \emph{nonce} is a non-negative \emph{progressive number} $p$, and
 a list of $\numberofscoops>0$ scoops or, equivalenty,
 a list of $2\times\numberofscoops$ hashes for $h_\deadline$.
 %
@@ -59,8 +59,8 @@ a list of $2\times\numberofscoops$ hashes for $h_\deadline$.
   \end{array}\right.\right\},
   \]
   \[
-  \Nonces=\left\{\langle n,\scoops\rangle\left|\begin{array}{l}
-  n\in\mathbb{N}\text{ and }\scoops\in\Scoops^\numberofscoops
+  \Nonces=\left\{\langle p,\scoops\rangle\left|\begin{array}{l}
+  p\in\mathbb{N}\text{ and }\scoops\in\Scoops^\numberofscoops
   \end{array}\right.\right\}.
   \]
 \end{definition}
@@ -76,20 +76,20 @@ and see how they can be useful.
   \]
 \end{definition}
 %
-The following is an algorithm that constructs a nonce, given its progressive number and a prolog.
+The following algorithm constructs a nonce, given its progressive number and a prolog.
 It uses a constant $\kappa>0$ to limit its computational cost, hence avoiding to hash
 very large chunks of data.
 %
-\begin{definition}[$\nonce(n,\pi)$]\label{def:nonce_construction}
-  Given $n\in\mathbb{N}$ and $\pi\in\Prologs$, let
+\begin{alg}[$\nonce(p,\pi)$]\label{alg:nonce_construction}
+  Given $p\in\mathbb{N}$ and $\pi\in\Prologs$, let
   \[
-  \nonce(n,\pi)=\langle n,\langle h_0,h_1\rangle\append
+  \nonce(p,\pi)=\langle p,\langle h_0,h_1\rangle\append
   \cdots\append\langle h_{2\times\numberofscoops-2},h_{2\times\numberofscoops-1}\rangle\rangle\in\Nonces,
   \]
   where the hashes $h_0,\ldots,h_{2\times\numberofscoops-1}$ are constructed as follows.
   %
   \begin{enumerate}
-  \item Let $\seed=\pi\append n$.
+  \item Let $\seed=\pi\append p$.
   \item For each $i$ from $2\times\numberofscoops-1$ to $0$,
     let\footnote{In~\cite{SignumPlotting}, it is said to
     take the \emph{last} $\kappa$ bytes, but an inspection of their code
@@ -107,19 +107,18 @@ very large chunks of data.
   \item For each odd $i$ from $1$ to $2\times\numberofscoops-1$, swap
     $h_i$ with $h_{2\times\numberofscoops-i}$.
   \end{enumerate}
-\end{definition}
+\end{alg}
 %
-A \emph{plot} is a set of nonces constructed with the algorithm
-from Def.~\ref{def:nonce_construction},
-for a finite subset of progressive numbers $S$ and
-for the same prolog $\pi$, recorded in the plot.
+A \emph{plot} is a set of nonces constructed with Alg.~\ref{alg:nonce_construction},
+for a finite non-empty set of progressive numbers $P$ and
+for a given prolog $\pi$, recorded in the plot.
 %
-\begin{definition}[Plot]
+\begin{definition}[Plot]\label{def:plot}
   The set of \emph{plots} is defined as
   \[
   \Plots=\left\{\left<\pi,\nonces\right>\left|\begin{array}{l}
-  \pi\in\Prologs,\ S\subset\mathbb{N}\text{ is finite}\\
-  \text{and }\nonces=\left\{\nonce(n,\pi)\left|\;n\in S\right.\right\}
+  \pi\in\Prologs,\ \varnothing\not=P\subset\mathbb{N}\text{ is finite}\\
+  \text{and }\nonces=\left\{\nonce(p,\pi)\left|\;p\in P\right.\right\}
   \end{array}\right.\right\}.
   \]
 \end{definition}

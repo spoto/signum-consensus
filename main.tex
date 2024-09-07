@@ -20,19 +20,19 @@
   tabsize=3,
   escapechar=|
 }
-\usepackage{algorithm, algorithmic}
+%\usepackage{algorithm, algorithmic}
 \usepackage{url}
-\usepackage{relsize}
-\usepackage{xcolor}
-\usepackage{multirow}
+%\usepackage{relsize}
+%\usepackage{xcolor}
+%\usepackage{multirow}
 
-\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
-\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
-\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
-\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
+%\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+%\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
+%\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
+%\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
 
-\newif\iflongversion
-\longversionfalse               % for conference version
+%\newif\iflongversion
+%\longversionfalse               % for conference version
 %\longversiontrue                % for technical report
 
 % \|name| or \mathid{name} denotes identifiers and slots in formulas
@@ -44,13 +44,16 @@
 \newcommand{\codeid}[1]{\ifmmode{\mbox{\codesize\ttfamily{#1}}}\else{\codesize\ttfamily #1}\fi}
 
 \newcommand{\todo}[1]{{\color{red}\bfseries [[#1]]}}
+
 \DeclareMathOperator*{\append}{\bowtie}
 
 \newcommand{\fs}[1]{\todo{FS: #1}}
 \newcommand*\xor{\oplus}
 
 % Reduce padding for \boxed
-\setlength{\fboxsep}{.5\fboxsep}
+%\setlength{\fboxsep}{.5\fboxsep}
+
+\newtheorem{alg}{Algorithm}
 
 \newcommand{\wrt}{\textit{wrt.\ }}
 \newcommand{\ie}{, \textit{ie.}, }
@@ -67,6 +70,7 @@
 \newcommand{\size}{{\mathit{size}}}
 \newcommand{\scoopnumber}{{\mathit{scoop\_number}}}
 \newcommand{\data}{{\mathit{data}}}
+\newcommand{\challenge}{{\mathit{challenge}}}
 \newcommand{\finalhash}{{h_{\mathit{final}}}}
 
 \newcommand{\Prologs}{{\mathsf{Prologs}}}
@@ -74,6 +78,7 @@
 \newcommand{\Challenges}{{\mathsf{Challenges}}}
 \newcommand{\Scoops}{{\mathsf{Scoops}}}
 \newcommand{\Nonces}{{\mathsf{Nonces}}}
+\newcommand{\Deadlines}{{\mathsf{Deadlines}}}
 
 %
 \begin{document}
