@@ -1,32 +1,60 @@
 \section{Challenge Generation}\label{sec:challenge_generation}
 %
 Challenges are generated in sequence, for each block of the blockchain.
-Namely, a first challenge is hardcoded in the genesis block of the blockchain;
-the challenge for the son(s) of a block $b$ is then computed
+Namely, the challenge $c$ for the son(s) of a block $b$ is computed
 from a portion of $b$ that we call \emph{trunk} of $b$, borrowing this terminology
-from~\cite{CohenP19}. In particular, that challenge is \emph{not}
+from~\cite{CohenP19}. In particular, that $c$ is \emph{not}
 computed from the transactions in the full block $b$,
 in order to avoid block-grinding attacks (Sec.~\ref{sec:related_work}).
-Since the full block structure is not used for the proof of space, we do not give a formal definition
-here for them.
+Since full blocks are not used for the proof of space, we do not give
+a formal definition here for them. A deadline that answers $c$
+is recorded in the sons of $b$. Since the first block has not parent, it holds
+a special trunk $\bot$ with no deadline. Its height is implicitly always $0$.
 %
 \begin{definition}\label{def:block}
   The set of \emph{trunks} of blocks is
   \[
-  \Trunks=\left\{\langle\height,\deadline\rangle\left|\;\height\in\mathbb{N}\text{ and }\deadline\in\Deadlines\right.\right\}.
+  \Trunks=\left\{\langle\height,\deadline\rangle\left|\;\height\in\mathbb{N}\text{ and }\deadline\in\Deadlines\right.\right\}\cup\{\bot\}.
   \]
   \emph{Blocks} include a trunk and extra data, such as a sequence of transactions.
 \end{definition}
 %
 The following algorithm shows how a challenge is derived from a trunk.
 %
-\begin{alg}[$\challenge(\trunk)$]\label{alg:challenge_from_signature}
-  Let $\trunk\in\Trunks$. The \emph{challenge for $\trunk$} is
-  \[
-  \challenge(\trunk)=\langle\betonat(h_\generation(\sigma\append(\trunk.\height+1)))\text{ mod }\numberofscoops,\sigma\rangle
-  \]
+\begin{alg}[$\nextchallenge(\trunk)$]\label{alg:next_challenge_from_trunk}
+  Let $\trunk\in\Trunks$ be such that $\trunk\not=\bot$. The \emph{next challenge for $\trunk$} is
+  \begin{multline*}
+    \nextchallenge(\trunk)=\\
+    \langle\betonat(h_\generation(\sigma\append\nattobe(\trunk.\height+1)))\text{ mod }\numberofscoops,\sigma\rangle
+  \end{multline*}
   where
   \[
   \sigma=h_\generation(\trunk.\deadline.\challenge.\sigma\append\trunk.\deadline.\pi).  
   \]
+  If $\trunk=\bot$, instead, it is
+  \begin{multline*}
+    \nextchallenge(\bot)=\\
+    \langle\betonat(h_\generation(\sigma_\genesis\append\nattobe(1)))\text{ mod }\numberofscoops,\sigma_\genesis\rangle,
+  \end{multline*}
+  %
+  where $\sigma_\genesis$ is a constant generation signature used for the genesis of the blockchain.
 \end{alg}
+%
+The definition of the generation signature $\sigma$ for the next challenge,
+in Alg.~\ref{alg:next_challenge_from_trunk},
+has puzzled us for some time, since~\cite{SignumPlotting} appends a \emph{previous block generator}
+to the previous block's generation signature $\trunk.\deadline.\challenge.\sigma$.
+That concept, however, is defined nowhere.
+We had to dive in the source code of the Signum node to understand that it is actually
+an identifier (more concretely, the public key)
+of the creator of the deadline for the previous block
+(see \url{https://github.com/signum-network/signum-node/blob/main/src/brs/GeneratorImpl.java}, constructor of \<GeneratorStateImpl>).
+We abstract that information through the prolog of the previous deadline, hence this is why
+Alg.~\ref{alg:next_challenge_from_trunk} appends
+$\trunk.\deadline.\pi$ to define $\sigma$.
+This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
+where it is stated that ``this previous block generator seems possible to be grinded, by trying
+different sets of transactions to include in a block''. This is false in the code of Signum,
+although the reason is quite obfuscated, and it is more clearly false in
+Alg.~\ref{alg:next_challenge_from_trunk}, since $\trunk.\deadline.\pi$ comes
+from the trunk only.

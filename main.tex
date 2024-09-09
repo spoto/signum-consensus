@@ -22,7 +22,7 @@
 }
 %\usepackage{algorithm, algorithmic}
 \usepackage{url}
-%\usepackage{relsize}
+\usepackage{relsize}
 %\usepackage{xcolor}
 %\usepackage{multirow}
 
@@ -39,7 +39,7 @@
 \def\|#1|{\mathid{#1}}
 \newcommand{\mathid}[1]{\ensuremath{\mathit{#1}}}
 % \<name> or \codeid{name} denotes computer code identifiers
-\def\codesize{\smaller}
+\def\codesize{\small}
 \def\<#1>{\codeid{#1}}
 \newcommand{\codeid}[1]{\ifmmode{\mbox{\codesize\ttfamily{#1}}}\else{\codesize\ttfamily #1}\fi}
 
@@ -71,8 +71,10 @@
 \newcommand{\scoopnumber}{{\mathit{scoop\_number}}}
 \newcommand{\data}{{\mathit{data}}}
 \newcommand{\challenge}{{\mathit{challenge}}}
+\newcommand{\nextchallenge}{{\mathit{next\_challenge}}}
 \newcommand{\height}{{\mathit{height}}}
 \newcommand{\trunk}{{\mathit{trunk}}}
+\newcommand{\genesis}{{\mathit{genesis}}}
 \newcommand{\nattobe}{{\mathit{nat2be}}}
 \newcommand{\betonat}{{\mathit{be2nat}}}
 \newcommand{\finalhash}{{h_{\mathit{final}}}}
@@ -107,6 +109,7 @@
 \input{nonce_and_plot}
 \input{challenge_and_deadline}
 \input{challenge_generation}
+\input{blockchain_construction}
 %\input{conclusion}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

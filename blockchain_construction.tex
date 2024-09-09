@@ -1,0 +1,11 @@
+\section{Blockchain Construction}\label{sec:blockchain_construction}
+
+The blockchain is a tree of blocks. Since only the trunks of the blocks are
+relevant for the proof of space, this section defines how a tree of trunks
+is constructed, rooted at an initial \emph{genesis} trunk. The collection,
+selection, execution and inclusion o fthe transactions inside blocks is
+completely abstracted away in this formalization.
+
+\begin{definition}\label{def:blockchain}
+  A \emph{blockchain} is a set $B\subset\Trunks$ such that $\bot\in B$.
+\end{definition}
