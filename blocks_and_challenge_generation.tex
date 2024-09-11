@@ -1,0 +1,95 @@
+\section{Blocks and Challenge Generation}\label{sec:challenge_generation}
+%
+The blocks of the blockchain contain information used for the proof
+of space, called \emph{trunk} by borrowing this terminology from~\cite{CohenP19},
+other information such as the previous block hash,
+and extra information that is irrelevant here, such as a list of transactions.
+The latter is not formalized below, since it is not used for the proof of space.
+Blocks can be genesis and non-genesis. Both contain their time of creation.
+Genesis blocks have nor trunk nor parent and their height is implicitly $0$.
+Challenges $c$ are generated in sequence: there is an initial constant challenge for the genesis
+blocks, while the subsequent challenges are generated from the trunk of
+each non-genesis block $b$ of the blockchain.
+In particular, $c$ is \emph{not} computed from the transactions in $b$,
+in order to avoid block-grinding attacks (Sec.~\ref{sec:related_work}).
+A deadline that answers $c$ is recorded in the trunk of the sons of $b$.
+%
+\begin{definition}[Trunk, Block]\label{def:trunk}
+  The sets of \emph{trunks} and \emph{blocks} are
+  \[
+  \Trunks=\left\{\langle\height,\deadline\rangle\left|\;\height\in\mathbb{N}\text{ and }\deadline\in\Deadlines\right.\right\}
+  \]
+  \[
+  \GenesisBlocks=\left\{\langle\tau\rangle\mid\tau\in\mathbb{N}\right\}
+  \]
+  \[
+  \NonGenesisBlocks=\left\{\langle\trunk,\alpha,\tau,\previousblockhash\rangle\left|\begin{array}{l}
+  \trunk\in\Trunks,\\
+  \alpha\in\mathbb{N},\ \alpha>0,\\
+  \tau\in\mathbb{N}\\
+  \text{and }\previousblockhash\\
+  \text{is a hash for $h_\block$}
+  \end{array}\right.\right\}
+  \]
+  \[
+  \Blocks=\GenesisBlocks\cup\NonGenesisBlocks.
+  \]
+  The value $\tau$ is the creation time of the blocks (milliseconds from the Unix epoch).
+  The value $\alpha$ is the non-genesis blocks
+  is called\footnote{In~\cite{SignumPlotting} the term
+  \emph{base target} is used for it, but we think that \emph{acceleration} is clearer.}
+  \emph{acceleration} and is used to modulate the time needed to wait for a deadline.
+  This acceleration changes dynamically from block to block, to cope with
+  the fluctuation of the mining power in the network. It is the inverse of Bitcoin's difficulty.
+\end{definition}
+%
+The following algorithm shows how the first challenge, for the genesis blocks,
+its defined. It is a constant that only depends on contextual values
+(Table~\ref{tab:notations}).
+%
+\begin{alg}[$\initialchallenge$]\label{alg:initial_challenge}
+  The \emph{initial challenge} is the constant
+  %
+  \begin{multline*}
+    \initialchallenge=\\
+    \langle\betonat(h_\generation(\sigma_\genesis\append\nattobe(1)))\text{ mod }\numberofscoops,\sigma_\genesis\rangle,
+  \end{multline*}
+  %
+  where $\sigma_\genesis$ is a constant generation signature used for the genesis of the blockchain
+  (see Table~\ref{tab:notations}).
+\end{alg}
+%
+The following algorithm shows how a challenge is derived from a trunk.
+%
+\begin{alg}[$\nextchallenge(\trunk)$]\label{alg:next_challenge_from_trunk}
+  Let $\trunk\in\Trunks$. The \emph{next challenge for $\trunk$} is
+  \begin{multline*}
+    \nextchallenge(\trunk)=\\
+    \langle\betonat(h_\generation(\sigma\append\nattobe(\trunk.\height+1)))\text{ mod }\numberofscoops,\sigma\rangle
+  \end{multline*}
+  where
+  \[
+  \sigma=h_\generation(\trunk.\deadline.\challenge.\sigma\append\trunk.\deadline.\pi).  
+  \]
+\end{alg}
+%
+The definition of the generation signature $\sigma$ for the next challenge,
+in Alg.~\ref{alg:next_challenge_from_trunk},
+has puzzled us for some time, since~\cite{SignumPlotting} appends a \emph{previous block generator}
+to the previous block's generation signature $\trunk.\deadline.\challenge.\sigma$.
+That concept, however, is defined nowhere.
+We had to dive in the source code of the Signum node
+to understand that it is actually
+an identifier (more concretely, the public key)
+of the creator of the deadline for the previous block
+(see \url{https://github.com/signum-network/signum-node/blob/main/src/brs/GeneratorImpl.java}, constructor of \<GeneratorStateImpl>).
+We abstract that information through the prolog of the previous deadline, hence this is why
+Alg.~\ref{alg:next_challenge_from_trunk} appends
+$\trunk.\deadline.\pi$ to define $\sigma$.
+This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
+where it is stated that ``this previous block generator seems possible to be grinded, by trying
+different sets of transactions to include in a block''. This is false in the code of Signum,
+although the reason is quite obfuscated, and it is more clearly false in
+Alg.~\ref{alg:next_challenge_from_trunk}, since $\trunk.\deadline.\pi$ comes
+from the trunk only.
+Therefore, such grinding attack is actually impossible.

@@ -60,6 +60,7 @@
 
 \newcommand{\numberofscoops}{{\#\mathit{scoops}}}
 \newcommand{\noncesize}{{\mathit{nonce}_{\mathit{size}}}}
+\newcommand{\byte}{{\mathit{byte}}}
 \newcommand{\nonce}{{\mathit{nonce}}}
 \newcommand{\nonces}{{\mathit{nonces}}}
 \newcommand{\scoops}{{\mathit{scoops}}}
@@ -68,12 +69,17 @@
 \newcommand{\deadline}{{\mathit{deadline}}}
 \newcommand{\generation}{{\mathit{generation}}}
 \newcommand{\size}{{\mathit{size}}}
-\newcommand{\scoopnumber}{{\mathit{scoop\_number}}}
+\newcommand{\scoopnumber}{{\mathit{scoopNumber}}}
 \newcommand{\data}{{\mathit{data}}}
 \newcommand{\challenge}{{\mathit{challenge}}}
-\newcommand{\nextchallenge}{{\mathit{next\_challenge}}}
+\newcommand{\nextchallenge}{{\mathit{nextChallenge}}}
+\newcommand{\initialchallenge}{{\mathit{initialChallenge}}}
 \newcommand{\height}{{\mathit{height}}}
 \newcommand{\trunk}{{\mathit{trunk}}}
+\newcommand{\block}{{\mathit{block}}}
+\newcommand{\now}{{\mathit{now}}}
+\newcommand{\beat}{{\mathit{beat}}}
+\newcommand{\previousblockhash}{{\mathit{previousBlockHash}}}
 \newcommand{\genesis}{{\mathit{genesis}}}
 \newcommand{\nattobe}{{\mathit{nat2be}}}
 \newcommand{\betonat}{{\mathit{be2nat}}}
@@ -85,6 +91,9 @@
 \newcommand{\Scoops}{{\mathsf{Scoops}}}
 \newcommand{\Nonces}{{\mathsf{Nonces}}}
 \newcommand{\Trunks}{{\mathsf{Trunks}}}
+\newcommand{\Blocks}{{\mathsf{Blocks}}}
+\newcommand{\GenesisBlocks}{{\mathsf{GenesisBlocks}}}
+\newcommand{\NonGenesisBlocks}{{\mathsf{NonGenesisBlocks}}}
 \newcommand{\Deadlines}{{\mathsf{Deadlines}}}
 
 %
@@ -108,7 +117,7 @@
 \input{related_work}
 \input{nonce_and_plot}
 \input{challenge_and_deadline}
-\input{challenge_generation}
+\input{blocks_and_challenge_generation}
 \input{blockchain_construction}
 %\input{conclusion}
 

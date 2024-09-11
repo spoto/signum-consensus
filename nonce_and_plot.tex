@@ -4,8 +4,9 @@ This section formalizes the notion of nonce and plot, together with their
 algorithmic construction. Tab.~\ref{tab:notations} collects some notations,
 introduced here and used throughout the paper.
 It also reports the specific choices
-made in~\cite{SignumPlotting} for such notations, but this paper remains parametric
-\wrt them.
+made in~\cite{SignumPlotting} for such notations, but this paper remains parametric \wrt them.
+NOte that we distinguish three hashing functions in our formalizations, although they
+might actually coincide. We prefer to remain as generic as possible.
 
 \begin{table}[t]
 \begin{center}
@@ -20,13 +21,20 @@ made in~\cite{SignumPlotting} for such notations, but this paper remains paramet
 
   $h_\generation$ & hashing function for computing the generations of challenges & shabal256\\\hline
 
-  $\kappa$ & maximal number of bytes fed to $h_\deadline$ & $4096$\\\hline
+  $h_\block$ & hashing function for computing the hash of the blocks & \\\hline
 
-  $\sigma_\genesis$ & the generation signature for the genesis block & \\\hline
+  $\kappa$ & maximal number of bytes fed to $h_\deadline$ in Alg.~\ref{alg:nonce_construction} & $4096$\\\hline
+
+  $\beat$ & target block creation time interval & $240000$ ms\\\hline
+  $\sigma_\genesis$ & generation signature for the genesis block & \\\hline
+
+  $\alpha_\genesis$ & acceleration for the genesis block & \\\hline
+
+  $\tau_\now$ & current time (ms from Unix epoch) & \\\hline
 \end{tabular}
 \end{center}
-\caption{Notations used in our formalization and their specific instantiations
-  used in~\cite{SignumPlotting}.}
+\caption{Notations and constants used in our formalization and their specific instantiations
+  used in~\cite{SignumPlotting}, when available.}
 \label{tab:notations}
 \end{table}
 %
