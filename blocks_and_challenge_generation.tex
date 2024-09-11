@@ -23,29 +23,42 @@ A deadline that answers $c$ is recorded in the trunk of the sons of $b$.
   \GenesisBlocks=\left\{\langle\tau\rangle\mid\tau\in\mathbb{N}\right\}
   \]
   \[
-  \NonGenesisBlocks=\left\{\langle\trunk,\alpha,\tau,\previousblockhash\rangle\left|\begin{array}{l}
+  \NonGenesisBlocks=\left\{\left\langle\begin{array}{c}
+  \trunk,\tau,\alpha,\\
+  \power,\weightedbeat,\\
+  \previousblockhash
+  \end{array}\right\rangle\left|\begin{array}{l}
   \trunk\in\Trunks,\\
+  \tau\in\mathbb{N},\\
   \alpha\in\mathbb{N},\ \alpha>0,\\
-  \tau\in\mathbb{N}\\
-  \text{and }\previousblockhash\\
-  \text{is a hash for $h_\block$}
+  \power\in\mathbb{N},\\
+  \weightedbeat\in\mathbb{N},\\
+  \previousblockhash\text{ is a}\\
+  \qquad\text{hash for $h_\block$}
   \end{array}\right.\right\}
   \]
   \[
   \Blocks=\GenesisBlocks\cup\NonGenesisBlocks.
   \]
-  The value $\tau$ is the creation time of the blocks (milliseconds from the Unix epoch).
-  The value $\alpha$ is the non-genesis blocks
-  is called\footnote{In~\cite{SignumPlotting} the term
-  \emph{base target} is used for it, but we think that \emph{acceleration} is clearer.}
-  \emph{acceleration} and is used to modulate the time needed to wait for a deadline.
-  This acceleration changes dynamically from block to block, to cope with
-  the fluctuation of the mining power in the network. It is the inverse of Bitcoin's difficulty.
 \end{definition}
 %
-The following algorithm shows how the first challenge, for the genesis blocks,
-its defined. It is a constant that only depends on contextual values
-(Table~\ref{tab:notations}).
+If $b$ is a block, then $b.\tau$ is its creation time (milliseconds from the Unix epoch).
+If $b$ is a non-genesis block, then
+$b.\alpha$ is called\footnote{In~\cite{SignumPlotting} the term
+\emph{base target} is used for it, but we think that \emph{acceleration} is clearer.}
+\emph{acceleration} and is used to modulate the time needed to wait for a deadline.
+This acceleration changes dynamically from block to block, to cope with
+the fluctuations of the mining power in the network. It is the inverse of Bitcoin's difficulty.
+The value $b.\power$ expresses how much space has been used to build the path that leads to $b$,
+starting from a genesis block; it will be used to select the \emph{best chain} for mining
+$b$'s next block. The value of $b.\weightedbeat$ is the average of the interval creation time
+for the path that leads to $b$, giving more weight to the last blocks; it will be
+compared to $\beat$ (Tab.~\ref{tab:notations}) to understand if the acceleration
+must be increased or decreased.
+The value of $b.\previousblockhash$ is the hash of the previous block in the path leading to $b$.
+
+The following algorithm shows how the first challenge, for genesis blocks,
+its defined. It is a constant that only depends on contextual values (Table~\ref{tab:notations}).
 %
 \begin{alg}[$\initialchallenge$]\label{alg:initial_challenge}
   The \emph{initial challenge} is the constant
@@ -59,7 +72,7 @@ its defined. It is a constant that only depends on contextual values
   (see Table~\ref{tab:notations}).
 \end{alg}
 %
-The following algorithm shows how a challenge is derived from a trunk.
+The following algorithm shows how a challenge is derived from the trunk of a non-genesis block.
 %
 \begin{alg}[$\nextchallenge(\trunk)$]\label{alg:next_challenge_from_trunk}
   Let $\trunk\in\Trunks$. The \emph{next challenge for $\trunk$} is
@@ -73,6 +86,19 @@ The following algorithm shows how a challenge is derived from a trunk.
   \]
 \end{alg}
 %
+In the following, it will be handy to determine the next challenge for a block. Note that
+the next definition only uses the trunk inside the block.
+%
+\begin{definition}\label{def:next_challenge_from_block}
+  Let $b\in\Blocks$. Its \emph{next challenge} is
+  \[
+  \nextchallenge(b)=\begin{cases}
+  \initialchallenge & \text{if $b\in\GenesisBlocks$}\\
+  \nextchallenge(b.\trunk) & \text{if $b\in\NonGenesisBlocks$.}
+  \end{cases}
+  \]
+\end{definition}
+
 The definition of the generation signature $\sigma$ for the next challenge,
 in Alg.~\ref{alg:next_challenge_from_trunk},
 has puzzled us for some time, since~\cite{SignumPlotting} appends a \emph{previous block generator}
@@ -88,8 +114,8 @@ Alg.~\ref{alg:next_challenge_from_trunk} appends
 $\trunk.\deadline.\pi$ to define $\sigma$.
 This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
 where it is stated that ``this previous block generator seems possible to be grinded, by trying
-different sets of transactions to include in a block''. This is false in the code of Signum,
-although the reason is quite obfuscated, and it is more clearly false in
-Alg.~\ref{alg:next_challenge_from_trunk}, since $\trunk.\deadline.\pi$ comes
-from the trunk only.
-Therefore, such grinding attack is actually impossible.
+different sets of transactions to include in a block''. This is false, although it was
+hard to grasp without the formalization in
+Alg.~\ref{alg:next_challenge_from_trunk}, where it is clear that
+$\trunk.\deadline.\pi$ comes from the trunk only, which makes
+such grinding attack impossible.

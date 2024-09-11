@@ -1,11 +1,37 @@
 \section{Blockchain Construction}\label{sec:blockchain_construction}
 
-The blockchain is a tree of blocks. Since only the trunks of the blocks are
-relevant for the proof of space, this section defines how a tree of trunks
-is constructed, rooted at an initial \emph{genesis} trunk. The collection,
-selection, execution and inclusion o fthe transactions inside blocks is
-completely abstracted away in this formalization.
-
+A blockchain is a set of blocks, linked through their $\previousblockhash$ field.
+It must contain exactly one genesis block; it has no hash collisions among its blocks;
+and all its blocks must satisfy the \emph{consensus rules}.
+%
 \begin{definition}\label{def:blockchain}
-  A \emph{blockchain} is a set $B\subset\Trunks$ such that $\bot\in B$.
+  A \emph{blockchain} is a set $B\subset\Blocks$ such that:
+  \begin{enumerate}
+  \item there is exactly one $b\in B\cap\GenesisBlocks$, written as $\genesis(B)$;
+  \item for each hash $h$ of $h_\block$, there is at most
+    one $b\in B$ such that $h_\block(b)=h$, written as $\block(B,h)$;
+  \item for each $b\in B$, the predicate $\consensus(B,b)$ holds true
+    where
+    %
+    \begin{itemize}
+    \item if $b\in\GenesisBlocks$, then $\consensus(B,b)=b.\tau\ge\tau_\now$ [$b$ is not created in the future]
+    \item if $b\in\NonGenesisBlocks$, then $\consensus(B,b)$ is the logical conjunction
+      of all the following consensus rules:
+      \begin{itemize}
+      \item $b$ is not created in the future:
+        $\consensus(B,b)=b.\tau\ge\tau_\now$;
+      \item there are no dangling pointers:
+        $p=\block(B,b.\previousblockhash)$ exists;
+      \item the deadline of $b$ answers the challenge of $p$:
+        \[
+        \nextchallenge(p)=b.\trunk.\deadline.\challenge;
+        \]
+      \item $b$ is created at the expiration of its deadline:
+        \[
+        b.\tau=p.\tau+\waitingtime(b.\trunk.\deadline,p.\alpha);
+        \]
+      \end{itemize}
+    \end{itemize}
+    %
+  \end{enumerate}
 \end{definition}
