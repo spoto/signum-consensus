@@ -20,6 +20,15 @@ the \emph{smallest} deadline for each nonce in the plot.
 %
 In the following, generation signature will be used as a synonym of hash for $h_\generation$.
 %
+\begin{definition}[$\mathit{value}(\nonce,\challenge)$]\label{def:nonce_value}
+  Let $\nonce\in\Nonces$ and $\challenge\in\Challenges$.
+  The \emph{value $\mathit{value}(\nonce,\challenge)$ of $\nonce$ \wrt $\challenge$} is defined as
+  \begin{multline*}
+    \mathit{value}(\nonce,\challenge)\\
+    =h_\deadline(\nonce.\scoops[\challenge.\scoopnumber]\append\challenge.\sigma).
+  \end{multline*}
+\end{definition}
+%
 \begin{definition}[Deadline]\label{def:deadline}
   The set of \emph{deadlines} is
   \[
@@ -48,27 +57,23 @@ called \emph{acceleration}\footnote{In~\cite{SignumPlotting} the term
 which is the inverse of Bitcoin's difficulty.
 %
 \begin{definition}[Deadline's waiting time]\label{def:deadline}
-  Given $\deadline\in\Deadlines$ and an \emph{acceleration}
+  Given $\delta\in\Deadlines$ and an \emph{acceleration}
   $\alpha\in\mathbb{N}$ such that $\alpha>0$, the
-  \emph{waiting time} for $\deadline$ \wrt $\alpha$ is
+  \emph{waiting time} for $\delta$ \wrt $\alpha$ is
   %
-  \begin{multline*}
-    \waitingtime(\deadline,\alpha)\\
-    =\betonat\left(\text{first $8$ bytes of}\left(\nattobe\left(\frac{\betonat(\deadline.\mathit{value})}{\alpha}\right)\right)\right).
-  \end{multline*}
+  \[
+  \waitingtime(\delta,\alpha)
+  =\betonat\left(\text{first $8$ bytes of}\left(\nattobe\left(\frac{\betonat(\delta.\mathit{value})}{\alpha}\right)\right)\right).
+  \]
 \end{definition}
 %
 The following algorithm shows how a nonce answers a challenge with a deadline.
 %
-\begin{alg}[$\deadline(\nonce,\pi,\challenge)$]\label{alg:deadline_from_nonce}
+\begin{alg}[$\delta(\nonce,\pi,\challenge)$]\label{alg:deadline_from_nonce}
   Given $\nonce\in\Nonces$, $\pi\in\Prologs$ and $\challenge\in\Challenges$, the
   \emph{deadline computed from $\nonce$ for $\pi$ and $\challenge$} is
   \[
-  \deadline(\nonce,\pi,\challenge)=\langle\nonce.p,\pi,\mathit{value},\challenge\rangle
-  \]
-  where
-  \[
-  \mathit{value}=h_\deadline(\nonce.\scoops[\challenge.\scoopnumber]\append\challenge.\sigma).
+  \delta(\nonce,\pi,\challenge)=\langle\nonce.p,\pi,\mathit{value}(\nonce,\challenge),\challenge\rangle.
   \]
 \end{alg}
 %
@@ -79,6 +84,25 @@ Alg.~\ref{alg:deadline_from_nonce} is extended to plots. Remember that plots are
   Given $\plot\in\Plots$ and $\challenge\in\Challenges$, the \emph{deadline computed
   from $\plot$ for $\challenge$} is
   \[
-  \deadline(\plot,\challenge)=\min\limits_{\nonce\in\plot.\nonces}\deadline(\nonce,\plot.\pi,\challenge).
+  \delta(\plot,\challenge)=\min\limits_{\nonce\in\plot.\nonces}\delta(\nonce,\plot.\pi,\challenge).
   \]
 \end{alg}
+%
+A deadline is valid when the nonce built from its progressive and prolog
+has the same value as the deadline \wrt its challenge.
+%
+\begin{definition}[Deadline's validity]\label{def:deadline_validity}
+  Let $\delta\in\Deadlines$. We say that $\delta$ is \emph{valid} if and only if
+  \[
+  \delta.\mathit{value}=\mathit{value}(\nonce(\delta.p,\delta.\pi),\delta.\challenge).
+  \]
+\end{definition}
+%
+The consensus rules of the blockchain, later, will check that the deadlines are
+actually valid (Def.~\ref{def:blockchain}). Therefore, one could be tempted to
+remove the $\mathit{value}$ field from deadlines (Def.~\ref{def:deadline}) and compute
+their value, when needed, by Def.~\ref{def:deadline_validity}. However, this would change the
+computational complexity of the algorithms, since the computation of
+$\nonce(\delta.p,\delta.\pi)$ is relatively expensive (Def.~\ref{alg:nonce_construction}).
+Therefore, the original informal description~\cite{SignumPlotting} puts a value in the deadline
+and we follow this approach as well.

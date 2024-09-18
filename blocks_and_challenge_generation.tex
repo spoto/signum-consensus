@@ -17,7 +17,7 @@ A deadline that answers $c$ is recorded in the trunk of the sons of $b$.
 \begin{definition}[Trunk, Block]\label{def:trunk}
   The sets of \emph{trunks} and \emph{blocks} are
   \[
-  \Trunks=\left\{\langle\height,\deadline\rangle\left|\;\height\in\mathbb{N}\text{ and }\deadline\in\Deadlines\right.\right\}
+  \Trunks=\left\{\langle\height,\delta\rangle\left|\;\height\in\mathbb{N}\text{ and }\delta\in\Deadlines\right.\right\}
   \]
   \[
   \GenesisBlocks=\left\{\langle\tau,\alpha\rangle\mid\tau\in\mathbb{N},\ \alpha\in\mathbb{N}\text{ and }\alpha>0\right\}
@@ -54,6 +54,16 @@ must be increased or decreased in $b$'s son.
 The value of $b.\previousblockhash$ is the hash of the previous block in the path leading to $b$.
 If $b$ is a genesis block, we abuse notation and assume that $b.\power=b.\weightedbeat=0$.
 
+\begin{definition}[Block's height]\label{def:block_height}
+  Let $b\in\Blocks$. The \emph{height} of $b$ is defined as
+  \[
+  \height(b)=\begin{cases}
+  0 & \text{if $b\in\GenesisBlocks$}\\
+  b.\trunk.\height & \text{if $b\in\NonGenesisBlocks$.}
+  \end{cases}
+  \]
+\end{definition}
+
 The following algorithm shows how the first challenge, for genesis blocks,
 its defined. It is a constant that only depends on contextual values (Table~\ref{tab:notations}).
 %
@@ -79,14 +89,14 @@ The following algorithm shows how a challenge is derived from the trunk of a non
   \end{multline*}
   where
   \[
-  \sigma=h_\generation(\trunk.\deadline.\challenge.\sigma\append\trunk.\deadline.\pi).  
+  \sigma=h_\generation(\trunk.\delta.\challenge.\sigma\append\trunk.\delta.\pi).  
   \]
 \end{alg}
 %
 The definition of the generation signature $\sigma$ for the next challenge,
 in Alg.~\ref{alg:next_challenge_from_trunk},
 has puzzled us for some time, since~\cite{SignumPlotting} appends a \emph{previous block generator}
-to the previous block's generation signature $\trunk.\deadline.\challenge.\sigma$.
+to the previous block's generation signature $\trunk.\delta.\challenge.\sigma$.
 That concept, however, is defined nowhere.
 We had to dive in the source code of the Signum node
 to understand that it is actually
@@ -95,14 +105,27 @@ of the creator of the deadline for the previous block
 (see \url{https://github.com/signum-network/signum-node/blob/main/src/brs/GeneratorImpl.java}, constructor of \<GeneratorStateImpl>).
 We abstract that information through the prolog of the previous deadline, hence this is why
 Alg.~\ref{alg:next_challenge_from_trunk} appends
-$\trunk.\deadline.\pi$ to define $\sigma$.
+$\trunk.\delta.\pi$ to define $\sigma$.
 This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
 where it is stated that ``this previous block generator seems possible to be grinded, by trying
 different sets of transactions to include in a block''. This is false, although it was
 hard to grasp without the formalization in
 Alg.~\ref{alg:next_challenge_from_trunk}, where it is clear that
-$\trunk.\deadline.\pi$ comes from the trunk only, which makes
+$\trunk.\delta.\pi$ comes from the trunk only, which makes
 such grinding attack impossible.
+
+Later, it will be handy to determine the next challenge for a block. Note that
+the next definition only uses the trunk inside the block.
+%
+\begin{definition}\label{def:next_challenge_from_block}
+  Let $b\in\Blocks$. Its \emph{next challenge} is
+  \[
+  \nextchallenge(b)=\begin{cases}
+  \initialchallenge & \text{if $b\in\GenesisBlocks$}\\
+  \nextchallenge(b.\trunk) & \text{if $b\in\NonGenesisBlocks$.}
+  \end{cases}
+  \]
+\end{definition}
 
 In the following, it is shown how the information inside a block is used to construct
 the information inside its son(s). The computation of the next weighted beat
@@ -113,33 +136,33 @@ adapted to our context: the maximal (hence worse) deadline's value $2^{8\cdot\si
 to the actual deadline's value and their ratio expresses how much space has been used to compute the deadline.
 %
 \begin{definition}[Next functions]\label{def:next}
-  Let $b\in\Blocks$ and $\deadline\in\Deadlines$. We define
+  Let $b\in\Blocks$ and $\delta\in\Deadlines$. We define
   \[
-  \nextwaitingtime(b,\deadline)=b.\tau+\waitingtime(\deadline,b.\alpha)
+  \nextwaitingtime(b,\delta)=b.\tau+\waitingtime(\delta,b.\alpha)
   \]
   \[
-  \nextweightedbeat(b,\deadline)=\begin{array}{c}
-  \waitingtime(\deadline,b.\alpha)\cdot\oblivion\\
+  \nextweightedbeat(b,\delta)=\begin{array}{c}
+  \waitingtime(\delta,b.\alpha)\cdot\oblivion\\
   +b.\weightedbeat\cdot(1-\oblivion)
   \end{array}
   \]
   \[
-  \nextacceleration(b,\deadline)=\frac{b.\alpha\cdot\nextweightedbeat(b,\deadline)}{\beat}
+  \nextacceleration(b,\delta)=\frac{b.\alpha\cdot\nextweightedbeat(b,\delta)}{\beat}
   \]
   \[
-  \nextpower(b,\deadline)=b.\power+\frac{2^{8\cdot\size(h_\deadline)}}{\betonat(\deadline.\mathit{value})+1}
+  \nextpower(b,\delta)=b.\power+\frac{2^{8\cdot\size(h_\deadline)}}{\betonat(\delta.\mathit{value})+1}
   \]
 \end{definition}
-
-In the following, it will be handy to determine the next challenge for a block. Note that
-the next definition only uses the trunk inside the block.
 %
-\begin{definition}\label{def:next_challenge_from_block}
-  Let $b\in\Blocks$. Its \emph{next challenge} is
+\begin{definition}[Next block]\label{def:next_block}
+  Let $b\in\Blocks$ and $\delta\in\Deadlines$. We define
+  $\nextblock(b,\delta)\in\NonGenesisBlocks$ as
   \[
-  \nextchallenge(b)=\begin{cases}
-  \initialchallenge & \text{if $b\in\GenesisBlocks$}\\
-  \nextchallenge(b.\trunk) & \text{if $b\in\NonGenesisBlocks$.}
-  \end{cases}
+  \nextblock(b,\delta)=\left\langle\begin{array}{c}
+  \nextwaitingtime(b,\delta),\nextacceleration(b,\delta),\\
+  \nextpower(b,\delta),\nextweightedbeat(b,\delta),\\
+  \langle\height(b)+1,\delta\rangle,\\
+  h_\block(b)
+  \end{array}\right\rangle.
   \]
 \end{definition}

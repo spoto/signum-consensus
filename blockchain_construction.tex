@@ -4,31 +4,39 @@ A blockchain is a set of blocks, linked through their $\previousblockhash$ field
 It must contain exactly one genesis block; it has no hash collisions among its blocks;
 and all its blocks must satisfy the \emph{consensus rules}.
 %
-\begin{definition}\label{def:blockchain}
+\begin{definition}[Blockchain, Consensus]\label{def:blockchain}
   A \emph{blockchain} is a set $B\subset\Blocks$ such that:
   \begin{enumerate}
   \item there is exactly one $b\in B\cap\GenesisBlocks$, written as $\genesis(B)$;
   \item for each hash $h$ of $h_\block$, there is at most
     one $b\in B$ such that $h_\block(b)=h$, written as $\block(B,h)$;
-  \item for each $b\in B$, the predicate $\consensus(B,b)$ holds true
-    where
+  \item for each $b\in B$, the predicate $\consensus(B,b)$ holds, where
     %
     \begin{itemize}
-    \item if $b\in\GenesisBlocks$, then $\consensus(B,b)=b.\tau\ge\tau_\now$ [$b$ is not created in the future]
+    \item if $b\in\GenesisBlocks$, then the only requirement for consensus is that
+      $b$ is not created in the future:
+      \[
+      \consensus(B,b)=b.\tau\ge\tau_\now;
+      \]
     \item if $b\in\NonGenesisBlocks$, then $\consensus(B,b)$ is the logical conjunction
       of all the following consensus rules:
       \begin{itemize}
       \item $b$ is not created in the future:
-        $\consensus(B,b)=b.\tau\ge\tau_\now$;
-      \item there are no dangling pointers:
-        $p=\block(B,b.\previousblockhash)$ exists;
-      \item the deadline of $b$ answers the challenge of $p$:
         \[
-        \nextchallenge(p)=b.\trunk.\deadline.\challenge;
+        b.\tau\ge\tau_\now;
         \]
-      \item $b$ is created at the expiration of its deadline:
+      \item the deadline of $b$ (that is, $b.\trunk.\delta$) is valid (Def.~\ref{def:deadline_validity});
+      \item there are no dangling pointers:
         \[
-        b.\tau=p.\tau+\waitingtime(b.\trunk.\deadline,p.\alpha);
+        p=\block(B,b.\previousblockhash)\text{ exists;}
+        \]
+      \item the deadline of $b$ answers the challenge of $p$ (Def.~\ref{def:next_challenge_from_block}):
+        \[
+        \nextchallenge(p)=b.\trunk.\delta.\challenge;
+        \]
+      \item $b$ is the next block of $p$ \wrt the deadline of $b$ (Def.~\ref{def:next_block}):
+        \[
+        b=\nextblock(p,b.\trunk.\delta).
         \]
       \end{itemize}
     \end{itemize}
