@@ -43,3 +43,85 @@ and all its blocks must satisfy the \emph{consensus rules}.
     %
   \end{enumerate}
 \end{definition}
+%
+Note that the above consensus rules, reconstructed and interpolated
+from~\cite{SignumPlotting,SignumSource},
+do not constrain the prolog of the deadlines in any way:
+each block can have an arbitrary prolog. Later, it will be shown why it is useful to
+restrain prologs with an extra consensus rule.
+
+\begin{definition}[Blockchain network]\label{def:blockchain_network}
+  A \emph{blockchain network} is a
+  network of \emph{peers} (computers), each connected to the other peers,
+  each holding its own version of a blockchain, for the same genesis block,
+  not created in the future.
+  Each peer holds a plot (Def.~\ref{def:plot}) in its memory.
+  Each peer starts with a blockchain holding only the genesis block and runs two
+  algorithms, concurrently: the \emph{block mining} algorithm
+  and the \emph{block mined} algorithm.
+\end{definition}
+%
+Note that Def.~\ref{def:blockchain_network} simplifies the picture very much:
+the peers are fully connected, never disconnect and never need to synchronize.
+Moreover, in practice, peers do not hold plots but rather rely on (one or more)
+external services (miners) that hold one or more plots.
+The goal here is to keep the picture as simple as possible and concentrate on the properties of the
+proof of space algorithm only. Def.~\ref{def:blockchain_network} does not pretend
+to describe a real blockchain implementation.
+
+The block mining algorithm looks for the most powerful block in blockchain,
+mines a new block on top of it, adds it to the blockchain and whispers it to the other peers.
+%
+\begin{alg}[Block mining]\label{alg:block_mining}
+  The \emph{block mining} algorithm of a peer $P$, holding blockchain $B$,
+  is the following infinite loop:
+  %
+  \begin{enumerate}
+  \item identify a most powerful\footnote{In theory, more blocks might be the most powerful in blockchain, although this is highly unlikely; in that case, any of them will be chosen.} block $b$ in $B$;
+  \item compute $c=\nextchallenge(b)$ (Def.~\ref{def:next_challenge_from_block});
+  \item compute $\delta'=\delta(\plot,c)$ (Alg.~\ref{alg:deadline_from_plot}), where $\plot$
+    if the plot of $P$;
+  \item compute $b'=\nextblock(b,\delta')$ (Def.~\ref{def:next_block});
+  \item\label{step:block_mining:wait} wait until $b'.\tau\ge\tau_\now$;
+  \item\label{step:block_mining:add} add $b'$ to $B$;
+  \item whisper $b'$ to the peers connected to $P$;
+  \item go back to step~1.
+  \end{enumerate}
+\end{alg}
+%
+The block mined algorithm receives a block whispered from a peer, checks its validity
+and adds it to the blockchain.
+%
+\begin{alg}[Block mined]\label{alg:block_mined}
+  The \emph{block mined} algorithm of a peer $P$, holding blockchain $B$,
+  is the following infinite loop:
+  %
+  \begin{enumerate}
+  \item wait for a block $b$ whispered from a connected peer $P'$;
+  \item\label{step:block_mined:add} if $B\cup\{b\}$ is a blockchain, add $b$ to $B$;
+  \item go back to step~1.
+  \end{enumerate}
+\end{alg}
+%
+In practice, step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined} should
+allow the addition only of blocks $b$ that are \emph{powerful enough} to look useful,
+in order to avoid filling the memory with useless blocks. This is not relevant in this paper.
+Moreover, if the whispered block $b$
+at step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined} is more
+powerful than $b'$ at step~\ref{step:block_mining:wait} of Alg.~\ref{alg:block_mining},
+a rational peer would interrupt the wait at step~\ref{step:block_mining:wait}
+of Alg.~\ref{alg:block_mining}, discard $b'$ and restart Alg.~\ref{alg:block_mining}
+from step~1, since the whispered $b'$ is better than the block $b$ that it is trying to mine,
+hence it is wiser to stop wasting time and start mining on top of the new best block $b'$.
+Such optimizations are not considered here.
+
+Note that peers check the validity of blocks coming from outside
+(step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined}), since they do not trust
+their connected peers. Instead, they do not check the validity of the blocks that they
+mine themselves (step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}),
+since they are valid by construction, as shown below.
+%
+\begin{proposition}\label{prop:mining_is_sound}
+  At step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining},
+  the set $B\cup\{b'\}$ is a blockchain.
+\end{proposition}
