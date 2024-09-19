@@ -1,19 +1,18 @@
 \section{Introduction}\label{sec:introduction}
 
-A blockchain is a list of \emph{blocks}.
-Each block $b$ refers to its previous block $p$ through its hash
-and satisfies some consistency or \emph{consensus} rules.
+A blockchain is a list of \emph{blocks}, each reporting the hash
+of its previous block, satisfying some consistency or \emph{consensus} rules.
 Blocks hold \emph{transactions}, whose exact nature is not relevant here.
 In general, they are requests to update the state of a global abstract machine:
 a ledger of payments (as in Bitcoin~\cite{Nakamoto08,Antonopoulos17})
-or a sort of global RAM where data structures can be allocated and modified
+or a sort of global RAM where data structures are allocated and modified
 (as in Ethereum~\cite{AntonopoulosW18}).
 By using hashes as machine-independent
 pointers, blockchains can be distributed in a network of peers.
 This is desirable since data gets safely duplicated
-and no special peer determines the history by itself.
-However, peers expand the blockchain at will, independently from other
-peers, and the blockchain becomes a tree rather than a list.
+and no special peer determines the history alone.
+However, peers expand the blockchain at will, independently from the other
+peers, hence the blockchain becomes a tree rather than a list.
 A notion of chain quality is used to incentivize peers to append blocks to the highest-quality chain
 (the \emph{best} chain).
 Therefore, a peer might replace its current best chain with another, even better chain,
@@ -21,91 +20,92 @@ a so called \emph{history change}.
 
 As presented above, peers are free to generate new blocks at maximal speed, flood the network
 with new blocks and make difficult the emergence of a best chain, with frequent history changes.
-This is an efficiency and a security issue: history changes allow
+This is an efficiency and security issue: history changes allow
 \emph{double spending}, when the same money is moved in the ledger twice, once in the current history
 and once in the updated history. The actual genious of Nakamoto~\cite{Nakamoto08} was to
-(largely) solve this issue with a consensus rule requiring blocks to have a binary hash
-that starts with at least $d$ zeros, directly bound to the quality of a chain.
-Therefore, the creator peer (\emph{miner}) of a new block runs a \emph{proof of work} algorithm
-that rotates the many possible values for a block field, called \emph{nonce}, until
-the hash of the block satisfies the consensus rule. This makes the creation of new blocks hard
-(for large $d$), makes it impossible to create blocks at arbitrary speed and introduces an
-incentive to expanding the best chain, rather than creating alternative histories, since
-otherwise a peer
-risks spending work (concretely, electricity) for creating blocks discarded
-by the other peers. The \emph{proof of work} is a brute-force algorithm,
-because of the non-correlation property of hash functions.
+(largely) solve this issue with a consensus rule requiring blocks to answer a \emph{challenge}
+contained in their previous block. Namely, the binary hash of each block must be smaller than
+a \emph{difficulty} value computed at the previous block, directly bound to the quality of the chain.
+Therefore, who creates (\emph{mines}) of a new block runs a \emph{proof of work} algorithm
+that rotates (\emph{grinds}) many alternative values for a block field, called \emph{nonce}, until
+the hash of the block is smaller than the difficulty. This complicates the creation of new blocks,
+makes it impossible to create blocks at arbitrary speed and introduces an
+incentive to expanding the best chain only, rather than creating alternative histories by mining at multiple chains,
+since otherwise the miner
+risks spending work (concretely, electricity) for creating blocks discarded by its peers.
 A miner gets remunerated for its work whenever it finds a new block before all other miners.
 
-Therefore, the proof of work consumes energy: Bitcoin is said to consume as much electricity as
+The \emph{proof of work} is a brute-force algorithm,
+because of the non-correlation property of hash functions.
+Therefore, it consumes energy: Bitcoin is said to consume as much electricity as
 a medium-sized country; moreover, it is not egalitarian, being
 worthwhile only in countries where electricity is cheap; furthermore, it
-runs more efficiently in dedicated, relatively expensive hardware (such as ASICs),
-which deviates much from the idea of a democratic and open network.
-Therefore, the current trend is towards a \emph{proof of stake}.
+runs more efficiently over dedicated, relatively expensive hardware (such as ASICs),
+against the promise of a democratic and open network.
+Therefore, the current trend is towards the \emph{proof of stake}.
 This comes in different flavors, but
-the shared idea is that mining is limited to a (static or dynamic, exclusive or delegatable)
-set of peers, that \emph{stake} some collateral to have the right of mining.
-Proof of stake has been criticized for being more centralized and less democratic
+the common idea is that mining is limited to a (static or dynamic, exclusive or delegatable)
+set of peers, that \emph{stake} a collateral to buy mining rights.
+Many criticize proof of stake for being centralized and undemocratic
 (\emph{rich becomes richer}).
 Moreover, it suffers from what we call a \emph{start-up issue}: as long as the cryptocurrency
 of a newborn blockchain has still no value, it is hard to convince miners to work and
 be updated, since there is no incentive for that. Moreover, miners in
 a proof of stake blockchain get punished (\emph{slashed}) if they misbehave or are offline, which
-might be perceived as unfair if that is the consequence of a network connectivity issue or black-out.
+might be perceived as unfair if that happens because of a connectivity issue or black-out.
 
 An alternative to proof of work and proof of stake is
 \emph{proof of space}~\cite{AtenieseBFG14,DziembowskiFKP15}, where
-miners must dedicate a large chunk of disk memory for mining.
-Its energy consumption is almost zero and no special
+miners must dedicate a large chunk of disk memory for answering challenges.
+Its energy consumption is close to zero and no special
 hardware helps for mining, currently: the technology is both cheap
 and democratic. Moreover, proof of space allows
 one to capitalize on unused memory, for free, while proof of work has always an
 inherent electricity cost.
-The general idea is that a challenge is generated from
-a block and a valid answer to that challenge must be reported in the subsequent block.
-The computation of the answer is very cheap and its quality should only depend
-on how much space has been allocated to that purpose. As discussed in~\cite{ParkKFGAP18},
-the fact that the answers are cheap introduces potential security attacks,
-known as \emph{nothing-at-stake} problems: they are \emph{block grinding attacks}
-and \emph{challenge grinding attacks}.
-Both increase the risk of double spending and make it convenient
+For fairness, proof of space protocols should only allow to generate answers of
+quality directly proportional to the allocated space, or otherwise they are said
+to suffer from a space/memory tradeoff.
+Moreover, \cite{ParkKFGAP18} shows that
+cheap answers actually introduce new security attacks,
+known as \emph{nothing-at-stake} problems, such as \emph{block grinding},
+\emph{challenge grinding} and \emph{mining on multiple chains},
+and proposes solutions to cope with them.
+These attacks increase the risk of double spending and make it convenient
 (\emph{rational}) to mine through space \emph{and} work, therefore neutralizing the benefits
-of proof of space. Solutions are reported in~\cite{ParkKFGAP18}.
+of proof of space.
 Another nothing-at-stake problem, that has not received great attention up to now,
 is the \emph{newborn attack}~\cite{TangZDWLG0L19}: a miner that has allocated a large space
-for mining for a blockchain network $N$ could recycle the same space, unchanged, for
-mining for a newborn, small network $N'$. Since the total space used by the peers of $N'$ is
-initial relatively small, it could be possible for the miner to hijack the history of $N'$,
-effectively taking its control. This is possible for proof of work as well, but in that
-case it costs money, because the same computing power cannot work for $N$ and $N'$ simultaneously.
-For proof of space, instead, this attack costs nothing.
+for mining for a blockchain network $N$ could use the same space, unchanged, for
+mining for a newborn, small network $N'$. If the total space used by the peers of $N'$ is
+initially relatively small, it could be possible for the miner to hijack the history of $N'$,
+effectively taking its control. Note that these attacks are anti-economic with proof of work,
+since computing power can only be dedicated to a mining task.
 
 Most theoretical formalizations of proof of space are
 based on challenges against graphs of high pebbling complexity, but
 no actual blockchain has ever been built using such theory: only SpaceMint, a prototype and non-maintained
-implementation of the protocol exists~\cite{ParkKFGAP18}. This is maybe because of the
+implementation of the protocol, exists~\cite{ParkKFGAP18}. This may be because of the
 complex protocol, with an initialization phase
 that writes a quite large proof (megabytes) in blockchain,
 for each new miner that joins the network.
-The only full-fledged implementation of a proof of space blockchain is Signum~\cite{Signum}, but it is not
-based on graph pebbling and has never been formalized up to now.
+The only full-fledged implementation of a proof of space blockchain is Signum~\cite{Signum}, that is
+not based on graph pebbling and has no such protocol issue, but it has never been formalized up to now.
 The authors of~\cite{ParkKFGAP18} warned the developers of Signum about a potential block grinding attack and
-time/memory tradeoffs, that the latters have allegedly solved,
+a time/memory tradeoff, that the developers have allegedly solved,
 but nothing has been proved nor published about it.
 
-This paper provides the following contributions about the algorithm of Signum:
+This paper provides the following contributions to Signum's algorithm:
 %
 \begin{itemize}
-\item a formalization of the algorithm, recostructed and interpolated from a very informal
-  web page~\cite{SignumPlotting} and its (poorly commented) source code~\cite{SignumSource};
+\item a formalization of the algorithm, recostructed and interpolated from its very informal
+  web description~\cite{SignumPlotting} and its poorly commented source code~\cite{SignumSource};
 \item a proof that the block grinding attack hinted in~\cite{ParkKFGAP18} cannot actually occur;
-\item a protection against challenge grinding attacks, inspired by~\cite{ParkKFGAP18};
-\item a protection against newborn attacks~\cite{TangZDWLG0L19}.
+\item a protection against challenge grinding and mining on multiple chains attacks, inspired by~\cite{ParkKFGAP18};
+\item a protection against newborn attacks.
 \end{itemize}
 %
 These results are relevant since they show that the only implementation
-of a blockchain, purely based on proof of space, is actually supported by a sound theory
+of a blockchain, purely based on proof of space, is actually supported by a formal theory
 and can be protected from a large class of attacks.
 
 The rest of this paper is organized as follows.
@@ -116,4 +116,4 @@ Sec.~\ref{sec:related_work} discusses related work.
 \textbf{Acknowledgments:}
 We thank the developers of Signum for discussions at their Discord channel (where, however, most
 of our questions remained unanswered) and K.\ Pietrzak for discussing solutions to
-grinding attacks~\cite{ParkKFGAP18} and the theoretical issues with Signum.
+grinding attacks and theoretical issues about Signum.
