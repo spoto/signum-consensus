@@ -44,8 +44,8 @@ Namely, in that case, it should be difficult for the prover to recover the
 missing portion of the file, when answering challenges from the verifier, or otherwise
 the algorithm suffers from other authors call a \emph{time/memory tradeoff}.
 In the context of graph pebbling, the initialization phase prevents most cheating
-(that is, keeping incomplete data on disk). In~\cite{Reyzin23}, the size
-of the portion of the file not kept on disk is related to the consequent time
+(that is, keeping incomplete data on disk). In~\cite{Reyzin23}, they relate the size
+of the portion of the file not kept on disk to the consequent time
 complexity degradation for computing the missing part to answer challenges.
 Ideally, the full file and pebbles must be kept in memory
 for having no time complexity explosion, but they show that this is not the case for existing solutions.
@@ -64,7 +64,7 @@ This is why~\cite{AbusalahACKPR17} proposes an alternative technology, which is 
 theoretical background of the Chia network~\cite{CohenP19,Chia}:
 a proof of sequential work on top of a proof of space, based on challenges
 about the inversion of a random function, for which it has been solved
-the well-known issue about time-memory trade-offs. This is not, however, a pure proof of space.
+the well-known issue about time/memory tradeoffs. This is not, however, a pure proof of space.
 Another alternative is the proof of retrievability in~\cite{JuelsK07}: a large file
 is initially sent from the verifier to the prover and later the verifier
 challenges, repeatedly, the prover to see if it still keeps the file in storage.
