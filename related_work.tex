@@ -1,14 +1,13 @@
 \section{Related Work}\label{sec:related_work}
 
-Proof of work was originally developed against email spam~\cite{DworkN92}:
-email senders must compute some
-work to have emails accepted by their recipient.
+Proof of work was originally meant as protection against email spam~\cite{DworkN92}:
+email senders must perform some work to have emails accepted by their recipient.
 %The input includes
 %the address of the recipient and the date of sending, in order to ban
 %recycling of work.
 %The algorithm adds extra data at the end of the email,
 %which corresponds to the nonce used in Bitcoin.
-Ethereum started as a proof of work blockchain~\cite{AntonopoulosW18} but later
+Ethereum started with proof of work~\cite{AntonopoulosW18} and later
 moved to proof of stake. The latter can be seen as a
 Byzantine consensus algorithm, as pioneered by Tendermint~\cite{Kwon14}.
 Most current blockchains use some form of proof of stake nowadays.
@@ -17,20 +16,18 @@ The theoretical background of proof of space was independently developed
 in two seminal papers~\cite{AtenieseBFG14,DziembowskiFKP15}.
 They feature similarities but also significant differences. Both are based
 on directed acyclic graphs (DAGs) of high pebbling complexity.
-Pebbling, here, is a directed hash decoration of the nodes of the DAG, as in
-a Merkle tree.
+Pebbling, here, is a directed hash decoration of the nodes of the DAG, as in a Merkle tree.
 A prover must keep such a (big) DAG and its pebbling on disk, in order to answer, efficiently,
-challenges, proposed by a verifier, with proofs that should convince the latter that
+challenges with proofs that should convince a verifier that
 the prover is actually keeping the DAG on disk.
-While~\cite{DziembowskiFKP15} requires space to remain allocated between challenges,
-and is consequently called a proof of \emph{persistent} space, \cite{AtenieseBFG14}~requires
-to allocate space only when answering challenges and is consequently called
-a proof of \emph{transient} space (or a proof of secure erasure, as~\cite{DziembowskiFKP15} calls it).
+While~\cite{DziembowskiFKP15} requires space to remain allocated between challenges
+(proof of \emph{persistent} space), \cite{AtenieseBFG14}~requires one
+to allocate space only when answering challenges
+(proof of \emph{transient} space or a \emph{proof of secure erasure}, as~\cite{DziembowskiFKP15} calls it).
 Both solutions have an initialization phase, when the verifier performs a deeper challenge
 of the prover and stores the resulting (big) proof in blockchain, followed by an execution phase,
 when the verifier challenges the prover for each new block.
-
-In the same line of~\cite{AtenieseBFG14,DziembowskiFKP15}, also~\cite{RenD16} uses
+Also~\cite{RenD16} uses
 pebbling for stacked expander graphs, to get simpler, more efficient and
 provably space-hard solutions.
 It works for both proof of transient space and proof of persistent space.
@@ -40,114 +37,77 @@ proof of retrievability.
 
 Time/memory tradeoffs are studied in~\cite{Reyzin23}. They occur if
 the prover stores only a part of the file on disk.
-For a good proof of space algorithm, it should be difficult for the prover to recover the
+A good proof of space algorithm should make it difficult for a prover to recover the
 missing part, when answering challenges.
 In the context of graph pebbling, the initialization phase prevents most cheating
-(that is, keeping incomplete data on disk). In~\cite{Reyzin23}, they relate the size
-of the portion of the file not kept on disk to the consequent time
+(that is, keeping incomplete data on disk). In~\cite{Reyzin23}, the size
+of the portion of the file not kept on disk is related to the consequent time
 complexity degradation for computing the missing part.
 Ideally, the full file and pebbles must be kept in memory
 for having no time complexity explosion, but they show that this is not the case in existing solutions.
-They provide sufficient conditions for the initialization phase that guarantee the ideal result.
+They provide sufficient conditions for the initialization phase, that guarantee the ideal result.
 
 The use of graph pebbling seems to dominate the literature on proof of space.
-However, that approach has its drawbacks.
-Namely, as stated in~\cite{AbusalahACKPR17}, the proof, included in blockchain, is relatively large:
-kilobytes or even megabytes for that created, in the initialization phase, for each new
-prover (miner) that joins the blockchain. That initialization phase is a problem by itself: it complicates
-the protocol and requires to spend cryptocurrency even \emph{before}
-starting mining. Compare this with Bitcoin, for instance, that allows one to start mining
-and \emph{later} collect cryptocurrency on the way. This is a barrier against new
-miners, that is, a limit to democracy.
 Therefore, \cite{AbusalahACKPR17}~proposes an alternative technology, which is the
 theoretical background of the Chia network~\cite{CohenP19,Chia}:
 a proof of sequential work on top of a proof of space, based on challenges
 about the inversion of a random function, for which time/memory tradeoffs have been solved.
 This is not, however, a pure proof of space.
-Another alternative is the proof of retrievability in~\cite{JuelsK07}: a large file
-is initially sent from the verifier to the prover and later the verifier
-challenges, repeatedly, the prover to see if it still keeps the file in storage.
-Its apparent simplicity
-is jeopardized by the fact that big files must be shared among the provers (miners) and
-the verifiers. In a blockchain network, they must be shared among \emph{all} (present and future)
+Another alternative is the proof of retrievability in~\cite{JuelsK07}: the verifier sends, initially,
+a large file to the prover (miner) and later challenges, repeatedly, the prover to see
+if it still keeps the file in storage. Its apparent simplicity
+is jeopardized by the fact that big files must be shared.
+In a blockchain network, they must be shared among \emph{all} (present and future)
 peers, for \emph{all} (past, present and future) miners, or otherwise peers could not verify the blocks.
-%This is impractical, because of the large size of the files and because it complicates the protocol.
-
-An issue with proof of space is tackled in~\cite{TangZDWLG0L19}.
-They observe that miners can use the same big file on disk
-for mining on many chains, simultaneously. This is problematic for newborn chains, that could
-get attacked from miners that already keep a very big file for mining other,
-more mature chains: their history could be easily hijacked
-(a so called \emph{newborn attack}). The solution in~\cite{TangZDWLG0L19} is
-to split the space for mining on many chains, with an
-incentive to allocate, for each chain, a space proportional
-to the market value of the chain.
 
 We are aware of only one implementation of graph-pebbling proof of space:
 SpaceMint~\cite{ParkKFGAP18}, previously Spacecoin~\cite{ParkPAFG15}.
-It must be stated that SpaceMint is not a blockchain implementation,
-but only a prototype of the proof of space protocol of~\cite{DziembowskiFKP15}.
+It is not a blockchain implementation,
+but a prototype of the proof of space protocol of~\cite{DziembowskiFKP15}.
 Its code~\cite{SpaceMintCode} has not been maintained in the last nine years.
 Nevertheless, \cite{ParkKFGAP18}~exposes interesting problems (and solutions)
 that are related to the actual game theory and implementation of proof of space.
 For instance, it uses the public key of the verifier as an input parameter
 for graph pebbling, to combat the creation of mining pools, often seen
 negatively~\cite{MillerKKS15}.
-Furthermore, it studies nothing-at-stake problems and potential solutions:
+Furthermore, it studies nothing-at-stake problems, that increase the risk of double spending
+and push miners to mine with a mix of proof of space and proof of work,
+thus nullifying the benefits of the former, and solutions to such problems:
 %
 \begin{enumerate}
-\item miners might find it profitable to mine multiple chains simultaneously (not only the best chain),
-  aiming at finding a better chain with a history change;
-\item miners might find it profitable to mine many alternative new blocks, each holding
-  different transactions, hoping to find better solutions to future challenges (\emph{block grinding}).
+\item Miners might find it profitable to mine multiple chains simultaneously (not only the best chain);
+  their solution is spot such behavior and impose penalty transactions against the culprit.
+  Such transactions include paits of blocks, as evidence, which is
+  problematic since transactions are, in turn, included in blocks and this makes it impossible to define
+  a maximal block size, a basic security requirement of every blockchain.
+  We have discussed this with K.\ Pietrzak who suggested that this could be actually optimized
+  by reporting signed hashes only.
+\item Miners might find it profitable to mine many alternative new blocks, each holding
+  different transactions, hoping to find better answers to future challenges (block grinding): their
+  solution is to make the challenge independent from the transactions in the block,
+  by splitting the
+  blockchain in a proofs blockchain and in a transactions blockchain: only the first is used for mining,
+  and the two are connected with the signature of the miner.
+\item Miners might find it profitable to provide suboptimal answers to the current challenge if
+  this allows them to provide much better answers later (challenge grinding): their solution is
+  to let past blocks influence the quality of short sequences of future blocks only.
+  The solution in~\cite{CohenP19} is more drastic: use the same challenge for several consecutive blocks,
+  since it is unlikely that a challenge will be good for many consecutive blocks.
 \end{enumerate}
 %
-In both cases, miners will end up mining with a mix of proof of space and proof of work,
-which nullifies the benefits of the former.
-In~\cite{ParkKFGAP18}, a solution to the first problem is suggested, where
-previous blocks are forced to affect future blocks only in a limited way
-(the next challenge is derived from the hash of a block deep in the past)
-and where peers get punished if they are found to have
-created more children blocks for the same father, through a penalty transaction that
-includes the children blocks, for evidence.
-The same problem is considered in~\cite{CohenP19}, and their solution has been
-to use the same challenge for several consecutive blocks, since it is
-unlikely that a challenge will be good for many consecutive blocks.
-The solution that~\cite{ParkKFGAP18} suggests
-for the second problem, instead, consists in making the challenges
-(and consequently the proofs) independent from the content of the transactions, by splitting the
-blockchain in a proofs blockchain and in a transactions blockchain: only the first is used for mining,
-and the two are connected with the signature of the miner.
-As a result, the next challenges (and proofs) depend on previous blocks from the proofs blockchain only.
-Moreover, \cite{ParkKFGAP18} includes actual experiments, that provide an estimation of the size of the proofs.
-Namely, those used in the initialization phase are between two and three megabytes, while those used
-in the execution phase can be optimized to around 100 kilobytes. Such proofs must be persistently stored in
+Actual experiments are reported in~\cite{ParkKFGAP18},
+that provide an estimation of the size of Spacemint's proofs:
+in the initialization phase, they are between two and three megabytes;
+in the execution phase, they can be optimized to around 100 kilobytes.
+Such proofs must be persistently stored in
 blockchain (for each new miner, in the first case, and for each new block, in the second).
-This makes the size of the blockchain much larger than in the case of Bitcoin, and requires
+This makes the size of the blockchain much larger than in Bitcoin, and requires
 that miners hold cryptocurrency to store proofs even before starting mining.
-We observe that also the use of penalty transactions, internally including blocks, is problematic, since
-transactions are, in turn, included in blocks, which makes it impossible to define
-a maximal block size, a basic security requirement of every blockchain.
-We have contacted the authors of~\cite{ParkKFGAP18}, reporting these issues,
-but have not received any answer.
 
-Signum~\cite{Signum}, previously Burstcoin, is another implementation of proof of space.
-It is a full-fledged blockchain, launched in 2014 and still active,
-not just a prototype implementation of a protocol. It includes a smart contract language, called SmartJ.
-Signum is not based on graph pebbling: in its proof of space algorithm, that they
-call proof of capacity, each miner allocates a large \emph{plot file} of hashes.
-Peers that want to mine new blocks contact miner(s) to ask for a
-\emph{deadline}\ie a compact data structure with a quality measure (its \emph{waiting time}) that,
-in general, is proportional to the size of the plot files. Such deadline is
-inserted in the new mined blocks as its proof of space. The simplicity of the protocol
-follows from the fact that there is no initialization phase: each miner creates its plot file
-independently and off-line: it is not shared and no initial big proof is stored in
-blockchain, as it was the case for SpaceMint.
-However, Signum has received very little scientific
-attention up to now. There is not even a formalization of its proof of space algorithm,
-but only an informal description~\cite{SignumPlotting} and a (largely uncommented)
-implementation~\cite{SignumSource}.
-In~\cite{ParkKFGAP18}, they state that Burstcoin has some
+Signum~\cite{Signum}, previously Burstcoin, is
+a full-fledged blockchain based on proof of space, including a smart contract language,
+launched in 2014 and still active.
+In~\cite{ParkKFGAP18}, it is stated that Burstcoin has some
 time/memory tradeoffs (``a miner doing a little extra computation can mine at the same
 rate as an honest miner, while using just a small fraction (\emph{e.g.}, 10\%) of the space''),
 which the developers of Signum assert to have solved. Moreover, the latest version of Signum
@@ -156,3 +116,8 @@ an idea clearly borrowed from~\cite{ParkKFGAP18}. However, there is no evidence 
 correctly.
 %Examples can be found at \url{https://github.com/signum-network/signum-smartj}.
 %While Hotmoka abstracts away all blockchain details, SmartJ requires programmers to
+
+Newborn attacks are considered in~\cite{TangZDWLG0L19}. Their solution is
+to split the space for mining on many chains, with an
+incentive to allocate, for each chain, a space proportional
+to the market value of the chain.

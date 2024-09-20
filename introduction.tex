@@ -64,7 +64,7 @@ one to capitalize on unused memory, for free, while proof of work has always an
 inherent electricity cost.
 For fairness, proof of space protocols should only allow to generate answers of
 quality directly proportional to the allocated space, or otherwise they are said
-to suffer from a space/memory tradeoff.
+to suffer from a time/memory tradeoff.
 Moreover, \cite{ParkKFGAP18} shows that
 cheap answers actually introduce new security attacks,
 known as \emph{nothing-at-stake} problems, such as \emph{block grinding},
@@ -78,26 +78,47 @@ is the \emph{newborn attack}~\cite{TangZDWLG0L19}: a miner that has allocated a 
 for mining for a blockchain network $N$ could use the same space, unchanged, for
 mining for a newborn, small network $N'$. If the total space used by the peers of $N'$ is
 initially relatively small, it could be possible for the miner to hijack the history of $N'$,
-effectively taking its control. Note that these attacks are anti-economic with proof of work,
-since computing power can only be dedicated to a mining task.
+effectively taking its control. These attacks are anti-economic with proof of work,
+since computing power can only be dedicated to one mining task.
 
-Most theoretical formalizations of proof of space are
+Most theoretical formalizations of proof of space~\cite{AtenieseBFG14,DziembowskiFKP15,RenD16} are
 based on challenges against graphs of high pebbling complexity, but
 no actual blockchain has ever been built using such theory: only SpaceMint, a prototype and non-maintained
-implementation of the protocol, exists~\cite{ParkKFGAP18}. This may be because of the
-complex protocol, with an initialization phase
-that writes a quite large proof (megabytes) in blockchain,
-for each new miner that joins the network.
-The only full-fledged implementation of a proof of space blockchain is Signum~\cite{Signum}, that is
-not based on graph pebbling and has no such protocol issue, but it has never been formalized up to now.
+implementation of the protocol, exists~\cite{ParkKFGAP18}. This has two reasons:
+%
+\begin{enumerate}
+\item the protocol includes an \emph{initialization phase},
+  run for each new prover (miner) that joins the blockchain,
+  that complicates the protocol itself and
+  requires to spend cryptocurrency even \emph{before}
+  starting mining. Compare this with Bitcoin, for instance, that allows one to start mining
+  and \emph{later} collect cryptocurrency. This initialization is a barrier against new
+  miners, that is, a limit to democracy;
+\item as stated in~\cite{AbusalahACKPR17}, answers to challenges (called \emph{proofs}),
+  included in blockchain, are relatively large:
+  kilobytes or even megabytes for proofs created in the initialization phase.
+\end{enumerate}
+%
+The only full-fledged implementation of a proof of space blockchain is Signum~\cite{Signum},
+that is not based on graph pebbling.
+In Signum, each miner allocates a large \emph{plot file} of hashes, that is not shared nor
+stored in blockchain.
+A peer that wants to mine the next block derives a challenge from the current head of the blockchain
+and challenges the miner for an answer, called
+\emph{deadline}\ie a small ($200$ bytes at most) data structure, derived from the plot, with a quality measure
+(its \emph{waiting time}) that, on average, is proportional to the size of the plot file.
+Signum's protocol is attractive since it has no initialization phase (each miner creates its plot file
+independently and off-line) and its answers are very small.
+But the theory behind Signum has never been formalized up to now.
 The authors of~\cite{ParkKFGAP18} warned the developers of Signum about a potential block grinding attack and
 a time/memory tradeoff, that the developers have allegedly solved,
-but nothing has been proved nor published about it.
+but nothing has been proved nor published about it. Without a formalization, it is
+even impossible to judge if such attacks are real.
 
-This paper provides the following contributions to Signum's algorithm:
+Therefore, this paper provides the following contributions to Signum's algorithm:
 %
 \begin{itemize}
-\item a formalization of the algorithm, recostructed and interpolated from its very informal
+\item a formalization of the algorithm, recostructed and interpolated from a very informal and partial
   web description~\cite{SignumPlotting} and its poorly commented source code~\cite{SignumSource};
 \item a proof that the block grinding attack hinted in~\cite{ParkKFGAP18} cannot actually occur;
 \item a protection against challenge grinding and mining on multiple chains attacks, inspired by~\cite{ParkKFGAP18};
@@ -111,9 +132,8 @@ and can be protected from a large class of attacks.
 The rest of this paper is organized as follows.
 Sec.~\ref{sec:related_work} discusses related work.
 
-\mbox{}\\
-
+\vspace*{1ex}
 \textbf{Acknowledgments:}
-We thank the developers of Signum for discussions at their Discord channel (where, however, most
+We thank the developers of Signum for discussions on their Discord channel (where, however, most
 of our questions remained unanswered) and K.\ Pietrzak for discussing solutions to
 grinding attacks and theoretical issues about Signum.
