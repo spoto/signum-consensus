@@ -107,15 +107,15 @@ that miners hold cryptocurrency to store proofs even before starting mining.
 Signum~\cite{Signum}, previously Burstcoin, is
 a full-fledged blockchain based on proof of space, including a smart contract language,
 launched in 2014 and still active.
+A formalization of an old version of Alg.~\ref{alg:nonce_construction}
+is reported in Appendix B of~\cite{ParkPAFG15}.
 In~\cite{ParkKFGAP18}, it is stated that Burstcoin has some
 time/memory tradeoffs (``a miner doing a little extra computation can mine at the same
 rate as an honest miner, while using just a small fraction (\emph{e.g.}, 10\%) of the space''),
 which the developers of Signum assert to have solved. Moreover, the latest version of Signum
 seems to have separated data in a proofs blockchain and a transactions blockchain,
-an idea clearly borrowed from~\cite{ParkKFGAP18}. However, there is no evidence that this has been done
-correctly.
-%Examples can be found at \url{https://github.com/signum-network/signum-smartj}.
-%While Hotmoka abstracts away all blockchain details, SmartJ requires programmers to
+an idea clearly borrowed from~\cite{ParkKFGAP18}. However, there is no evidence that this
+has been done correctly.
 
 Newborn attacks are considered in~\cite{TangZDWLG0L19}. Their solution is
 to split the space for mining on many chains, with an

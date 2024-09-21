@@ -130,7 +130,15 @@ of a blockchain, purely based on proof of space, is actually supported by a form
 and can be protected from a large class of attacks.
 
 The rest of this paper is organized as follows.
+Sec.~\ref{sec:nonces_and_plots} formalizes structure and initialization of the space used for mining.
+Sec.~\ref{sec:challenges_and_deadlines} defines the challenges that the proof of space
+algorithm must solve, and their answers, called \emph{deadlines}.
+Sec.~\ref{sec:blockchain_construction} presents the blockchain and the mining algorithm
+based on proof of space.
+Sec.~\ref{sec:attacks_and_protections} considers grinding and newborn attacks and
+shows if the algorithm is subject to such attacks and how to cope with them.
 Sec.~\ref{sec:related_work} discusses related work.
+Sec.~\ref{sec:conclusion} concludes the paper.
 
 \vspace*{1ex}
 \textbf{Acknowledgments:}
