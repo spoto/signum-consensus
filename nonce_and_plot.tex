@@ -1,11 +1,15 @@
 \section{Nonces and Plots}\label{sec:nonces_and_plots}
 
-This section formalizes the notion of nonce and plot, together with their
-algorithmic construction. Tab.~\ref{tab:notations} collects some notations,
+This section formalizes the notion of plot, a collection of nonces, together with their
+algorithmic construction. Signum's algorithm requires miners to hold one or more plots
+in their memory. Their initialization is performed only ones and offline, hence it is
+not part of the mining protocol.
+
+Tab.~\ref{tab:notations} collects some notations,
 introduced here and used throughout the paper.
 It also reports the specific choices
 made in~\cite{SignumPlotting} for such notations, but this paper remains parametric \wrt them.
-NOte that we distinguish three hashing functions in our formalizations, although they
+Note that we distinguish three hashing functions in our formalizations, although they
 might actually coincide. We prefer to remain as generic as possible.
 
 \begin{table}[t]
@@ -23,7 +27,7 @@ might actually coincide. We prefer to remain as generic as possible.
 
   $h_\block$ & hashing function for computing the hash of the blocks & \\\hline
 
-  $\kappa$ & maximal number of bytes fed to $h_\deadline$ in Alg.~\ref{alg:nonce_construction} & $4096$\\\hline
+  $\kappa$ & threshold to the number of bytes fed to $h_\deadline$ in Alg.~\ref{alg:nonce_construction} & $4096$\\\hline
 
   $\beat$ & target block creation time interval (ms) & $240000$ \\\hline
 
@@ -38,10 +42,12 @@ might actually coincide. We prefer to remain as generic as possible.
   used in~\cite{SignumPlotting}, when available.}
 \label{tab:notations}
 \end{table}
+
+The following definitions are used to deal with bytes and hashing.
 %
 \begin{definition}[Concatenation operator $\bowtie$]
-  Sequences are concatenated by $\bowtie$. The same $\bowtie$
-  is used to concated a sequence to a element or an element to a sequence.
+  Sequences (for instance, of bytes) are concatenated by $\bowtie$. The same $\bowtie$
+  is used to concatenate a sequence to a element or an element to a sequence.
 \end{definition}
 %
 \begin{definition}[$\nattobe$ and $\betonat$]
@@ -52,16 +58,17 @@ might actually coincide. We prefer to remain as generic as possible.
 \begin{definition}[Hashing function]
   A \emph{hashing function} $h$ of $\size>0$
   is a total map $h:\mathit{byte}^*\to\mathit{byte}^\size$, where
-  $\mathit{byte}^\size$ is a sequence of $\size$ bytes, called a \emph{hash} for $h$.
+  $\mathit{byte}^*$ is a sequence of bytes, of arbitrary length,
+  and $\mathit{byte}^\size$ is a sequence of $\size$ bytes, called a \emph{hash} for $h$.
   If $h$ is a hashing function, then $\size(h)$ is its size.
 \end{definition}
-%
-The definition of nonces and plots is parametric \wrt a hashing
-function $h_\deadline$ used for their creation.
+
 A \emph{scoop} is a pair of hashes.
 A \emph{nonce} is a non-negative \emph{progressive number} $p$, and
 a list of $\numberofscoops>0$ scoops or, equivalenty,
-a list of $2\times\numberofscoops$ hashes for $h_\deadline$.
+a list of $2\cdot\numberofscoops$ hashes for $h_\deadline$.
+Their definitions are parametric \wrt a hashing
+function $h_\deadline$ used for their creation.
 %
 \begin{definition}[Scoop, Nonce]
   The sets of \emph{scoops} and \emph{nonces} are
@@ -77,9 +84,15 @@ a list of $2\times\numberofscoops$ hashes for $h_\deadline$.
   \]
 \end{definition}
 %
-A \emph{prolog} is the identifier of the creator of nonces and plots.
-For now, it is just a sequence of bytes. Later, we will give structure to prologs
-and see how they can be useful.
+In the above definition, angular brackets stand for tuples. In this specific
+case, they stand for pairs. When definitions are given in terms of tuples, as above
+for $\Scoops$ and $\Nonces$, we silently assume that there are selection functions
+for the elements of the tuple. For instance, if $\nonce\in\Nonces$, then $\nonce.p$
+and $\nonce.\scoops$ are the fields of the pair $\nonce$.
+
+A \emph{prolog} is the identifier of the creator of nonces and plots (for instance, its public key).
+For now, it is just a sequence of bytes. Sec.~\ref{sec:attacks_and_protections}
+will give structure to prologs and see how they can be useful.
 %
 \begin{definition}[Prolog]\label{def:prolog}
   The set of \emph{prologs} is
@@ -89,37 +102,71 @@ and see how they can be useful.
 \end{definition}
 %
 The following algorithm constructs a nonce, given its progressive number and a prolog.
-It uses a constant $\kappa>0$ to limit its computational cost, hence avoiding to hash
-very large chunks of data.
+It uses a constant $\kappa>0$ (Tab.~\ref{tab:notations})
+to limit its computational cost, hence avoiding to hash very large chunks of data.
 %
 \begin{alg}[$\nonce(p,\pi)$]\label{alg:nonce_construction}
   Given $p\in\mathbb{N}$ and $\pi\in\Prologs$, let
   \[
   \nonce(p,\pi)=\langle p,\langle h_0,h_1\rangle\append
-  \cdots\append\langle h_{2\times\numberofscoops-2},h_{2\times\numberofscoops-1}\rangle\rangle\in\Nonces,
+  \cdots\append\langle h_{2\cdot\numberofscoops-2},h_{2\cdot\numberofscoops-1}\rangle\rangle\in\Nonces,
   \]
-  where the hashes $h_0,\ldots,h_{2\times\numberofscoops-1}$ are constructed as follows.
+  where the hashes $h_0,\ldots,h_{2\cdot\numberofscoops-1}$ are constructed as
+  follows\footnote{Step.~\ref{step:nonce_construction:swap} has been added
+  after the formalization of this algorithm given in~\cite{ParkPAFG15} and
+  in response to their criticisms. See Sec.~\ref{sec:attacks_and_protections} for a discussion.}.
   %
   \begin{enumerate}
   \item Let $\seed=\pi\append\nattobe(p)$.
-  \item For each $i$ from $2\times\numberofscoops-1$ to $0$,
+  \item\label{step:nonce_construction:first_hash}
+    For each $i$ from $2\cdot\numberofscoops-1$ to $0$,
     let\footnote{In~\cite{SignumPlotting}, it is said to
     take the \emph{last} $\kappa$ bytes, but an inspection of their code
     shows that they actually take the \emph{first} $\kappa$ bytes. They
-    probably use \emph{last} here in the sense of \emph{more recently computed}.}
+    probably use \emph{last} here in the sense of \emph{more recently computed}.
+    This threshold $\kappa$ seems to have been added after the formalization of
+    this algorithm given in~\cite{ParkPAFG15}, where it is not present.}
     \[
-    h_i=h_\deadline\left(\text{first $\kappa$ bytes of}\left(\left(\append_{i<j<2\times\numberofscoops}h_j\right)\append\seed\right)\right).
+    h_i=h_\deadline\left(\text{first $\kappa$ bytes of}\left(\left(\append_{i<j<2\cdot\numberofscoops}h_j\right)\append\seed\right)\right).
     \]
-  \item Let
+  \item\label{step:nonce_construction:final_hash}
+    Let
     \[
-    \finalhash=h_\deadline\left(\left(\append_{0\le j<2\times\numberofscoops}h_j\right)\append\seed\right).
+    \finalhash=h_\deadline\left(\left(\append_{0\le j<2\cdot\numberofscoops}h_j\right)\append\seed\right).
     \]
-  \item For each $i$ from $0$ to $2\times\numberofscoops-1$, reassign
+  \item For each $i$ from $0$ to $2\cdot\numberofscoops-1$, reassign
     $h_i$ to $h_i\xor\finalhash$.
-  \item For each odd $i$ from $1$ to $2\times\numberofscoops-1$, swap
-    $h_i$ with $h_{2\times\numberofscoops-i}$.
+  \item\label{step:nonce_construction:swap}
+    For each odd $i$ from $1$ to $2\cdot\numberofscoops-1$, swap
+    $h_i$ with $h_{2\cdot\numberofscoops-i}$.
   \end{enumerate}
 \end{alg}
+%
+As usual in this context, the complexity of the algorithm is better expressed
+in terms of how much data is hashed, since that is the expensive operation that dominates
+Alg.~\ref{alg:nonce_construction}. The following result assumes that
+integers use a finite machine representation (for instance, $8$ bytes for \texttt{long} in Java)
+and that prologs have a fixed structure and length.
+%
+\begin{proposition}\label{prop:nonce_construction_complexity}
+  The execution of Alg.~\ref{alg:nonce_construction}, in terms
+  of $\kappa$ and $\numberofscoops$, requires to hash
+  $O(\kappa\cdot\numberofscoops)$ bytes with $h_\deadline$.
+\end{proposition}
+\begin{proof}
+  Step~\ref{step:nonce_construction:first_hash} of Alg.~\ref{alg:nonce_construction}
+  hashes at most $\kappa$ bytes and gets iterated $2\cdot\numberofscoops$ times.
+  Step~\ref{step:nonce_construction:final_hash} hashes
+  $2\cdot\numberofscoops\cdot\size(h_\deadline)+|\pi|+\log(p)$ bytes. Therefore,
+  Alg.~\ref{alg:nonce_construction} hashes a number of bytes that is
+  \begin{align*}
+    &O(2\cdot\kappa\cdot\numberofscoops+2\cdot\numberofscoops\cdot\size(h_\deadline)+|\pi|+\log(p))\\
+    \text{(constants)}&=O(2\cdot\kappa\cdot\numberofscoops+2\cdot\numberofscoops)\\
+    \text{(since $\kappa>0$)}&=O(2\cdot\kappa\cdot\numberofscoops)\\
+    &=O(\kappa\cdot\numberofscoops).
+  \end{align*}
+  \qed
+\end{proof}
 %
 A \emph{plot} is a set of nonces constructed with Alg.~\ref{alg:nonce_construction},
 for a finite non-empty set of progressive numbers $P$ and
@@ -134,3 +181,4 @@ for a given prolog $\pi$, recorded in the plot.
   \end{array}\right.\right\}.
   \]
 \end{definition}
+%

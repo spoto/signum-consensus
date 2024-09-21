@@ -105,13 +105,14 @@ In Signum, each miner allocates a large \emph{plot file} of hashes, that is not 
 stored in blockchain.
 A peer that wants to mine the next block derives a challenge from the current head of the blockchain
 and challenges the miner for an answer, called
-\emph{deadline}\ie a small ($200$ bytes at most) data structure, derived from the plot, with a quality measure
+\emph{deadline}\ie a small (around $200$ bytes) data structure, derived from the plot, with a quality measure
 (its \emph{waiting time}) that, on average, is proportional to the size of the plot file.
 Signum's protocol is attractive since it has no initialization phase (each miner creates its plot file
 independently and off-line) and its answers are very small.
-But the theory behind Signum has never been formalized up to now.
-The authors of~\cite{ParkKFGAP18} warned the developers of Signum about a potential block grinding attack and
-a time/memory tradeoff, that the developers have allegedly solved,
+But the theory behind Signum has never been formalized
+or even defined up to now.
+Moroever, \cite{ParkKFGAP18}~warns about a potential block grinding attack and
+a time/memory tradeoff, that the developers of Signum have allegedly solved,
 but nothing has been proved nor published about it. Without a formalization, it is
 even impossible to judge if such attacks are real.
 
