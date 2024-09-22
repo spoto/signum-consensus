@@ -1,9 +1,11 @@
 \section{Challenges and Deadlines}\label{sec:challenges_and_deadlines}
 
-A \emph{challenge} specifies a query that can be asked to a nonce.
-The answer will be a \emph{deadline}.
-Challenges will be applied to plots as well, by taking
-the \emph{smallest} deadline for each nonce in the plot.
+A \emph{challenge} specifies a puzzle that must be solved in order to mine
+a new block. Since blocks, in this framework, are mined by using a collection of nonces
+(a plot), then challenges become a query that can be asked to a nonce, resulting
+in an answer called \emph{deadline}.
+Challenges will be applied to plots by taking
+the \emph{smallest} deadline over their nonces.
 %
 \begin{definition}[Challenge]\label{def:challenge}
   The set of \emph{challenges} is
@@ -19,6 +21,9 @@ the \emph{smallest} deadline for each nonce in the plot.
 \end{definition}
 %
 In the following, generation signature will be used as a synonym of hash for $h_\generation$.
+
+Given a challenge and a nonce, the latter has a value that specifies how well
+it answers the challenge.
 %
 \begin{definition}[$\mathit{value}(\nonce,\challenge)$]\label{def:nonce_value}
   Let $\nonce\in\Nonces$ and $\challenge\in\Challenges$.
@@ -28,6 +33,13 @@ In the following, generation signature will be used as a synonym of hash for $h_
     =h_\deadline(\nonce.\scoops[\challenge.\scoopnumber]\append\challenge.\sigma).
   \end{multline*}
 \end{definition}
+%
+The answer to a challenge could actually be a nonce $n$, whose quality is its value.
+However, nonces are relatively big (around $262$ kbytes under the assumptions in the
+rightmost column of Tab.~\ref{tab:notations}). Since answers are reported in blockchain,
+\cite{SignumPlotting}~introduces \emph{deadlines}, a much smaller representation of the value of
+$n$, carrying the information needed to reconstruct $n$ and verify that it actually
+answers the challenge.
 %
 \begin{definition}[Deadline]\label{def:deadline}
   The set of \emph{deadlines} is
@@ -59,15 +71,21 @@ which is the inverse of Bitcoin's difficulty.
 \begin{definition}[Deadline's waiting time]\label{def:deadline_waiting_time}
   Given $\delta\in\Deadlines$ and an \emph{acceleration}
   $\alpha\in\mathbb{N}$ such that $\alpha>0$, the
-  \emph{waiting time} for $\delta$ \wrt $\alpha$ is
+  \emph{waiting time} for $\delta$ \wrt $\alpha$ is\footnote{
+  In~\cite{SignumPlotting}, the divisor is actually
+  $2^{\size(h_\deadline)-8}\cdot\alpha$, in order to avoid using very large values for the
+  acceleration $\alpha$. This is theoretically irrelevant
+  and we prefer our simpler presentation.
+  }
   %
   \[
   \waitingtime(\delta,\alpha)
-  =\betonat\left(\text{first $8$ bytes of}\left(\nattobe\left(\frac{\betonat(\delta.\mathit{value})}{\alpha}\right)\right)\right).
+  %  =\betonat\left(\text{first $8$ bytes of}\left(\nattobe\left(\frac{\betonat(\delta.\mathit{value})}{\alpha}\right)\right)\right).
+  =\frac{\betonat(\delta.\mathit{value})}{\alpha}.
   \]
 \end{definition}
 %
-The following algorithm shows how a nonce answers a challenge with a deadline.
+We can finally show show how a nonce answers a challenge with a deadline.
 %
 \begin{alg}[$\delta(\nonce,\pi,\challenge)$]\label{alg:deadline_from_nonce}
   Given $\nonce\in\Nonces$, $\pi\in\Prologs$ and $\challenge\in\Challenges$, the
@@ -78,7 +96,8 @@ The following algorithm shows how a nonce answers a challenge with a deadline.
 \end{alg}
 %
 Alg.~\ref{alg:deadline_from_nonce} is extended to plots. Remember that plots are non-empty
-(Def.~\ref{def:plot}) and that deadlines are ordered by their value.
+(Def.~\ref{def:plot}) and embed the identifier of their creator $\pi$,
+and that deadlines are ordered by their value.
 %
 \begin{alg}[$\deadline(\plot,\challenge)$]\label{alg:deadline_from_plot}
   Given $\plot\in\Plots$ and $\challenge\in\Challenges$, the \emph{deadline computed
@@ -98,11 +117,13 @@ has the same value as the deadline \wrt its challenge.
   \]
 \end{definition}
 %
-The consensus rules of the blockchain, later, will check that the deadlines are
-actually valid (Def.~\ref{def:blockchain}). Therefore, one could be tempted to
-remove the $\mathit{value}$ field from deadlines (Def.~\ref{def:deadline}) and compute
-their value, when needed, by Def.~\ref{def:deadline_validity}. However, this would change the
-computational complexity of the algorithms, since the computation of
-$\nonce(\delta.p,\delta.\pi)$ is relatively expensive (Def.~\ref{alg:nonce_construction}).
-Therefore, the original informal description~\cite{SignumPlotting} puts a value in the deadline
-and we follow this approach as well.
+Later, the consensus rules of the blockchain (Def.~\ref{def:blockchain})
+will need to check that deadlines are actually valid. Therefore, one could be tempted to
+avoid such check by removing the $\mathit{value}$ field from deadlines
+(Def.~\ref{def:deadline}) and computing
+their value, on demand, by Def.~\ref{def:deadline_validity}. However, the
+computation of
+$\nonce(\delta.p,\delta.\pi)$ is relatively expensive in terms of amount of data hasehd
+(Def.~\ref{alg:nonce_construction}).
+Therefore, the original informal description~\cite{SignumPlotting} puts the value in the deadlines
+and we follow this approach here.
