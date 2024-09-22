@@ -1,19 +1,23 @@
 \section{Attacks and Protections}\label{sec:attacks_and_protections}
 %
-In~\cite{ParkKFGAP18}, it is observed that the cost for validating
-a deadline is quadratic in $\numberofscoops$,
-since (Def.~\ref{def:deadline_validity}) it
-requires to recontruct a nonce through
-Alg.~\ref{alg:nonce_construction}. At the time, the web page of
-Burstcoin still presented that algorithm
-without the $\kappa$ threshold of step~\ref{step:nonce_construction:first_hash}
-and its complexity, in terms of $\numberofscoops$, was actually quadratic.
-This might be seen as a (very theoretical)
-security issue if $\numberofscoops$ is very large
-and $\beat$ is very small (Tab.~\ref{tab:notations}). In that case,
-peers might not have enough time to verify the blocks whispered
-from their connected peers and the network might split.
-The addition of the $\kappa$ threshold makes the complexity
-of deadline validation linear in $\numberofscoops$ now
-(Prop.~\ref{prop:nonce_construction_complexity}), hence this
-issue has been solved.
+In~\cite{ParkKFGAP18}, one ciriticism to Burstcoin was that
+the validation of a deadline
+(Def.~\ref{def:deadline_validity}) requires to run
+Alg.~\ref{alg:nonce_construction}, that in turn
+requires hashing $8\cdot 10^6\cdot 32=256000000$ bytes.
+It must be stated that
+such hashing can actually be computed in milliseconds nowadays,
+with minimal energy cost. Therefore, we do not see this as a problem.
+In any case, step~\ref{step:nonce_construction:first_hash} of
+Alg.~\ref{alg:nonce_construction} currently uses a threshold $\kappa$,
+that was possibly missing at the time of writing~\cite{ParkKFGAP18}.
+Considering that threshold and assuming the specific values and hashing
+used in~\cite{SignumPlotting} (see rightmost column of Tab.~\ref{tab:notations}),
+step~\ref{step:nonce_construction:first_hash}
+hashes at most $\kappa$ bytes and is iterated $2\cdot\numberofscoops$ times, that is,
+it hashes at most $33554432$ bytes.
+Step~\ref{step:nonce_construction:final_hash} hashes $32\cdot 2\cdot 4096$ bytes
+plus the size of the $\seed$, which is around $200$ bytes.
+That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
+hashes $33816776$ bytes, which is around $8$ times less than what reported
+in~\cite{ParkKFGAP18}.
