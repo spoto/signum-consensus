@@ -1,10 +1,18 @@
 \documentclass[orivec]{llncs}
+
+\pagestyle{headings}
+
 \usepackage{showkeys}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{relsize}
+\usepackage{enumitem}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage[T1]{fontenc}
 \usepackage{listings, framed}
+
 \lstset{
   language=Java,
   showstringspaces=false,
@@ -18,20 +26,6 @@
   tabsize=3,
   escapechar=|
 }
-%\usepackage{algorithm, algorithmic}
-\usepackage{url}
-\usepackage{relsize}
-%\usepackage{xcolor}
-%\usepackage{multirow}
-
-%\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
-%\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
-%\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
-%\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
-
-%\newif\iflongversion
-%\longversionfalse               % for conference version
-%\longversiontrue                % for technical report
 
 % \|name| or \mathid{name} denotes identifiers and slots in formulas
 \def\|#1|{\mathid{#1}}
@@ -47,9 +41,6 @@
 
 \newcommand{\fs}[1]{\todo{FS: #1}}
 \newcommand*\xor{\oplus}
-
-% Reduce padding for \boxed
-%\setlength{\fboxsep}{.5\fboxsep}
 
 \newtheorem{alg}{Algorithm}
 
@@ -109,18 +100,22 @@
 \begin{document}
 %
 \begin{frontmatter}
+
   \title{A Formalization of Signum's Consensus}
-\author{Fausto Spoto}
-\institute{Dipartimento di Informatica, Universit\`a di Verona, Verona, Italy\\
-  \email{fausto.spoto@univr.it}}
-%
-\maketitle
-%
-\begin{abstract}
-  Very interesting text.
-\end{abstract}
-%
+
+  \author{Fausto Spoto}
+  \institute{Dipartimento di Informatica, Universit\`a di Verona, Verona, Italy\\
+    \email{fausto.spoto@univr.it}}
+
+  \maketitle
+
+  \begin{abstract}
+    Very interesting text.
+  \end{abstract}
+
 \end{frontmatter}
+
+\pagenumbering{arabic}
 
 \input{introduction}
 \input{nonce_and_plot}
@@ -130,8 +125,9 @@
 \input{related_work}
 \input{conclusion}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{plain}
 \bibliography{biblio}
+
+\input{proofs}
 
 \end{document}

@@ -175,38 +175,38 @@ and all its blocks must satisfy the \emph{consensus rules}.
 \begin{definition}[Blockchain, Consensus]\label{def:blockchain}
   A \emph{blockchain} is a set $B\subset\Blocks$ such that:
   \begin{enumerate}
-  \item there is exactly one $b\in B\cap\GenesisBlocks$, written as $\genesis(B)$;
-  \item for each hash $h$ of $h_\block$, there is at most
+  \item\label{prop:blockchain:genesis} there is exactly one $b\in B\cap\GenesisBlocks$, written as $\genesis(B)$;
+  \item\label{prop:blockchain:no_collision} for each hash $h$ of $h_\block$, there is at most
     one $b\in B$ such that $h_\block(b)=h$, written as $\block(B,h)$;
-  \item for each $b\in B$, the predicate $\consensus(B,b)$ holds, where
+  \item\label{prop:blockchain:consensus} for each $b\in B$, the predicate $\consensus(B,b)$ holds, where
     %
     \begin{itemize}
     \item if $b\in\GenesisBlocks$, then the only requirement for consensus is that
       $b$ is not created in the future:
       \[
-      \consensus(B,b)=b.\tau\ge\tau_\now;
+      \consensus(B,b)=b.\tau\le\tau_\now;
       \]
     \item if $b\in\NonGenesisBlocks$, then $\consensus(B,b)$ is the logical conjunction
       of all the following consensus rules:
-      \begin{itemize}
-      \item $b$ is not created in the future:
+      \begin{enumerate}[label=(\alph*)]
+      \item\label{prop:consensus:no_future} $b$ is not created in the future:
         \[
-        b.\tau\ge\tau_\now;
+        b.\tau\le\tau_\now;
         \]
-      \item the deadline of $b$ (that is, $b.\trunk.\delta$) is valid (Def.~\ref{def:deadline_validity});
-      \item there are no dangling pointers:
+      \item\label{prop:consensus:valid} the deadline of $b$ (that is, $b.\trunk.\delta$) is valid (Def.~\ref{def:deadline_validity});
+      \item\label{prop:consensus:no_dangling} there are no dangling pointers:
         \[
         p=\block(B,b.\previousblockhash)\text{ exists;}
         \]
-      \item the deadline of $b$ answers the challenge of $p$ (Def.~\ref{def:next_challenge_from_block}):
+      \item\label{prop:consensus:answer} the deadline of $b$ answers the challenge of $p$ (Def.~\ref{def:next_challenge_from_block}):
         \[
         \nextchallenge(p)=b.\trunk.\delta.\challenge;
         \]
-      \item $b$ is the next block of $p$ \wrt the deadline of $b$ (Def.~\ref{def:next_block}):
+      \item\label{prop:consensus:next_block} $b$ is the next block of $p$ \wrt the deadline of $b$ (Def.~\ref{def:next_block}):
         \[
         b=\nextblock(p,b.\trunk.\delta).
         \]
-      \end{itemize}
+      \end{enumerate}
     \end{itemize}
     %
   \end{enumerate}
@@ -221,10 +221,9 @@ restrain prologs with an extra consensus rule.
 \begin{definition}[Blockchain network]\label{def:blockchain_network}
   A \emph{blockchain network} is a
   network of \emph{peers} (computers), each connected to the other peers,
-  each holding its own version of a blockchain, for the same genesis block,
-  not created in the future.
-  Each peer holds a plot (Def.~\ref{def:plot}) in its memory.
-  Each peer starts with a blockchain holding only the genesis block and runs two
+  each holding its own version of a blockchain, for the same genesis block.
+  Each peer holds a plot (Def.~\ref{def:plot}) in its memory, starts with
+  a blockchain that only holds a single block and runs two
   algorithms, concurrently: the \emph{block mining} algorithm
   and the \emph{block mined} algorithm.
 \end{definition}
@@ -245,15 +244,15 @@ mines a new block on top of it, adds it to the blockchain and whispers it to the
   is the following infinite loop:
   %
   \begin{enumerate}
-  \item identify a most powerful\footnote{In theory, more blocks might be the most powerful in blockchain, although this is highly unlikely; in that case, any of them will be chosen.} block $b$ in $B$;
-  \item compute $c=\nextchallenge(b)$ (Def.~\ref{def:next_challenge_from_block});
-  \item compute $\delta'=\delta(\plot,c)$ (Def.~\ref{def:deadline_from_plot}), where $\plot$
+  \item\label{step:block_mining:loop} identify a most powerful\footnote{In theory, more blocks might be the most powerful in blockchain, although this is highly unlikely; in that case, any of them will be chosen.} block $p$ in $B$;
+  \item\label{step:block_mining:next_challenge} compute $c=\nextchallenge(p)$ (Def.~\ref{def:next_challenge_from_block});
+  \item\label{step:block_mining:next_deadline} compute $\delta'=\delta(\plot,c)$ (Def.~\ref{def:deadline_from_plot}), where $\plot$
     if the plot of $P$;
-  \item compute $b'=\nextblock(b,\delta')$ (Def.~\ref{def:next_block});
-  \item\label{step:block_mining:wait} wait until $b'.\tau\ge\tau_\now$;
+  \item\label{step:block_mining:next_block} compute $b'=\nextblock(p,\delta')$ (Def.~\ref{def:next_block});
+  \item\label{step:block_mining:wait} wait until $b'.\tau\le\tau_\now$;
   \item\label{step:block_mining:add} add $b'$ to $B$;
-  \item whisper $b'$ to the peers connected to $P$;
-  \item go back to step~1.
+  \item whisper $b$ to the peers connected to $P$;
+  \item go back to step~\ref{step:block_mining:loop}.
   \end{enumerate}
 \end{alg}
 %
@@ -265,9 +264,9 @@ and adds it to the blockchain.
   is the following infinite loop:
   %
   \begin{enumerate}
-  \item wait for a block $b$ whispered from a connected peer $P'$;
+  \item\label{step:block_mined:loop} wait for a block $b$ whispered from a connected peer $P'$;
   \item\label{step:block_mined:add} if $B\cup\{b\}$ is a blockchain, add $b$ to $B$;
-  \item go back to step~1.
+  \item go back to step~\ref{step:block_mined:loop}.
   \end{enumerate}
 \end{alg}
 %
@@ -287,10 +286,11 @@ Note that peers check the validity of blocks coming from outside
 (step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined}), since they do not trust
 their connected peers. Instead, they do not check the validity of the blocks that they
 mine themselves (step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}),
-since they are valid by construction, as shown below. The hypothesis on no hash collisions
-is standard for blockchains.
+since they are valid by construction, as shown below. This
+guarantees that $B$ remains a blockchain in every peer, as Prop.~\ref{prop:mining_is_sound} shows.
+The hypothesis on no hash collisions is standard for blockchains.
 %
 \begin{proposition}\label{prop:mining_is_sound}
-  At step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining},
-  if there are no hash collisions, then $B\cup\{b'\}$ is a blockchain.
+  If no hash collision occurs at step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining},
+  then the set $B$ of blocks in each peer is a blockchain.
 \end{proposition}

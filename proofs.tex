@@ -1,0 +1,83 @@
+\newpage
+
+\appendix
+\section{Proofs (not meant for publication)}
+
+\textbf{Proof of Prop.~\ref{prop:mining_is_sound} at page~\pageref{prop:mining_is_sound}}
+
+\begin{proof}
+  Let us prove it by induction on the number of blocks added to $B$ in Algs.~\ref{alg:block_mining}
+  and~\ref{alg:block_mined}. The thesis is true when the peer starts,
+  by Def.~\ref{def:blockchain_network}. Alg.~\ref{alg:block_mined} keeps $B$
+  as a blockchain, since it explicitly checks it (step~\ref{step:block_mined:add} of
+  Alg.~\ref{alg:block_mined}). It remains to show that, if $B$ is a blockchain at the beginning
+  of step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}, then $B\cup\{b'\}$ is a
+  blockchain as well. By Def.~\ref{def:next_block}, it is $b'\in\NonGenesisBlocks$.
+  Therefore, property~\ref{prop:blockchain:genesis} of Def.~\ref{def:blockchain} remains true.
+  By the assumption on no hash collisions, property~\ref{prop:blockchain:no_collision} remains true.
+  It remains to prove that property~\ref{prop:blockchain:consensus} remains true as well.
+  Let $b\in B\cup\{b'\}$.
+  \begin{itemize}
+  \item If $b\in\GenesisBlocks$, it is $b\not=b'$ and then $b\in B$; since $\tau_\now$ only
+    increases with the time, by inductive hypothesis
+    the property $b.\tau\le\tau_\now$ was true at the start of the
+    algorithm and is still true now.
+  \item If $b\in\NonGenesisBlocks$ and $b\in B$, by inductive hypothesis
+    all consensus rules held when $b$ was added to
+    $B$ and they must still hold now, since $\tau_\now$ only
+    increases with the time and since no block is ever removed from $B$.
+  \item If $b\in\NonGenesisBlocks$ and $b\not\in B$, it must be $b=b'$. Let us prove that each consensus rule
+    in Def.~\ref{def:blockchain} holds.
+    \begin{itemize}
+    \item[\ref{prop:consensus:no_future}] This rule holds by step~\ref{step:block_mining:wait} of
+      Alg.~\ref{alg:block_mining} and by the fact
+      that $\tau_\now$ cannot decrease from step~\ref{step:block_mining:wait} to
+      step~\ref{step:block_mining:add};
+    \item[\ref{prop:consensus:valid}] It is
+      \begin{align*}
+        b.\trunk.\delta&=b'.\trunk.\delta\\
+        \text{(step~\ref{step:block_mining:next_block} of Alg.~\ref{alg:block_mining} and Def.~\ref{def:next_block})}&=\delta'\\
+        \text{(step~\ref{step:block_mining:next_deadline} of Alg.~\ref{alg:block_mining})}&=
+        \delta(\plot,c)\\
+        \text{(Def.~\ref{def:deadline_from_plot})}&=\delta(\nonce,\plot.\pi,c)
+      \end{align*}
+      for some $\nonce\in\plot.\nonces$. The deadline $\Delta=\delta(\nonce,\plot.\pi,c)$ is valid
+      (Def.~\ref{def:deadline_validity}) since, by Def.~\ref{def:deadline_from_nonce}:
+      \begin{align*}
+        \Delta.\mathit{value}&=\mathit{value}(\nonce,c)\\
+        &=\mathit{value}(\nonce,\Delta.\challenge)\\
+        \text{(Def.~\ref{def:plot})}&=\mathit{value}(\nonce(\nonce.p,\plot.\pi),\Delta)\\
+        \text{(Def.~\ref{def:deadline_from_nonce})}&=\mathit{value}(\nonce(\Delta.p,\Delta.\pi),\Delta).
+      \end{align*}
+    \item[\ref{prop:consensus:no_dangling}] It is
+      \begin{align*}
+        b.\previousblockhash&=b'.\previousblockhash\\
+        \text{(step.~\ref{step:block_mining:next_block} of Alg.~\ref{alg:block_mining})}
+        &=\block_\mynext(p,\delta').\previousblockhash\\
+        &=h_\block(p),
+      \end{align*}
+      where $p$ is the most powerful block in $B$ (by step.~\ref{step:block_mining:loop}
+      of Alg.~\ref{alg:block_mining}). Therefore, $\block(B,b.\previousblockhash)$ exists
+      and coincides with the block $p$ selected at step~\ref{step:block_mining:loop}
+      of Alg.~\ref{alg:block_mining}. This fact is used in the subsequent points of this proof.
+    \item[\ref{prop:consensus:answer}] By step~\ref{step:block_mining:next_challenge}
+      of Alg.~\ref{alg:block_mining}, it is
+      \begin{align*}
+        \challenge_\mynext(p)&=c\\
+        \text{(Defs.~\ref{def:deadline_from_plot} and~\ref{def:deadline_from_nonce})}&=
+        \delta(\plot,c).\challenge\\
+        \text{(step~\ref{step:block_mining:next_deadline} of Alg.~\ref{alg:block_mining})}&=\delta'.\challenge\\
+        \text{(step~\ref{step:block_mining:next_block} of Alg.~\ref{alg:block_mining} and Def.~\ref{def:next_block})}&=b'.\trunk.\delta.\challenge\\
+        &=b.\trunk.\delta.\challenge.
+      \end{align*}
+    \item[\ref{prop:consensus:next_block}] It is
+      \begin{align*}
+        b&=b'\\
+        \text{(step.~\ref{step:block_mining:next_block} of Alg.~\ref{alg:block_mining})}
+        &=\block_\mynext(p,\delta')\\
+        \text{(Def.~\ref{def:next_block})}&=\block_\mynext(p,b.\trunk.\delta).
+      \end{align*}
+    \end{itemize}
+  \end{itemize}
+  \qed
+\end{proof}
