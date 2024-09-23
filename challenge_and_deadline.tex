@@ -87,25 +87,25 @@ which is the inverse of Bitcoin's difficulty.
 %
 We can finally show show how a nonce answers a challenge with a deadline.
 %
-\begin{alg}[$\delta(\nonce,\pi,\challenge)$]\label{alg:deadline_from_nonce}
+\begin{definition}[$\delta(\nonce,\pi,\challenge)$]\label{def:deadline_from_nonce}
   Given $\nonce\in\Nonces$, $\pi\in\Prologs$ and $\challenge\in\Challenges$, the
   \emph{deadline computed from $\nonce$ for $\pi$ and $\challenge$} is
   \[
   \delta(\nonce,\pi,\challenge)=\langle\nonce.p,\pi,\mathit{value}(\nonce,\challenge),\challenge\rangle.
   \]
-\end{alg}
+\end{definition}
 %
-Alg.~\ref{alg:deadline_from_nonce} is extended to plots. Remember that plots are non-empty
-(Def.~\ref{def:plot}) and embed the identifier of their creator $\pi$,
+Def.~\ref{def:deadline_from_nonce} is extended to plots. Remember that plots are non-empty
+(Def.~\ref{def:plot}) and embed the identifier of their creator $\pi$;
 and that deadlines are ordered by their value.
 %
-\begin{alg}[$\deadline(\plot,\challenge)$]\label{alg:deadline_from_plot}
+\begin{definition}[$\deadline(\plot,\challenge)$]\label{def:deadline_from_plot}
   Given $\plot\in\Plots$ and $\challenge\in\Challenges$, the \emph{deadline computed
   from $\plot$ for $\challenge$} is
   \[
   \delta(\plot,\challenge)=\min\limits_{\nonce\in\plot.\nonces}\delta(\nonce,\plot.\pi,\challenge).
   \]
-\end{alg}
+\end{definition}
 %
 A deadline is valid when the nonce built from its progressive and prolog
 has the same value as the deadline \wrt its challenge.
@@ -118,12 +118,12 @@ has the same value as the deadline \wrt its challenge.
 \end{definition}
 %
 Later, the consensus rules of the blockchain (Def.~\ref{def:blockchain})
-will need to check that deadlines are actually valid. Therefore, one could be tempted to
+will check that deadlines are valid. Therefore, one could be tempted to
 avoid such check by removing the $\mathit{value}$ field from deadlines
 (Def.~\ref{def:deadline}) and computing
 their value, on demand, by Def.~\ref{def:deadline_validity}. However, the
 computation of
-$\nonce(\delta.p,\delta.\pi)$ is relatively expensive in terms of amount of data hasehd
+$\nonce(\delta.p,\delta.\pi)$ is relatively expensive in terms of amount of hashed data
 (Def.~\ref{alg:nonce_construction}).
 Therefore, the original informal description~\cite{SignumPlotting} puts the value in the deadlines
-and we follow this approach here.
+and we follow that approach.

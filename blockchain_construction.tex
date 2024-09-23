@@ -1,12 +1,12 @@
 \section{Blockchain Construction}\label{sec:blockchain_construction}
 
-The blocks of the blockchain contain information used for the proof
-of space, called \emph{trunk} by borrowing this terminology from~\cite{CohenP19},
+The blocks of the blockchain contain information used for consensus,
+called \emph{trunk} by borrowing this terminology from~\cite{CohenP19},
 other information such as the previous block hash,
 and extra information that is irrelevant here, such as a list of transactions.
-Transactions are not formalized below, since they are not used for the proof of space.
+Transactions are not formalized below, since they are not used by Signum's consensus.
 Blocks can be genesis and non-genesis. Both contain their time of creation and their acceleration.
-Genesis blocks have nor trunk nor parent and their height is implicitly $0$.
+Genesis blocks have nor trunk nor parent; their height is implicitly $0$.
 Challenges $c$ are generated in sequence: there is an initial constant challenge for the genesis
 blocks, while the subsequent challenges are generated from the trunk of
 each non-genesis block $b$ of the blockchain.
@@ -48,7 +48,7 @@ and $b.\alpha$ is the acceleration at $b$. If $b$ is a non-genesis block, then
 $b.\power$ expresses how much space has been used to build the path that leads to $b$,
 starting from the genesis block; it will be used to select the \emph{best chain} for mining
 $b$'s son. The value of $b.\weightedbeat$ is the average of the interval creation time
-for the path that leads to $b$, giving more weight to the last blocks; it will be
+for the path that leads to $b$; it weighs the last blocks more. It will be
 compared to $\beat$ (Tab.~\ref{tab:notations}) to understand if the acceleration
 must be increased or decreased in $b$'s son.
 The value of $b.\previousblockhash$ is the hash of the previous block in the path leading to $b$.
@@ -63,25 +63,29 @@ If $b$ is a genesis block, we abuse notation and assume that $b.\power=b.\weight
   \end{cases}
   \]
 \end{definition}
-
-The following algorithm shows how the first challenge, for genesis blocks,
-its defined. It is a constant that only depends on contextual values (Table~\ref{tab:notations}).
 %
-\begin{alg}[$\initialchallenge$]\label{alg:initial_challenge}
-  The \emph{initial challenge} is the constant
+Def.~\ref{def:initial_challenge} shows how the first challenge is defined, for genesis blocks.
+It is a constant that only depends on contextual values (Table~\ref{tab:notations}).
+%
+\begin{definition}[$\initialchallenge$]\label{def:initial_challenge}
+  The \emph{initial challenge} is the constant\footnote{In~\cite{SignumPlotting},
+  the scoop number is derived from $\sigma_\genesis$; we simplify it to $0$, without loss
+  of generality.}
   %
-  \begin{multline*}
-    \initialchallenge=\\
-    \langle\betonat(h_\generation(\sigma_\genesis\append\nattobe(1)))\text{ mod }\numberofscoops,\sigma_\genesis\rangle,
-  \end{multline*}
+  \[
+    \initialchallenge=
+    \langle 0,\sigma_\genesis\rangle
+    %\\\langle\betonat(h_\generation(\sigma_\genesis\append\nattobe(1)))\text{ mod }\numberofscoops,\sigma_\genesis\rangle,
+  \]
   %
   where $\sigma_\genesis$ is a constant generation signature used for the genesis of the blockchain
   (see Table~\ref{tab:notations}).
-\end{alg}
+\end{definition}
 %
-The following algorithm shows how a challenge is derived from the trunk of a non-genesis block.
+Def.~\ref{def:next_challenge_from_trunk}
+shows how a challenge is derived from the trunk of a non-genesis block.
 %
-\begin{alg}[$\nextchallenge(\trunk)$]\label{alg:next_challenge_from_trunk}
+\begin{definition}[$\nextchallenge(\trunk)$]\label{def:next_challenge_from_trunk}
   Let $\trunk\in\Trunks$. The \emph{next challenge for $\trunk$} is
   \begin{multline*}
     \nextchallenge(\trunk)=\\
@@ -91,10 +95,10 @@ The following algorithm shows how a challenge is derived from the trunk of a non
   \[
   \sigma=h_\generation(\trunk.\delta.\challenge.\sigma\append\trunk.\delta.\pi).  
   \]
-\end{alg}
+\end{definition}
 %
 The definition of the generation signature $\sigma$ for the next challenge,
-in Alg.~\ref{alg:next_challenge_from_trunk},
+in Def.~\ref{def:next_challenge_from_trunk},
 has puzzled us for some time, since~\cite{SignumPlotting} appends a \emph{previous block generator}
 to the previous block's generation signature $\trunk.\delta.\challenge.\sigma$.
 That concept, however, is defined nowhere.
@@ -104,15 +108,8 @@ an identifier (more concretely, the public key)
 of the creator of the deadline for the previous block
 (see \url{https://github.com/signum-network/signum-node/blob/main/src/brs/GeneratorImpl.java}, constructor of \<GeneratorStateImpl>).
 We abstract that information through the prolog of the previous deadline, hence this is why
-Alg.~\ref{alg:next_challenge_from_trunk} appends
+Def.~\ref{def:next_challenge_from_trunk} appends
 $\trunk.\delta.\pi$ to define $\sigma$.
-This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
-where it is stated that ``this previous block generator seems possible to be grinded, by trying
-different sets of transactions to include in a block''. This is false, although it was
-hard to grasp without the formalization in
-Alg.~\ref{alg:next_challenge_from_trunk}, where it is clear that
-$\trunk.\delta.\pi$ comes from the trunk only, which makes
-such grinding attack impossible.
 
 Later, it will be handy to determine the next challenge for a block. Note that
 the next definition only uses the trunk inside the block.
@@ -150,9 +147,12 @@ to the actual deadline's value and their ratio expresses how much space has been
   \nextacceleration(b,\delta)=\frac{b.\alpha\cdot\nextweightedbeat(b,\delta)}{\beat}
   \]
   \[
-  \nextpower(b,\delta)=b.\power+\frac{2^{8\cdot\size(h_\deadline)}}{\betonat(\delta.\mathit{value})+1}
+  \nextpower(b,\delta)=b.\power+\frac{2^{8\cdot\size(h_\deadline)}}{\betonat(\delta.\mathit{value})+1}.
   \]
 \end{definition}
+
+We are finally ready to show how the next block of $b$ is constructed, once
+a deadline $\delta$ has been chosen for it.
 %
 \begin{definition}[Next block]\label{def:next_block}
   Let $b\in\Blocks$ and $\delta\in\Deadlines$. We define
@@ -163,8 +163,9 @@ to the actual deadline's value and their ratio expresses how much space has been
   \nextpower(b,\delta),\nextweightedbeat(b,\delta),\\
   \langle\height(b)+1,\delta\rangle,\\
   h_\block(b)
-  \end{array}\right\rangle.
+  \end{array}\right\rangle,
   \]
+  where $h_\block(b)$ is the application of $h_\block$ to the byte representation of $b$.
 \end{definition}
 
 A blockchain is a set of blocks, linked through their $\previousblockhash$ field.
@@ -211,12 +212,12 @@ and all its blocks must satisfy the \emph{consensus rules}.
   \end{enumerate}
 \end{definition}
 %
-Note that the above consensus rules, reconstructed and interpolated
+The above consensus rules, reconstructed and interpolated
 from~\cite{SignumPlotting,SignumSource},
 do not constrain the prolog of the deadlines in any way:
 each block can have an arbitrary prolog. Later, it will be shown why it is useful to
 restrain prologs with an extra consensus rule.
-
+%
 \begin{definition}[Blockchain network]\label{def:blockchain_network}
   A \emph{blockchain network} is a
   network of \emph{peers} (computers), each connected to the other peers,
@@ -228,16 +229,16 @@ restrain prologs with an extra consensus rule.
   and the \emph{block mined} algorithm.
 \end{definition}
 %
-Note that Def.~\ref{def:blockchain_network} simplifies the picture very much:
-the peers are fully connected, never disconnect and never need to synchronize.
+Def.~\ref{def:blockchain_network} simplifies the picture very much:
+peers are fully connected, never disconnect and never need to synchronize.
 Moreover, in practice, peers do not hold plots but rather rely on (one or more)
 external services (miners) that hold one or more plots.
-The goal here is to keep the picture as simple as possible and concentrate on the properties of the
-proof of space algorithm only. Def.~\ref{def:blockchain_network} does not pretend
+The goal here is to keep the picture as simple as possible and concentrate on the properties of
+Signum's consensus only: Def.~\ref{def:blockchain_network} does not pretend
 to describe a real blockchain implementation.
 
 The block mining algorithm looks for the most powerful block in blockchain,
-mines a new block on top of it, adds it to the blockchain and whispers it to the other peers.
+mines a new block on top of it, adds it to the blockchain and whispers it to the connected peers.
 %
 \begin{alg}[Block mining]\label{alg:block_mining}
   The \emph{block mining} algorithm of a peer $P$, holding blockchain $B$,
@@ -246,7 +247,7 @@ mines a new block on top of it, adds it to the blockchain and whispers it to the
   \begin{enumerate}
   \item identify a most powerful\footnote{In theory, more blocks might be the most powerful in blockchain, although this is highly unlikely; in that case, any of them will be chosen.} block $b$ in $B$;
   \item compute $c=\nextchallenge(b)$ (Def.~\ref{def:next_challenge_from_block});
-  \item compute $\delta'=\delta(\plot,c)$ (Alg.~\ref{alg:deadline_from_plot}), where $\plot$
+  \item compute $\delta'=\delta(\plot,c)$ (Def.~\ref{def:deadline_from_plot}), where $\plot$
     if the plot of $P$;
   \item compute $b'=\nextblock(b,\delta')$ (Def.~\ref{def:next_block});
   \item\label{step:block_mining:wait} wait until $b'.\tau\ge\tau_\now$;
@@ -256,7 +257,7 @@ mines a new block on top of it, adds it to the blockchain and whispers it to the
   \end{enumerate}
 \end{alg}
 %
-The block mined algorithm receives a block whispered from a peer, checks its validity
+The block mined algorithm receives a block whispered from a connected peer, checks its validity
 and adds it to the blockchain.
 %
 \begin{alg}[Block mined]\label{alg:block_mined}
@@ -286,9 +287,10 @@ Note that peers check the validity of blocks coming from outside
 (step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined}), since they do not trust
 their connected peers. Instead, they do not check the validity of the blocks that they
 mine themselves (step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}),
-since they are valid by construction, as shown below.
+since they are valid by construction, as shown below. The hypothesis on no hash collisions
+is standard for blockchains.
 %
 \begin{proposition}\label{prop:mining_is_sound}
   At step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining},
-  the set $B\cup\{b'\}$ is a blockchain.
+  if there are no hash collisions, then $B\cup\{b'\}$ is a blockchain.
 \end{proposition}

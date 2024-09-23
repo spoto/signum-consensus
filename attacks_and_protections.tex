@@ -21,3 +21,11 @@ plus the size of the $\seed$, which is around $200$ bytes.
 That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
 hashes $33816776$ bytes, which is around $8$ times less than what reported
 in~\cite{ParkKFGAP18}.
+
+This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
+where it is stated that ``this previous block generator seems possible to be grinded, by trying
+different sets of transactions to include in a block''. This is false, although it was
+hard to grasp without the formalization in
+Def.~\ref{def:next_challenge_from_trunk}, where it is clear that
+$\trunk.\delta.\pi$ comes from the trunk only, which makes
+such grinding attack impossible.
