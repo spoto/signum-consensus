@@ -26,7 +26,7 @@ the public key of the peer inside $b.\trunk.\delta$ matches the signature of the
   fidelization and allows peers to compete by offering different remuneration schemes to miners;
 \item the creator of a plot must specify the chain identifier of the blockchain.
   Therefore, it becomes impossible to use the same plot for mining two
-  blockchain networks at the same time. This protects against new born attacks.
+  blockchain networks at the same time. This protects against newborn attacks.
 \end{itemize}
 
 In~\cite{ParkKFGAP18}, one criticism to Burstcoin was that the validation of a deadline
@@ -41,7 +41,7 @@ for a blockchain, such as Signum, that allows smart contracts.
 Therefore, the extra time for verifying the deadlines does not seem like a problem to us.
 In any case, step~\ref{step:nonce_construction:first_hash} of
 Alg.~\ref{alg:nonce_construction} currently uses a threshold $\kappa$,
-that was possibly missing when~\cite{ParkKFGAP18} has been written.
+that was possibly missing when~\cite{ParkKFGAP18} was written.
 Considering that threshold and assuming the specific values and hashing
 used in~\cite{SignumPlotting} (see rightmost column of Tab.~\ref{tab:notations}),
 step~\ref{step:nonce_construction:first_hash}
@@ -53,10 +53,55 @@ That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
 hashes $33816776$ bytes, which is around $8$ times less than what reported
 in~\cite{ParkKFGAP18}.
 
-This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
-where it is stated that ``this previous block generator seems possible to be grinded, by trying
-different sets of transactions to include in a block''. This is false, although it was
-hard to grasp without the formalization in
-Def.~\ref{def:next_challenge_from_trunk}, where it is clear that
-$\trunk.\delta.\pi$ comes from the trunk only, which makes
-such grinding attack impossible.
+In~\cite{ParkPAFG15}, page~28, a potential block grinding attack was hinted for Burstcoin,
+since, in~\cite{SignumPlotting}, the next challenge of a previous block used its undefined
+\emph{previous block generator}:
+``this seems possible to be grinded, by trying
+different sets of transactions to include in a block''~\cite{ParkPAFG15}.
+As discussed just after our Def.~\ref{def:next_challenge_from_trunk}, that notion is
+just the prolog $\trunk.\delta.\pi$ of the deadline of the trunk in the previous block.
+Consequently, it cannot be grinded: Signum is protected against block grinding attacks.
+But we sympathize with~\cite{ParkPAFG15}: without a formalization,
+it was impossible to exclude that attack.
+
+It is also interesting to observe that Signum has partial protection
+against challenge grinding attacks.
+The challenge for the a block is actually uniquely determined by the trunk in its
+previous block
+(consensus rule~\ref{prop:consensus:answer} of Def.~\ref{def:blockchain}
+and Def.~\ref{def:next_challenge_from_block}) but a peer
+might select suboptimal deadlines at step~\ref{step:block_mining:next_deadline}
+of Alg.~\ref{alg:block_mining} (that is, not the minimal one of Def.~\ref{def:deadline_from_plot}),
+hoping that such a sacrifice will generate subsequent challenges for which the peer
+can find very good deadlines.
+%Therefore, in Signum, such an attack should be called \emph{deadline grinding}.
+But that attack does not pay off, since the choice of suboptimal deadlines does not
+affect the sequence of challenges, as shown below.
+%
+\begin{proposition}\label{prop:no_challenge_grinding}
+  Let $B$ be a blockchain, $\plot\in\Plots$, $b_0,\ldots,b_n$ and
+  $b_0',\ldots,b_n'$ be two sequences of blocks in $B$, rooted at the same
+  $b_0=b_0'$, mined by using $\plot$ only
+  (possibly with suboptimal choices of the deadlines), that is,
+  %
+  \begin{align*}
+    b_i.\trunk.\delta&=\delta(\nonce_i,\plot.\pi,\challenge_\mynext(b_{i-1}))\\
+    b'_i.\trunk.\delta&=\delta(\nonce'_i,\plot.\pi,\challenge_\mynext(b'_{i-1}))
+  \end{align*}
+  %
+  for suitable $\nonce_i,\nonce_i'\in\plot.\nonces$, for every $1\le i\le n$. Then
+  \[
+  \challenge_\mynext(b_j)=\challenge_\mynext(b'_j)
+  \]
+  for every $0\le j\le n$.
+\end{proposition}
+%
+Intuitively, the sequence of challenges depends only on
+the sequence of prologs used for mining, that is always the same by using a given plot.
+Therefore, a challenge grinding attack in Signum
+would require to use many plots, with different keys, all in control of the peer,
+and grind among the plots. However, the number of plots is limited by the space
+allocated to the algorithm and the same set of plots
+would be used at each mining step, which highly
+limits the power of grinding. For additional protection, it is always possible to use
+one of the techniques present in literature (Sec.~\ref{sec:related_work}).

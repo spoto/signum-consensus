@@ -3,9 +3,10 @@
 \appendix
 \section{Proofs (not meant for publication)}
 
+\noindent
 \textbf{Proof of Prop.~\ref{prop:mining_is_sound} at page~\pageref{prop:mining_is_sound}}
 
-\begin{proof}
+\noindent
   Let us prove it by induction on the number of blocks added to $B$ in Algs.~\ref{alg:block_mining}
   and~\ref{alg:block_mined}. The thesis is true when the peer starts,
   by Def.~\ref{def:blockchain_network}. Alg.~\ref{alg:block_mined} keeps $B$
@@ -80,4 +81,70 @@
     \end{itemize}
   \end{itemize}
   \qed
-\end{proof}
+
+\noindent
+\textbf{Proof of Prop.~\ref{prop:no_challenge_grinding} at page~\pageref{prop:no_challenge_grinding}}
+
+\noindent
+  Let us proceed by induction on $n$.
+  If $n=0$, since $b_0=b'_0$ the thesis holds.
+  Let $n>0$ and assume that the thesis holds for $n-1$. Let us prove it for $n$.
+  By inductive hypothesis, it is enough
+  to prove that $\challenge_\mynext(b_n)=\challenge_\mynext(b'_n)$.
+  Since $n>0$, by consensus rule~\ref{prop:consensus:next_block} of Def.~\ref{def:blockchain}
+  and by Def.~\ref{def:next_block}, it is $b_n\in\NonGenesisBlocks$. Therefore, by
+  Def.~\ref{def:next_challenge_from_block}, it is
+  %
+  \begin{align*}
+    \challenge_\mynext(b_n)&=\challenge_\mynext(b_n.\trunk)\\
+    (Def.~\ref{def:next_challenge_from_trunk})&=\langle\betonat(h_\generation(\sigma\append\nattobe(b_n.\trunk.\height+1)))\\
+    &\qquad\text{mod }\numberofscoops,\sigma\rangle\\
+    \left(\begin{array}{c}
+      \text{consensus}\\
+      \text{rule~\ref{prop:consensus:next_block}}\\
+      \text{of Def.~\ref{def:blockchain},}\\
+      \text{and Def.~\ref{def:next_block}}
+    \end{array}\right)&=\langle\betonat(h_\generation(\sigma\append\nattobe(b_0.\trunk.\height+n+1)))\\
+    &\qquad\text{mod }\numberofscoops,\sigma\rangle
+  \end{align*}
+  %
+  and similarly
+  %
+  \begin{align*}
+    \challenge_\mynext(b'_n)&=\langle\betonat(h_\generation(\sigma'\append\nattobe(b_0.\trunk.\height+n+1)))\\
+    &\qquad\text{mod }\numberofscoops,\sigma'\rangle
+  \end{align*}
+  %
+  where
+  %
+  \begin{align*}
+    \sigma&=h_\generation(b_n.\trunk.\delta.\challenge.\sigma\append b_n.\trunk.\delta.\pi)\\
+    \left(\begin{array}{c}
+      \text{$b_n$ has been}\\
+      \text{mined by using}\\
+      \text{$\plot$ only,}\\
+      \text{and Def.~\ref{def:deadline_from_nonce}}
+    \end{array}\right)&=h_\generation(b_n.\trunk.\delta.\challenge.\sigma\append\plot.\pi)\\
+    \left(\begin{array}{c}
+      \text{consensus rule~\ref{prop:consensus:answer}}\\
+      \text{of Def.~\ref{def:blockchain}}
+    \end{array}\right)&=h_\generation(\challenge_\mynext(b_{n-1}).\sigma\append\plot.\pi)\\
+    \left(\begin{array}{c}
+      \text{inductive}\\
+      \text{hypothesis}
+    \end{array}\right)&=h_\generation(\challenge_\mynext(b'_{n-1}).\sigma\append\plot.\pi)\\
+    \left(\begin{array}{c}
+      \text{consensus rule~\ref{prop:consensus:answer}}\\
+      \text{of Def.~\ref{def:blockchain}}
+    \end{array}\right)&=h_\generation(b'_n.\trunk.\delta.\challenge.\sigma\append\plot.\pi)\\
+    \left(\begin{array}{c}
+      \text{$b'_n$ has been}\\
+      \text{mined by using}\\
+      \text{$\plot$ only,}\\
+      \text{and Def.~\ref{def:deadline_from_nonce}}
+    \end{array}\right)&=h_\generation(b'_n.\trunk.\delta.\challenge.\sigma\append b'_n.\trunk.\delta.\pi)\\
+    &=\sigma'.
+  \end{align*}
+  %
+  It follows that $\challenge_\mynext(b_n)=\challenge_\mynext(b'_n)$.
+  \qed
