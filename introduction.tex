@@ -121,14 +121,14 @@ Therefore, this paper provides the following contributions to Signum's algorithm
 \begin{itemize}
 \item a formalization of the algorithm, recostructed and interpolated from a very informal and partial
   web description~\cite{SignumPlotting} and its poorly commented source code~\cite{SignumSource};
-\item a proof that the block grinding attack hinted in~\cite{ParkKFGAP18} cannot actually occur;
-\item a protection against challenge grinding and mining on multiple chains attacks, inspired by~\cite{ParkKFGAP18};
+\item a proof that block grinding attacks cannot occur, against the hint in~\cite{ParkKFGAP18};
+\item a proof that challenge grinding attacks cannot occur;
 \item a protection against newborn attacks.
 \end{itemize}
 %
-These results are relevant since they show that the only implementation
-of a blockchain, purely based on proof of space, is actually supported by a formal theory
-and can be protected from a large class of attacks.
+These results are relevant since they show that Signum's consensus
+is actually supported by a formal theory and
+protected from a large class of attacks.
 
 The rest of this paper is organized as follows.
 Sec.~\ref{sec:nonces_and_plots} formalizes structure and initialization of the space used for mining.
@@ -136,8 +136,9 @@ Sec.~\ref{sec:challenges_and_deadlines} defines the challenges that the proof of
 algorithm must solve, and their answers, called \emph{deadlines}.
 Sec.~\ref{sec:blockchain_construction} presents the blockchain and the mining algorithm
 based on proof of space.
-Sec.~\ref{sec:attacks_and_protections} considers grinding and newborn attacks and
-shows if the algorithm is subject to such attacks and how to cope with them.
+Sec.~\ref{sec:prolog_structure_attacks} proposes to structure the identifiers of
+the deadlines in a new way, with many benefits, including a protection against new born attacks.
+It shows that the algorithm is not subject to grinding attacks and discusses other potential attacks.
 Sec.~\ref{sec:related_work} discusses related work.
 Sec.~\ref{sec:conclusion} concludes the paper.
 

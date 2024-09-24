@@ -1,0 +1,62 @@
+\section{Prolog Structure, Protection against Attacks}\label{sec:prolog_structure_attacks}
+%
+This section proposes an extension to the framework in~\cite{SignumPlotting} and
+discusses potential attacks to the algorithm.
+
+The peers of Def.~\ref{def:blockchain_network} have two functions: to find new deadlines and to
+package new blocks with such deadlines. In practice, two machines perform each of them:
+one (the actual miner) finds deadlines by using plots: it must have a large disk space; the other (the actual peer)
+receives deadlines, packages and whispers new blocks: it must have a good network connection.
+Such machines will work for a blockchain network with a given chain identifier~\cite{Antonopoulos17}.
+Therefore, we propose to use, as prologs, the byte representation of the following structure:
+\[
+\langle\text{chain identifier},\text{public key of the peer},\text{public key of the miner}\rangle
+\]
+(in~\cite{SignumPlotting}, prologs are just the public key of the miner).
+Moreover, we add two new consensus rules to Def.~\ref{def:blockchain}. Informally, one requires
+that the chain identifier in $b.\trunk.\delta$ is that of the blockchain; and the other requires that
+the public key of the peer inside $b.\trunk.\delta$ matches the signature of the block $b$. This has many advantages:
+%
+\begin{itemize}
+\item the public keys of peer and miner can be used to remunerate them for their contribution,
+  in an application-specific way;
+\item the creator of a plot must specify the public key of the peer: hence that plot
+  can only be used to create deadlines for that given peer and miners become dedicated to that given
+  peer, instead of working, with the same plot, for many peers. This creates a sort of miner
+  fidelization and allows peers to compete by offering different remuneration schemes to miners;
+\item the creator of a plot must specify the chain identifier of the blockchain.
+  Therefore, it becomes impossible to use the same plot for mining two
+  blockchain networks at the same time. This protects against new born attacks.
+\end{itemize}
+
+In~\cite{ParkKFGAP18}, one criticism to Burstcoin was that the validation of a deadline
+(Def.~\ref{def:deadline_validity}) requires to run
+Alg.~\ref{alg:nonce_construction}, that in turn
+requires hashing $8\cdot 10^6\cdot 32=256000000$ bytes.
+It must be stated that
+such hashing can actually be computed in a few milliseconds nowadays,
+for a minimal energy cost. Moreover, that time is largely dominated
+by the time for verifying the transactions in a block, in particular
+for a blockchain, such as Signum, that allows smart contracts.
+Therefore, the extra time for verifying the deadlines does not seem like a problem to us.
+In any case, step~\ref{step:nonce_construction:first_hash} of
+Alg.~\ref{alg:nonce_construction} currently uses a threshold $\kappa$,
+that was possibly missing when~\cite{ParkKFGAP18} has been written.
+Considering that threshold and assuming the specific values and hashing
+used in~\cite{SignumPlotting} (see rightmost column of Tab.~\ref{tab:notations}),
+step~\ref{step:nonce_construction:first_hash}
+hashes at most $\kappa$ bytes and is iterated $2\cdot\numberofscoops$ times, that is,
+it hashes at most $33554432$ bytes.
+Step~\ref{step:nonce_construction:final_hash} hashes $32\cdot 2\cdot 4096$ bytes
+plus the size of the $\seed$, which is around $200$ bytes.
+That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
+hashes $33816776$ bytes, which is around $8$ times less than what reported
+in~\cite{ParkKFGAP18}.
+
+This gives us the opportunity to discuss the observation in~\cite{ParkPAFG15}, page~28,
+where it is stated that ``this previous block generator seems possible to be grinded, by trying
+different sets of transactions to include in a block''. This is false, although it was
+hard to grasp without the formalization in
+Def.~\ref{def:next_challenge_from_trunk}, where it is clear that
+$\trunk.\delta.\pi$ comes from the trunk only, which makes
+such grinding attack impossible.

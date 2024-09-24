@@ -142,31 +142,31 @@ to limit its computational cost, hence avoiding to hash very large chunks of dat
   \end{enumerate}
 \end{alg}
 %
-As usual in this context, the complexity of the algorithm is better expressed
-in terms of how much data is hashed, since that is the expensive operation that dominates
-Alg.~\ref{alg:nonce_construction}. The following result assumes that
-integers use a finite machine representation (for instance, $8$ bytes for \texttt{long} in Java)
-and that prologs have a fixed structure and length.
+%As usual in this context, the complexity of the algorithm is better expressed
+%in terms of how much data is hashed, since that is the expensive operation that dominates
+%Alg.~\ref{alg:nonce_construction}. The following result assumes that
+%integers use a finite machine representation (for instance, $8$ bytes for \texttt{long} in Java)
+%and that prologs have a fixed structure and length.
 %
-\begin{proposition}\label{prop:nonce_construction_complexity}
-  The execution of Alg.~\ref{alg:nonce_construction}, in terms
-  of $\kappa$ and $\numberofscoops$, requires to hash
-  $O(\kappa\cdot\numberofscoops)$ bytes with $h_\deadline$.
-\end{proposition}
-\begin{proof}
-  Step~\ref{step:nonce_construction:first_hash} of Alg.~\ref{alg:nonce_construction}
-  hashes at most $\kappa$ bytes and gets iterated $2\cdot\numberofscoops$ times.
-  Step~\ref{step:nonce_construction:final_hash} hashes
-  $2\cdot\numberofscoops\cdot\size(h_\deadline)+|\pi|+\log(p)$ bytes. Therefore,
-  Alg.~\ref{alg:nonce_construction} hashes a number of bytes that is
-  \begin{align*}
-    &O(2\cdot\kappa\cdot\numberofscoops+2\cdot\numberofscoops\cdot\size(h_\deadline)+|\pi|+\log(p))\\
-    \text{(constants)}&=O(2\cdot\kappa\cdot\numberofscoops+2\cdot\numberofscoops)\\
-    \text{(since $\kappa>0$)}&=O(2\cdot\kappa\cdot\numberofscoops)\\
-    &=O(\kappa\cdot\numberofscoops).
-  \end{align*}
-  \qed
-\end{proof}
+%\begin{proposition}\label{prop:nonce_construction_complexity}
+%  The execution of Alg.~\ref{alg:nonce_construction}, in terms
+%  of $\kappa$ and $\numberofscoops$, requires to hash
+%  $O(\kappa\cdot\numberofscoops)$ bytes with $h_\deadline$.
+%\end{proposition}
+%\begin{proof}
+%  Step~\ref{step:nonce_construction:first_hash} of Alg.~\ref{alg:nonce_construction}
+%  hashes at most $\kappa$ bytes and gets iterated $2\cdot\numberofscoops$ times.
+%  Step~\ref{step:nonce_construction:final_hash} hashes
+%  $2\cdot\numberofscoops\cdot\size(h_\deadline)+|\pi|+\log(p)$ bytes. Therefore,
+%  Alg.~\ref{alg:nonce_construction} hashes a number of bytes that is
+%  \begin{align*}
+%    &O(2\cdot\kappa\cdot\numberofscoops+2\cdot\numberofscoops\cdot\size(h_\deadline)+|\pi|+\log(p))\\
+%    \text{(constants)}&=O(2\cdot\kappa\cdot\numberofscoops+2\cdot\numberofscoops)\\
+%    \text{(since $\kappa>0$)}&=O(2\cdot\kappa\cdot\numberofscoops)\\
+%    &=O(\kappa\cdot\numberofscoops).
+%  \end{align*}
+%  \qed
+%\end{proof}
 %
 A \emph{plot} is a set of nonces constructed with Alg.~\ref{alg:nonce_construction},
 for a finite non-empty set of progressive numbers $P$ and
