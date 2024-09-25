@@ -2,50 +2,51 @@
 
 A blockchain is a list of \emph{blocks}, each reporting the hash
 of its previous block, satisfying some consistency or \emph{consensus} rules.
-Blocks hold \emph{transactions}, whose exact nature is not relevant here.
-In general, they are requests to update the state of a global abstract machine:
-a ledger of payments (as in Bitcoin~\cite{Nakamoto08,Antonopoulos17})
-or a sort of global RAM where data structures are allocated and modified
+Blocks hold \emph{transactions}, whose exact nature is not relevant here:
+they are requests to update the state of a global abstract machine
+(a ledger of payments as in Bitcoin~\cite{Nakamoto08,Antonopoulos17})
+or a sort of global memory where data structures are allocated and modified
 (as in Ethereum~\cite{AntonopoulosW18}).
 By using hashes as machine-independent
 pointers, blockchains can be distributed in a network of peers.
 This is desirable since data gets safely duplicated
-and no special peer determines the history alone.
-However, peers expand the blockchain at will, independently from the other
+and no special peer determines the history by itself.
+However, peers expand the blockchain, independently from the other
 peers, hence the blockchain becomes a tree rather than a list.
-A notion of chain quality is used to incentivize peers to append blocks to the highest-quality chain
+A notion of chain quality incentivizes peers to append blocks to the highest-quality chain
 (the \emph{best} chain).
 Therefore, a peer might replace its current best chain with another, even better chain,
 a so called \emph{history change}.
 
 As presented above, peers are free to generate new blocks at maximal speed, flood the network
-with new blocks and make difficult the emergence of a best chain, with frequent history changes.
-This is an efficiency and security issue: history changes allow
+with new blocks and make the emergence of a best chain difficult.
+This is an efficiency and security issue: frequent history changes allow
 \emph{double spending}, when the same money is moved in the ledger twice, once in the current history
 and once in the updated history. The actual genious of Nakamoto~\cite{Nakamoto08} was to
 (largely) solve this issue with a consensus rule requiring blocks to answer a \emph{challenge}
 contained in their previous block. Namely, the binary hash of each block must be smaller than
 a \emph{difficulty} value computed at the previous block, directly bound to the quality of the chain.
 Therefore, who creates (\emph{mines}) of a new block runs a \emph{proof of work} algorithm
-that rotates (\emph{grinds}) many alternative values for a block field, called \emph{nonce}, until
-the hash of the block is smaller than the difficulty. This complicates the creation of new blocks,
+that rotates (\emph{grinds}) many alternative values for a block field (\emph{nonce}), until
+the hash of the block is smaller than the difficulty. This hardens the creation of new blocks,
 makes it impossible to create blocks at arbitrary speed and introduces an
-incentive to expanding the best chain only, rather than creating alternative histories by mining at multiple chains,
+incentive to expanding the best chain only,
+rather than creating alternative histories by mining on multiple chains,
 since otherwise the miner
 risks spending work (concretely, electricity) for creating blocks discarded by its peers.
-A miner gets remunerated for its work whenever it finds a new block before all other miners.
+%A miner gets remunerated for its work whenever it finds a new block before all other miners.
 
-The \emph{proof of work} is a brute-force algorithm,
+Proof of work is a brute-force algorithm,
 because of the non-correlation property of hash functions.
-Therefore, it consumes energy: Bitcoin is said to consume as much electricity as
-a medium-sized country; moreover, it is not egalitarian, being
+Therefore, it consumes energy (as much as a medium-sized country, for Bitcoin);
+moreover, it is not egalitarian, being
 worthwhile only in countries where electricity is cheap; furthermore, it
-runs more efficiently over dedicated, relatively expensive hardware (such as ASICs),
+is more efficient over dedicated, expensive hardware (such as ASICs),
 against the promise of a democratic and open network.
 Therefore, the current trend is towards the \emph{proof of stake}.
 This comes in different flavors, but
 the common idea is that mining is limited to a (static or dynamic, exclusive or delegatable)
-set of peers, that \emph{stake} a collateral to buy mining rights.
+set of peers, that \emph{stake} a collateral in exchange of mining rights.
 Many criticize proof of stake for being centralized and undemocratic
 (\emph{rich becomes richer}).
 Moreover, it suffers from what we call a \emph{start-up issue}: as long as the cryptocurrency
@@ -54,8 +55,7 @@ be updated, since there is no incentive for that. Moreover, miners in
 a proof of stake blockchain get punished (\emph{slashed}) if they misbehave or are offline, which
 might be perceived as unfair if that happens because of a connectivity issue or black-out.
 
-An alternative to proof of work and proof of stake is
-\emph{proof of space}~\cite{AtenieseBFG14,DziembowskiFKP15}, where
+A further alternative is \emph{proof of space}~\cite{AtenieseBFG14,DziembowskiFKP15}, where
 miners must dedicate a large chunk of disk memory for answering challenges.
 Its energy consumption is close to zero and no special
 hardware helps for mining, currently: the technology is both cheap
@@ -64,25 +64,25 @@ one to capitalize on unused memory, for free, while proof of work has always an
 inherent electricity cost.
 For fairness, proof of space protocols should only allow to generate answers of
 quality directly proportional to the allocated space, or otherwise they are said
-to suffer from a time/memory tradeoff.
-Moreover, \cite{ParkKFGAP18}~shows that
-cheap answers introduce new \emph{nothing-at-stake} security attacks,
-that are anti-economic with proof of work,
-since computing power can only be dedicated to one mining task:
+to suffer from a time/memory tradeoff. As a drawback,
+cheap answers introduce new \emph{nothing-at-stake} security attacks~\cite{ParkKFGAP18}
+(these are anti-economic with proof of work,
+since computing power can only be dedicated to one mining task):
 %
 \begin{description}
-\item[Block grinding:] Miners might find it profitable to mine many alternative new blocks, each holding
-  different transactions, hoping to find better answers to future challenges.
+\item[Block grinding:] Miners might find it profitable (\emph{rational})
+  to mine many alternative new blocks, each holding
+  different transactions, finally selecting the block that leads to better answers
+  to subsequent challenges.
 \item[Challenge grinding:] Miners might find it profitable
   to provide suboptimal answers to the current challenge if
-  this later generates further challenges for which they have much better answers.
+  this leads to subsequent challenges for which they have much better answers.
 \item[Mining on multiple chains:] Miners might find it profitable
-  to mine multiple chains simultaneously (not only the best chain).
+  to mine multiple chains simultaneously (not only the best one).
 \end{description}
 %
 These attacks increase the risk of double spending and make it convenient
-(\emph{rational}) to mine through space \emph{and} work, therefore neutralizing the benefits
-of proof of space.
+to mine through space \emph{and} work, thus neutralizing the benefits of proof of space.
 
 Another nothing-at-stake problem, that has not received great attention up to now,
 is the \emph{newborn attack}~\cite{TangZDWLG0L19}: a miner that has allocated a large space
@@ -100,28 +100,29 @@ implementation of the protocol, exists~\cite{ParkKFGAP18}. This has two reasons:
 \item the protocol includes an \emph{initialization phase},
   run for each new prover (miner) that joins the blockchain,
   that complicates the protocol itself and
-  requires to spend cryptocurrency even \emph{before}
-  starting mining. Compare this with Bitcoin, for instance, that allows one to start mining
-  and \emph{later} collect cryptocurrency. This initialization is a barrier against new
-  miners, that is, a limit to democracy;
-\item as stated in~\cite{AbusalahACKPR17}, answers to challenges (called \emph{proofs}),
-  included in blockchain, are relatively large:
+  requires to spend cryptocurrency \emph{before}
+  starting mining;
+  %Compare this with Bitcoin, for instance, that allows one to start mining
+  %and \emph{later} collect cryptocurrency. This initialization is a barrier against new
+  %miners, that is, a limit to democracy;
+\item answers to challenges (\emph{proofs}),
+  included in blockchain, are relatively large~\cite{AbusalahACKPR17}:
   kilobytes or even megabytes for proofs created in the initialization phase.
 \end{enumerate}
-%
+
 Signum~\cite{Signum} is a fully-fledged implementation, but it is not based on graph pebbling.
 In Signum, each miner precomputes a large \emph{plot file} of hashes, that is not shared nor
 stored in blockchain.
 A peer that wants to mine the next block derives a challenge from the current blockchain head
-and challenges the miner for an answer, called
-\emph{deadline}\ie a small (around $200$ bytes) data structure, derived from the plot, with a quality measure
-(its \emph{waiting time}) that, on average, is proportional to the size of the plot file.
+and challenges a miner for an answer, called
+\emph{deadline}\ie a small (around $200$ bytes) data structure, derived from the plot,
+with a quality measure
+(its \emph{waiting time}) proportional, on average, to the size of the plot.
 Signum's protocol is attractive since it has no initialization phase (each miner creates its plot file
 independently and off-line) and its answers are very small.
-But the theory behind Signum has never been formalized
-or even defined up to now.
+But the theory behind Signum has never been formalized nor defined up to now.
 Moroever, \cite{ParkKFGAP18}~warns about a potential block grinding attack.
-Without a formalization, it is even impossible to judge if it is a real attack.
+Without a formalization, it is impossible to judge if it is real.
 
 Therefore, this paper provides the following contributions about Signum:
 %
@@ -138,14 +139,14 @@ is actually supported by a formal theory and
 protected from a large class of attacks.
 
 The rest of this paper is organized as follows.
-Sec.~\ref{sec:nonces_and_plots} formalizes structure and initialization of the space used for mining.
-Sec.~\ref{sec:challenges_and_deadlines} defines the challenges that the proof of space
-algorithm must solve, and their answers, called \emph{deadlines}.
+Sec.~\ref{sec:nonces_and_plots} formalizes the structure of the space used for mining.
+Sec.~\ref{sec:challenges_and_deadlines} defines the challenges that the consensus
+algorithm must solve, and their answers (deadline).
 Sec.~\ref{sec:blockchain_construction} presents Signum's mining algorithm.
 Sec.~\ref{sec:prolog_structure_attacks} studies grinding attacks
 in Signum and proposes a new solution against newborn attacks.
 Sec.~\ref{sec:related_work} presents related work.
-Sec.~\ref{sec:conclusion} concludes the paper.
+Sec.~\ref{sec:conclusion} concludes.
 
 \vspace*{1ex}
 \textbf{Acknowledgments:}

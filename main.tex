@@ -12,6 +12,7 @@
 \usepackage{graphicx}
 \usepackage[T1]{fontenc}
 \usepackage{listings, framed}
+\usepackage{orcidlink}
 
 \lstset{
   language=Java,
@@ -96,28 +97,27 @@
 \newcommand{\NonGenesisBlocks}{{\mathsf{NonGenesisBlocks}}}
 \newcommand{\Deadlines}{{\mathsf{Deadlines}}}
 
-%
 \begin{document}
-%
+
 \begin{frontmatter}
 
   \title{A Formalization of Signum's Consensus}
 
-  \author{Fausto Spoto}
-  \institute{Dipartimento di Informatica, Universit\`a di Verona, Verona, Italy\\
+  \author{Fausto Spoto\orcidlink{0000-0003-2973-0384}}
+  \institute{Dipartimento di Informatica, Universit\`a di Verona, Italy\\
     \email{fausto.spoto@univr.it}}
 
   \maketitle
 
   \begin{abstract}
-    Bitcoin's proof of work consumes energy and currently requires
+    Bitcoin's proof of work consensus consumes energy and requires
     dedicated, expensive hardware. Therefore, alternatives have been proposed,
     including proof of stake and proof of space. The latter requires to allocate
-    disk space for mining, instead of CPU power. A few theoretical and
-    implemented proof of space solutions exist. Signum is one of them:
+    disk space for mining, instead of CPU power. Among the few theoretical or
+    implemented existing proof of space solutions, Signum is
     a blockchain network that runs since ten years, has a relatively simple
     consensus algorithm but lacks any formalization.
-    This paper formalizes Signum's consensus algorithm and uses that formalization
+    This paper formalizes Signum's consensus and uses that formalization
     to show that Signum is free from block grinding attacks and is largely
     protected from challenge grinding attacks. Moreover, this paper proposes
     a new protection for Signum against newborn attacks.
