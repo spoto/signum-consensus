@@ -102,6 +102,32 @@ Therefore, a challenge grinding attack in Signum
 would require to use many plots, with different keys, all in control of the peer,
 and grind among the plots. However, the number of plots is limited by the space
 allocated to the algorithm and the same set of plots
-would be used at each mining step, which highly
-limits the power of grinding. For additional protection, it is always possible to use
-one of the techniques present in literature (Sec.~\ref{sec:related_work}).
+would be used at each mining step, since they are to expensive to compute
+on the fly during grinding. This highly
+limits the benefits of grinding. For additional protection, it is always possible to use
+one of the techniques presented in~\cite{ParkKFGAP18} (see Sec.~\ref{sec:related_work}).
+
+Signum does not seem to have any protection against mining on different chains instead.
+The only possibility here seems to use the penalty transactions used in~\cite{ParkKFGAP18}
+and challenges that
+are not built from the previous block but from a predecessor block deeper in the chain
+(see Sec.~\ref{sec:related_work}).
+
+The original definition of Burstcoin was shown to have a time/memory tradeoff~\cite{ParkKFGAP18}:
+it was possible to store $\finalhash$ only instead of each full nonce
+(see step.~\ref{step:nonce_construction:final_hash} of Alg.~\ref{alg:nonce_construction}) and
+reconstruct (some) scoops on demand. The resulting (mining power)/(space used) ratio was proportionally higher
+than by storing the full nonces,
+``at the price of having to compute a modest number of extra hashes''~\cite{ParkKFGAP18}.
+We agree with the attack but not with the \emph{modest number} part: the discussion in Appendix~B
+of~\cite{ParkKFGAP18} confuses plots with nonces and does not recognize that that modest number
+must be computed for all nonces in the plot, which are easily too many, considering the
+cost of the shabal256 hashing algorithm (Tab.~\ref{tab:notations}). In any case, the developers
+of Signum have modified Alg.~\ref{alg:nonce_construction} with the addition of
+step~\ref{step:nonce_construction:swap}, in order to cope with this time/memory tradeoff.
+That extra step requires one to compute all $h_i$ in order to compute the scoops.
+Therefore, this specific time/memory tradeoff does not occur anymore. Of course, proving
+that the addition of step~\ref{step:nonce_construction:swap} is enough to ban all
+time/memory tradeoffs remains an open question,
+a daunting task that goes well beyond the scope of this paper.
+
