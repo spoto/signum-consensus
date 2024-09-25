@@ -1,16 +1,14 @@
 \section{Nonces and Plots}\label{sec:nonces_and_plots}
 
-This section formalizes the notion of plot, a collection of nonces, together with their
-algorithmic construction. Signum's algorithm requires miners to hold one or more plots
-in their memory. Their initialization is performed only ones and offline, hence it is
+This section formalizes the notion of plot, a collection of nonces, and their
+algorithmic construction. Signum requires miners to hold one or more plots
+on disk. Their initialization is performed only once and offline, hence it is
 not part of the mining protocol.
 
-Tab.~\ref{tab:notations} collects some notations,
-introduced here and used throughout the paper.
-It also reports the specific choices
-made in~\cite{SignumPlotting} for such notations, but this paper remains parametric \wrt them.
-Note that we distinguish three hashing functions in our formalizations, although they
-might actually coincide. We prefer to remain as generic as possible.
+Tab.~\ref{tab:notations} collects notations introduced here and used throughout the paper.
+It also reports specific choices
+made in~\cite{SignumPlotting} (rightmost column), but this paper remains parametric \wrt them.
+For genericity, our formalization uses three hashing functions, that might actually coincide.
 
 \begin{table}[t]
 \begin{center}
@@ -18,7 +16,7 @@ might actually coincide. We prefer to remain as generic as possible.
   \hline
   \textbf{notation} & \textbf{meaning} & \textbf{in~\cite{SignumPlotting}}\\\hline\hline
 
-  $\append$ & concatenation on sequences & \\\hline
+  $\append$ & concatenation of sequences & \\\hline
   $\numberofscoops$ & number of scoops contained in a nonce & $4096$\\\hline
 
   $h_\deadline$ & hashing function for computing nonces, plots and deadlines & shabal256\\\hline
@@ -47,12 +45,12 @@ The following definitions are used to deal with bytes and hashing.
 %
 \begin{definition}[Concatenation operator $\bowtie$]
   Sequences (for instance, of bytes) are concatenated by $\bowtie$. The same $\bowtie$
-  is used to concatenate a sequence to a element or an element to a sequence.
+  is used to concatenate a sequence to an element or an element to a sequence.
 \end{definition}
 %
 \begin{definition}[$\nattobe$ and $\betonat$]
   The operators $\nattobe$ and $\betonat$ transform natural numbers
-  into their big-endian representation, and vice versa.
+  into their big-endian byte representation, and vice versa.
 \end{definition}
 %
 \begin{definition}[Hashing function]
@@ -65,10 +63,10 @@ The following definitions are used to deal with bytes and hashing.
 
 A \emph{scoop} is a pair of hashes.
 A \emph{nonce} is a non-negative \emph{progressive number} $p$, and
-a list of $\numberofscoops>0$ scoops or, equivalenty,
-a list of $2\cdot\numberofscoops$ hashes for $h_\deadline$.
-Their definitions are parametric \wrt a hashing
-function $h_\deadline$ used for their creation.
+a list of $\numberofscoops>0$ scoops.
+%or, equivalenty,
+%a list of $2\cdot\numberofscoops$ hashes for $h_\deadline$.
+Their definitions are parametric \wrt the hashing function $h_\deadline$ used for their creation.
 %
 \begin{definition}[Scoop, Nonce]
   The sets of \emph{scoops} and \emph{nonces} are
@@ -84,37 +82,33 @@ function $h_\deadline$ used for their creation.
   \]
 \end{definition}
 %
-In the above definition, angular brackets stand for tuples. In this specific
-case, they stand for pairs. When definitions are given in terms of tuples, as above
-for $\Scoops$ and $\Nonces$, we silently assume that there are selection functions
+In the above definition, angular brackets stand for tuples (in this specific
+case, they stand for pairs). When definitions are given in terms of tuples,
+it is silently assumed that there are selection functions
 for the elements of the tuple. For instance, if $\nonce\in\Nonces$, then $\nonce.p$
-and $\nonce.\scoops$ are the fields of the pair $\nonce$.
+and $\nonce.\scoops$ are its components.
 
 A \emph{prolog} is the identifier of the creator of nonces and plots (for instance, its public key).
-For now, it is just a sequence of bytes. Sec.~\ref{sec:attacks_and_protections}
+For now, it is just a sequence of bytes. Sec.~\ref{sec:prolog_structure_attacks}
 will give structure to prologs and see how they can be useful.
 %
 \begin{definition}[Prolog]\label{def:prolog}
-  The set of \emph{prologs} is
-  \[
-  \Prologs=\{\pi\mid\pi\in\mathit{bytes}^*\}.
-  \]
+  The set of \emph{prologs} is $\Prologs=\{\pi\mid\pi\in\mathit{bytes}^*\}$.
 \end{definition}
 %
 The following algorithm constructs a nonce, given its progressive number and a prolog.
 It uses a constant $\kappa>0$ (Tab.~\ref{tab:notations})
-to limit its computational cost, hence avoiding to hash very large chunks of data.
+to limit its computational cost, by avoiding hashing very large chunks of data.
 %
 \begin{alg}[$\nonce(p,\pi)$]\label{alg:nonce_construction}
-  Given $p\in\mathbb{N}$ and $\pi\in\Prologs$, let
+  Given $p\in\mathbb{N}$ and $\pi\in\Prologs$, we define
   \[
   \nonce(p,\pi)=\langle p,\langle h_0,h_1\rangle\append
   \cdots\append\langle h_{2\cdot\numberofscoops-2},h_{2\cdot\numberofscoops-1}\rangle\rangle\in\Nonces,
   \]
   where the hashes $h_0,\ldots,h_{2\cdot\numberofscoops-1}$ are constructed as
   follows\footnote{Step.~\ref{step:nonce_construction:swap} has been added
-  after the formalization of this algorithm given in~\cite{ParkPAFG15} and
-  in response to their criticisms. See Sec.~\ref{sec:attacks_and_protections} for a discussion.}.
+  in response to some criticism in~\cite{ParkKFGAP18}. See Sec.~\ref{sec:prolog_structure_attacks}.}.
   %
   \begin{enumerate}
   \item Let $\seed=\pi\append\nattobe(p)$.
@@ -124,8 +118,8 @@ to limit its computational cost, hence avoiding to hash very large chunks of dat
     take the \emph{last} $\kappa$ bytes, but an inspection of their code
     shows that they actually take the \emph{first} $\kappa$ bytes. They
     probably use \emph{last} here in the sense of \emph{more recently computed}.
-    This threshold $\kappa$ seems to have been added after the formalization of
-    this algorithm given in~\cite{ParkPAFG15}, where it is not present.}
+    This $\kappa$ seems to have been added after the
+    publication of~\cite{ParkKFGAP18}.}
     \[
     h_i=h_\deadline\left(\text{first $\kappa$ bytes of}\left(\left(\append_{i<j<2\cdot\numberofscoops}h_j\right)\append\seed\right)\right).
     \]
