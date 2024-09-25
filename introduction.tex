@@ -65,21 +65,31 @@ inherent electricity cost.
 For fairness, proof of space protocols should only allow to generate answers of
 quality directly proportional to the allocated space, or otherwise they are said
 to suffer from a time/memory tradeoff.
-Moreover, \cite{ParkKFGAP18} shows that
-cheap answers actually introduce new security attacks,
-known as \emph{nothing-at-stake} problems, such as \emph{block grinding},
-\emph{challenge grinding} and \emph{mining on multiple chains},
-and proposes solutions to cope with them.
+Moreover, \cite{ParkKFGAP18}~shows that
+cheap answers introduce new \emph{nothing-at-stake} security attacks,
+that are anti-economic with proof of work,
+since computing power can only be dedicated to one mining task:
+%
+\begin{description}
+\item[Block grinding:] Miners might find it profitable to mine many alternative new blocks, each holding
+  different transactions, hoping to find better answers to future challenges.
+\item[Challenge grinding:] Miners might find it profitable
+  to provide suboptimal answers to the current challenge if
+  this later generates further challenges for which they have much better answers.
+\item[Mining on multiple chains:] Miners might find it profitable
+  to mine multiple chains simultaneously (not only the best chain).
+\end{description}
+%
 These attacks increase the risk of double spending and make it convenient
 (\emph{rational}) to mine through space \emph{and} work, therefore neutralizing the benefits
 of proof of space.
+
 Another nothing-at-stake problem, that has not received great attention up to now,
 is the \emph{newborn attack}~\cite{TangZDWLG0L19}: a miner that has allocated a large space
 for mining for a blockchain network $N$ could use the same space, unchanged, for
 mining for a newborn, small network $N'$. If the total space used by the peers of $N'$ is
 initially relatively small, it could be possible for the miner to hijack the history of $N'$,
-effectively taking its control. These attacks are anti-economic with proof of work,
-since computing power can only be dedicated to one mining task.
+effectively taking its control.
 
 Most theoretical formalizations of proof of space~\cite{AtenieseBFG14,DziembowskiFKP15,RenD16} are
 based on challenges against graphs of high pebbling complexity, but
@@ -99,11 +109,10 @@ implementation of the protocol, exists~\cite{ParkKFGAP18}. This has two reasons:
   kilobytes or even megabytes for proofs created in the initialization phase.
 \end{enumerate}
 %
-The only full-fledged implementation of a proof of space blockchain is Signum~\cite{Signum},
-that is not based on graph pebbling.
-In Signum, each miner allocates a large \emph{plot file} of hashes, that is not shared nor
+Signum~\cite{Signum} is a fully-fledged implementation, but it is not based on graph pebbling.
+In Signum, each miner precomputes a large \emph{plot file} of hashes, that is not shared nor
 stored in blockchain.
-A peer that wants to mine the next block derives a challenge from the current head of the blockchain
+A peer that wants to mine the next block derives a challenge from the current blockchain head
 and challenges the miner for an answer, called
 \emph{deadline}\ie a small (around $200$ bytes) data structure, derived from the plot, with a quality measure
 (its \emph{waiting time}) that, on average, is proportional to the size of the plot file.
@@ -111,19 +120,17 @@ Signum's protocol is attractive since it has no initialization phase (each miner
 independently and off-line) and its answers are very small.
 But the theory behind Signum has never been formalized
 or even defined up to now.
-Moroever, \cite{ParkKFGAP18}~warns about a potential block grinding attack and
-a time/memory tradeoff, that the developers of Signum have allegedly solved,
-but nothing has been proved nor published about it. Without a formalization, it is
-even impossible to judge if such attacks are real.
+Moroever, \cite{ParkKFGAP18}~warns about a potential block grinding attack.
+Without a formalization, it is even impossible to judge if it is a real attack.
 
-Therefore, this paper provides the following contributions to Signum's algorithm:
+Therefore, this paper provides the following contributions about Signum:
 %
 \begin{itemize}
-\item a formalization of the algorithm, recostructed and interpolated from a very informal and partial
-  web description~\cite{SignumPlotting} and its poorly commented source code~\cite{SignumSource};
-\item a proof that block grinding attacks cannot occur, against the hint in~\cite{ParkKFGAP18};
-\item a proof that challenge grinding attacks cannot occur;
-\item a protection against newborn attacks.
+\item a formalization of its algorithm, recostructed and interpolated from a very informal and partial
+  description~\cite{SignumPlotting} and its poorly commented code~\cite{SignumSource};
+\item a proof that block grinding attacks are impossible, contrary to previous hints~\cite{ParkKFGAP18};
+\item a proof that challenge grinding attacks are limited;
+\item a new protection against newborn attacks.
 \end{itemize}
 %
 These results are relevant since they show that Signum's consensus
@@ -134,16 +141,14 @@ The rest of this paper is organized as follows.
 Sec.~\ref{sec:nonces_and_plots} formalizes structure and initialization of the space used for mining.
 Sec.~\ref{sec:challenges_and_deadlines} defines the challenges that the proof of space
 algorithm must solve, and their answers, called \emph{deadlines}.
-Sec.~\ref{sec:blockchain_construction} presents the blockchain and the mining algorithm
-based on proof of space.
-Sec.~\ref{sec:prolog_structure_attacks} proposes to structure the identifiers of
-the deadlines in a new way, with many benefits, including a protection against new born attacks.
-It shows that the algorithm is not subject to grinding attacks and discusses other potential attacks.
-Sec.~\ref{sec:related_work} discusses related work.
+Sec.~\ref{sec:blockchain_construction} presents Signum's mining algorithm.
+Sec.~\ref{sec:prolog_structure_attacks} studies grinding attacks
+in Signum and proposes a new solution against newborn attacks.
+Sec.~\ref{sec:related_work} presents related work.
 Sec.~\ref{sec:conclusion} concludes the paper.
 
 \vspace*{1ex}
 \textbf{Acknowledgments:}
-We thank the developers of Signum for discussions on their Discord channel (where, however, most
-of our questions remained unanswered) and K.\ Pietrzak for discussing solutions to
+We thank the developers of Signum for discussions on their Discord channel
+and K.\ Pietrzak for discussing solutions to
 grinding attacks and theoretical issues about Signum.

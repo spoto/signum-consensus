@@ -70,31 +70,22 @@ that are related to the actual game theory and implementation of proof of space.
 For instance, it uses the public key of the verifier as an input parameter
 for graph pebbling, to combat the creation of mining pools, often seen
 negatively~\cite{MillerKKS15}.
-Furthermore, it studies nothing-at-stake problems, that increase the risk of double spending
-and push miners to mine with a mix of proof of space and proof of work,
-thus nullifying the benefits of the former, and solutions to such problems:
-%
-\begin{enumerate}
-\item Miners might find it profitable to mine multiple chains simultaneously (not only the best chain);
-  their solution is spot such behavior and impose penalty transactions against the culprit.
-  Such transactions include paits of blocks, as evidence, which is
-  problematic since transactions are, in turn, included in blocks and this makes it impossible to define
-  a maximal block size, a basic security requirement of every blockchain.
-  We have discussed this with K.\ Pietrzak who suggested that this could be actually optimized
-  by reporting signed hashes only.
-\item Miners might find it profitable to mine many alternative new blocks, each holding
-  different transactions, hoping to find better answers to future challenges (block grinding): their
-  solution is to make the challenge independent from the transactions in the block,
-  by splitting the
-  blockchain in a proofs blockchain and in a transactions blockchain: only the first is used for mining,
-  and the two are connected with the signature of the miner.
-\item Miners might find it profitable to provide suboptimal answers to the current challenge if
-  this allows them to provide much better answers later (challenge grinding): their solution is
-  to let past blocks influence the quality of short sequences of future blocks only.
-  The solution in~\cite{CohenP19} is more drastic: use the same challenge for several consecutive blocks,
-  since it is unlikely that a challenge will be good for many consecutive blocks.
-\end{enumerate}
-%
+Furthermore, it provides solutions for nothing-at-stake problems. Against block grinding,
+they make challenges independent from the transactions in the blocks, by splitting the
+blockchain in a proofs blockchain and in a transactions blockchain: only the first is used for mining,
+and the two are connected with the signature of the miner.
+Against challenge grinding, they let past blocks influence the quality of short sequences
+of future blocks only. This is similar to the more drastic solution in~\cite{CohenP19}:
+use the same challenge for several consecutive blocks,
+since it is unlikely that a challenge will be good for many consecutive blocks.
+Against mining on multiple chains, they propose a technique that spots such behavior and
+imposes a penalty transaction against the culprit.
+%The latter includes pairs of blocks, as evidence, which is
+%problematic since transactions are, in turn, included in blocks and this makes it impossible to define
+%a maximal block size, a basic security requirement of every blockchain.
+%We have discussed this with K.\ Pietrzak who suggested that this could be actually optimized
+%by reporting signed hashes only.
+
 Actual experiments are reported in~\cite{ParkKFGAP18},
 that provide an estimation of the size of Spacemint's proofs:
 in the initialization phase, they are between two and three megabytes;
@@ -104,18 +95,10 @@ blockchain (for each new miner, in the first case, and for each new block, in th
 This makes the size of the blockchain much larger than in Bitcoin, and requires
 that miners hold cryptocurrency to store proofs even before starting mining.
 
-Signum~\cite{Signum}, previously Burstcoin, is
-a full-fledged blockchain based on proof of space, including a smart contract language,
-launched in 2014 and still active.
-A formalization of an old version of Alg.~\ref{alg:nonce_construction}
-is reported in Appendix B of~\cite{ParkKFGAP18}.
-The same paper states that Burstcoin has some
-time/memory tradeoffs (``a miner doing a little extra computation can mine at the same
-rate as an honest miner, while using just a small fraction (\emph{e.g.}, 10\%) of the space''),
-which the developers of Signum assert to have solved. Moreover, the latest version of Signum
-seems to have separated data in a proofs blockchain and a transactions blockchain,
-an idea clearly borrowed from~\cite{ParkKFGAP18}. However, there is no evidence that this
-has been done correctly.
+Signum~\cite{Signum}, previously Burstcoin, has been launched in 2014, with possibly
+the first language for smart contracts, and is still active.
+Appendix B of~\cite{ParkKFGAP18} reports a formalization of an old version
+of Alg.~\ref{alg:nonce_construction}.
 
 Newborn attacks are considered in~\cite{TangZDWLG0L19}. Their solution is
 to split the space for mining on many chains, with an
