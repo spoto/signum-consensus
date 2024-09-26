@@ -21,13 +21,15 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
-      - name: Check pdf files
+      - name: Check PDF file
         run: |
           file main.pdf | grep -q ' PDF '
+      - name: Rename PDF file
+        run: mv main.pdf signum-consensus.pdf
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: main
+          name: signum-consensus
           path: |
-            main.pdf
+            signum-consensus.pdf
         if: always()
