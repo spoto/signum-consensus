@@ -121,35 +121,32 @@ it only uses the trunk inside the block.
   \]
 \end{definition}
 
-In the following, it is shown how the information inside a block is used to construct
-the information inside its son(s). The computation of the next weighted beat
-gives more or less weight to the previous weighted beat, depending on a constant $\oblivion$.
-Therefore, the latter ($0\le\oblivion\le 1$) expresses how quickly the acceleration reacts to changes
-in mining power. The computation of the next power uses the same formula of Bitcoin~\cite{WalkerG24},
-adapted to our context: the maximal (hence worse) deadline's value $2^{8\cdot\size(h_\deadline)}$ is compared
-to the actual deadline's value and their ratio expresses how much space has been used to compute the deadline.
+Def.~\ref{def:next} shows how the information inside a block is used to construct
+that inside its sons. It is actually our proposal, since there is no information
+in~\cite{SignumPlotting} about this. The computation of the next weighted beat
+gives more or less weight to the previous weighted beat, depending on a constant $\oblivion$
+($0\le\oblivion\le 1$) that expresses how quickly the acceleration reacts to changes
+in mining power. The computation of the next power uses the same formula
+of Bitcoin~\cite{WalkerG24}, adapted to our context: the ratio between the maximal (hence worse)
+deadline's value $2^{8\cdot\size(h_\deadline)}$ and the actual deadline's value
+expresses how much space has been used to compute the deadline.
 %
 \begin{definition}[Next functions]\label{def:next}
   Let $b\in\Blocks$ and $\delta\in\Deadlines$. We define
-  \[
-  \nextwaitingtime(b,\delta)=b.\tau+\waitingtime(\delta,b.\alpha)
-  \]
-  \[
-  \nextweightedbeat(b,\delta)=\begin{array}{c}
-  \waitingtime(\delta,b.\alpha)\cdot\oblivion\\
-  +b.\weightedbeat\cdot(1-\oblivion)
-  \end{array}
-  \]
-  \[
-  \nextacceleration(b,\delta)=\frac{b.\alpha\cdot\nextweightedbeat(b,\delta)}{\beat}
-  \]
-  \[
-  \nextpower(b,\delta)=b.\power+\frac{2^{8\cdot\size(h_\deadline)}}{\betonat(\delta.\mathit{value})+1}.
-  \]
+  %
+  \begin{align*}
+    \nextwaitingtime(b,\delta)&=b.\tau+\waitingtime(\delta,b.\alpha),\\
+    \nextweightedbeat(b,\delta)&=\begin{array}{c}
+    \waitingtime(\delta,b.\alpha)\cdot\oblivion\\
+    +b.\weightedbeat\cdot(1-\oblivion)
+    \end{array},\\
+    \nextacceleration(b,\delta)&=\frac{b.\alpha\cdot\nextweightedbeat(b,\delta)}{\beat},\\
+    \nextpower(b,\delta)&=b.\power+\frac{2^{8\cdot\size(h_\deadline)}}{\betonat(\delta.\mathit{value})+1}.
+  \end{align*}
 \end{definition}
-
-We are finally ready to show how the next block of $b$ is constructed, once
-a deadline $\delta$ has been chosen for it.
+%
+Finally, Def.~\ref{def:next_block} shows how a next block is constructed, once
+a deadline has been chosen for it.
 %
 \begin{definition}[Next block]\label{def:next_block}
   Let $b\in\Blocks$ and $\delta\in\Deadlines$. We define
@@ -165,7 +162,7 @@ a deadline $\delta$ has been chosen for it.
 \end{definition}
 
 A blockchain is a set of blocks, linked through their $\previousblockhash$ field.
-It must contain exactly one genesis block; it has no hash collisions among its blocks;
+It must contain exactly one genesis block; there is no hash collision among its blocks;
 and all its blocks must satisfy the \emph{consensus rules}.
 %
 \begin{definition}[Blockchain, Consensus]\label{def:blockchain}
@@ -210,17 +207,17 @@ and all its blocks must satisfy the \emph{consensus rules}.
 %
 The above consensus rules, reconstructed and interpolated
 from~\cite{SignumPlotting,SignumSource},
-do not constrain the prolog of the deadlines in any way:
-each block can have an arbitrary prolog. Later, it will be shown why it is useful to
-restrain prologs with an extra consensus rule.
+do not constrain the prologs of the deadlines:
+each block can have an arbitrary prolog. Sec.~\ref{sec:prolog_structure_attacks}
+will show why it is useful to restrain prologs with extra consensus rules.
 %
 \begin{definition}[Blockchain network]\label{def:blockchain_network}
   A \emph{blockchain network} is a
   network of \emph{peers} (computers), each connected to the other peers,
-  each holding its own version of a blockchain, for the same genesis block.
+  each holding its own vision of the blockchain, all for the same genesis block.
   Each peer holds a plot (Def.~\ref{def:plot}) in its memory, starts with
-  a blockchain that only holds a single block and runs two
-  algorithms, concurrently: the \emph{block mining} algorithm
+  a blockchain that only holds a single block and runs,
+  concurrently, the \emph{block mining} algorithm
   and the \emph{block mined} algorithm.
 \end{definition}
 %
@@ -232,7 +229,8 @@ The goal here is to keep the picture as simple as possible and concentrate on th
 Signum's consensus only: Def.~\ref{def:blockchain_network} does not pretend
 to describe a real blockchain implementation.
 
-The block mining algorithm looks for the most powerful block in blockchain,
+The block mining algorithm, referred in Def.~\ref{def:blockchain_network},
+looks for the most powerful block in blockchain,
 mines a new block on top of it, adds it to the blockchain and whispers it to the connected peers.
 %
 \begin{alg}[Block mining]\label{alg:block_mining}
@@ -240,7 +238,7 @@ mines a new block on top of it, adds it to the blockchain and whispers it to the
   is the following infinite loop:
   %
   \begin{enumerate}
-  \item\label{step:block_mining:loop} identify a most powerful\footnote{In theory, more blocks might be the most powerful in blockchain, although this is highly unlikely; in that case, any of them will be chosen.} block $p$ in $B$;
+  \item\label{step:block_mining:loop} identify a most powerful\footnote{In theory, more \emph{most powerful blocks} might exist in blockchain, although this is highly unlikely; in that case, step~\ref{step:block_mining:loop} will choose any of them.} block $p$ in $B$;
   \item\label{step:block_mining:next_challenge} compute $c=\nextchallenge(p)$ (Def.~\ref{def:next_challenge_from_block});
   \item\label{step:block_mining:next_deadline} compute $\delta'=\delta(\plot,c)$ (Def.~\ref{def:deadline_from_plot}), where $\plot$
     if the plot of $P$;
@@ -266,25 +264,25 @@ and adds it to the blockchain.
   \end{enumerate}
 \end{alg}
 %
-In practice, step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined} should
-allow the addition only of blocks $b$ that are \emph{powerful enough} to look useful,
-in order to avoid filling the memory with useless blocks. This is not relevant in this paper.
+In practice, step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined} could
+only allow the addition of $b$ if it looks \emph{powerful enough},
+in order to avoid filling the memory with useless blocks. This is not relevant here.
 Moreover, if the whispered block $b$
 at step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined} is more
 powerful than $b'$ at step~\ref{step:block_mining:wait} of Alg.~\ref{alg:block_mining},
 a rational peer would interrupt the wait at step~\ref{step:block_mining:wait}
 of Alg.~\ref{alg:block_mining}, discard $b'$ and restart Alg.~\ref{alg:block_mining}
-from step~1, since the whispered $b'$ is better than the block $b$ that it is trying to mine,
-hence it is wiser to stop wasting time and start mining on top of the new best block $b'$.
+from step~1, since the whispered $b$ is better than the block $b'$ that it is trying to mine,
+hence it is wiser to stop waiting and start mining on top of the new best block $b$.
 Such optimizations are not considered here.
 
-Note that peers check the validity of blocks coming from outside
+Peers check the validity of blocks coming from outside
 (step~\ref{step:block_mined:add} of Alg.~\ref{alg:block_mined}), since they do not trust
 their connected peers. Instead, they do not check the validity of the blocks that they
 mine themselves (step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}),
-since they are valid by construction, as shown below. This
-guarantees that $B$ remains a blockchain in every peer, as Prop.~\ref{prop:mining_is_sound} shows.
-The hypothesis on no hash collisions is standard for blockchains.
+since they are valid by construction. Namely,
+Prop.~\ref{prop:mining_is_sound} guarantees that $B$ remains a blockchain in every peer.
+The hypothesis on no hash collision is standard for blockchains.
 %
 \begin{proposition}\label{prop:mining_is_sound}
   If no hash collision occurs at step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining},
