@@ -1,4 +1,4 @@
-name: Build LaTeX documents
+name: LaTeX-Build
 
 # Controls when the action will run. 
 on:

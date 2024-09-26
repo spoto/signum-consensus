@@ -1,4 +1,4 @@
-[![Latex-Build Action Status](https://github.com/spoto/signum-consensus/workflows/Build/badge.svg)](https://github.com/spoto/signum-consensus/actions)
+[![LaTeX-Build Action Status](https://github.com/spoto/signum-consensus/workflows/LaTeX-Build/badge.svg)](https://github.com/spoto/signum-consensus/actions)
 
 # A Formalization of Signum's Consensus
 
