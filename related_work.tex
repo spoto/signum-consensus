@@ -1,7 +1,7 @@
 \section{Related Work}\label{sec:related_work}
 
 Proof of work was originally meant as protection against email spam~\cite{DworkN92}:
-email senders must perform some work to have emails accepted by their recipient.
+senders must perform some work to have their emails accepted by the recipients.
 %The input includes
 %the address of the recipient and the date of sending, in order to ban
 %recycling of work.
@@ -14,20 +14,19 @@ Most current blockchains use some form of proof of stake nowadays.
 
 The theoretical background of proof of space was independently developed
 in two seminal papers~\cite{AtenieseBFG14,DziembowskiFKP15}.
-They feature similarities but also significant differences. Both are based
-on directed acyclic graphs (DAGs) of high pebbling complexity.
+%They feature both similarities and significant differences.
+Both are based on directed acyclic graphs (DAGs) of high pebbling complexity.
 Pebbling, here, is a directed hash decoration of the nodes of the DAG, as in a Merkle tree.
 A prover must keep such a (big) DAG and its pebbling on disk, in order to answer, efficiently,
 challenges with proofs that should convince a verifier that
-the prover is actually keeping the DAG on disk.
+the prover is actually keeping data on disk.
 While~\cite{DziembowskiFKP15} requires space to remain allocated between challenges
 (proof of \emph{persistent} space), \cite{AtenieseBFG14}~requires one
 to allocate space only when answering challenges
-(proof of \emph{transient} space or a \emph{proof of secure erasure}, as~\cite{DziembowskiFKP15} calls it).
+(proof of \emph{transient} space or \emph{proof of secure erasure}, as~\cite{DziembowskiFKP15} calls it).
 Both solutions have an initialization phase, when the verifier performs a deeper challenge
 of the prover and stores the resulting (big) proof in blockchain, followed by an execution phase,
-when the verifier challenges the prover for each new block.
-Also~\cite{RenD16} uses
+when the verifier challenges the prover for each new block. Also~\cite{RenD16} uses
 pebbling for stacked expander graphs, to get simpler, more efficient and
 provably space-hard solutions.
 It works for both proof of transient space and proof of persistent space.
@@ -36,7 +35,8 @@ and related techniques: memory-hard functions, proof of secure erasure, provable
 proof of retrievability.
 
 Time/memory tradeoffs are studied in~\cite{Reyzin23}. They occur if
-the prover stores only a part of the file on disk.
+the prover can store only a part of the data on disk, with a less than proportional
+degradation of its mining capabilities.
 A good proof of space algorithm should make it difficult for a prover to recover the
 missing part, when answering challenges.
 In the context of graph pebbling, the initialization phase prevents most cheating
@@ -44,21 +44,24 @@ In the context of graph pebbling, the initialization phase prevents most cheatin
 of the portion of the file not kept on disk is related to the consequent time
 complexity degradation for computing the missing part.
 Ideally, the full file and pebbles must be kept in memory
-for having no time complexity explosion, but they show that this is not the case in existing solutions.
+for having no time complexity explosion, but they show
+that this is not the case for existing solutions.
 They provide sufficient conditions for the initialization phase, that guarantee the ideal result.
 
 The use of graph pebbling seems to dominate the literature on proof of space.
-Therefore, \cite{AbusalahACKPR17}~proposes an alternative technology, which is the
+Instead, \cite{AbusalahACKPR17}~proposes an alternative technology that is the
 theoretical background of the Chia network~\cite{CohenP19,Chia}:
 a proof of sequential work on top of a proof of space, based on challenges
 about the inversion of a random function, for which time/memory tradeoffs have been solved.
 This is not, however, a pure proof of space.
-Another alternative is the proof of retrievability in~\cite{JuelsK07}: the verifier sends, initially,
+Another alternative is the proof of retrievability
+in~\cite{JuelsK07}: the verifier sends, initially,
 a large file to the prover (miner) and later challenges, repeatedly, the prover to see
 if it still keeps the file in storage. Its apparent simplicity
 is jeopardized by the fact that big files must be shared.
 In a blockchain network, they must be shared among \emph{all} (present and future)
-peers, for \emph{all} (past, present and future) miners, or otherwise peers could not verify the blocks.
+peers, for \emph{all} (past, present and future) miners, or otherwise peers
+could not verify the blocks.
 
 We are aware of only one implementation of graph-pebbling proof of space:
 SpaceMint~\cite{ParkKFGAP18}, previously Spacecoin~\cite{ParkPAFG15}.
@@ -68,15 +71,16 @@ Its code~\cite{SpaceMintCode} has not been maintained in the last nine years.
 Nevertheless, \cite{ParkKFGAP18}~exposes interesting problems (and solutions)
 that are related to the actual game theory and implementation of proof of space.
 For instance, it uses the public key of the verifier as an input parameter
-for graph pebbling, to combat the creation of mining pools, often seen
+for graph pebbling, to discourage the creation of mining pools, often seen
 negatively~\cite{MillerKKS15}.
 Furthermore, it provides solutions for nothing-at-stake problems. Against block grinding,
 they make challenges independent from the transactions in the blocks, by splitting the
-blockchain in a proofs blockchain and in a transactions blockchain: only the first is used for mining,
+blockchain in a proofs blockchain and in a transactions blockchain:
+only the first is used for mining,
 and the two are connected with the signature of the miner.
 Against challenge grinding, they let past blocks influence the quality of short sequences
-of future blocks only. This is similar to the more drastic solution in~\cite{CohenP19}:
-use the same challenge for several consecutive blocks,
+of future blocks only. This is similar to the more drastic solution in~\cite{CohenP19}, that
+uses the same challenge for several consecutive blocks,
 since it is unlikely that a challenge will be good for many consecutive blocks.
 Against mining on multiple chains, they propose a technique that spots such behavior and
 imposes a penalty transaction against the culprit.
@@ -86,7 +90,7 @@ imposes a penalty transaction against the culprit.
 %We have discussed this with K.\ Pietrzak who suggested that this could be actually optimized
 %by reporting signed hashes only.
 
-Actual experiments are reported in~\cite{ParkKFGAP18},
+Actual experiments are reported in~\cite{ParkKFGAP18}
 that provide an estimation of the size of Spacemint's proofs:
 in the initialization phase, they are between two and three megabytes;
 in the execution phase, they can be optimized to around 100 kilobytes.
@@ -96,7 +100,7 @@ This makes the size of the blockchain much larger than in Bitcoin, and requires
 that miners hold cryptocurrency to store proofs even before starting mining.
 
 Signum~\cite{Signum}, previously Burstcoin, has been launched in 2014, with possibly
-the first language for smart contracts, and is still active.
+the first ever language for smart contracts, and is still active.
 Appendix B of~\cite{ParkKFGAP18} reports a formalization of an old version
 of Alg.~\ref{alg:nonce_construction}.
 
