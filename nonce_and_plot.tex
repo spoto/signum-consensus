@@ -70,16 +70,14 @@ Their definitions are parametric \wrt the hashing function $h_\deadline$ used fo
 %
 \begin{definition}[Scoop, Nonce]
   The sets of \emph{scoops} and \emph{nonces} are
-  \[
-  \Scoops=\left\{\langle h_1,h_2\rangle\left|\begin{array}{l}
-  h_1,h_2\text{ are hashes for }h_\deadline
-  \end{array}\right.\right\},
-  \]
-  \[
-  \Nonces=\left\{\langle p,\scoops\rangle\left|\begin{array}{l}
-  p\in\mathbb{N}\text{ and }\scoops\in\Scoops^\numberofscoops
-  \end{array}\right.\right\}.
-  \]
+  \begin{align*}
+    \Scoops&=\left\{\langle h_1,h_2\rangle\left|\begin{array}{l}
+    h_1,h_2\text{ are hashes for }h_\deadline
+    \end{array}\right.\right\},\\
+    \Nonces&=\left\{\langle p,\scoops\rangle\left|\begin{array}{l}
+    p\in\mathbb{N}\text{ and }\scoops\in\Scoops^\numberofscoops
+    \end{array}\right.\right\}.
+  \end{align*}
 \end{definition}
 %
 In the above definition, angular brackets stand for tuples (in this specific

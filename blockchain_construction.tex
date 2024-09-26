@@ -15,30 +15,24 @@ A deadline that answers $c$ is recorded in the trunk of the sons of $b$.
 %
 \begin{definition}[Trunk, Block]\label{def:trunk}
   The sets of \emph{trunks} and \emph{blocks} are
-  \[
-  \Trunks=\left\{\langle\height,\delta\rangle\left|\;\height\in\mathbb{N}\text{ and }\delta\in\Deadlines\right.\right\},
-  \]
-  \[
-  \GenesisBlocks=\left\{\langle\tau,\alpha\rangle\mid\tau\in\mathbb{N},\ \alpha\in\mathbb{N}\text{ and }\alpha>0\right\},
-  \]
-  \[
-  \NonGenesisBlocks=\left\{\left\langle\begin{array}{c}
-  \tau,\alpha,\power,\\
-  \weightedbeat,\trunk,\\
-  \previousblockhash
-  \end{array}\right\rangle\left|\begin{array}{l}
-  \tau\in\mathbb{N},\\
-  \alpha\in\mathbb{N},\ \alpha>0,\\
-  \power\in\mathbb{N},\\
-  \weightedbeat\in\mathbb{N},\\
-  \trunk\in\Trunks,\\
-  \previousblockhash\text{ is a}\\
-  \qquad\text{hash for $h_\block$}
-  \end{array}\right.\right\},
-  \]
-  \[
-  \Blocks=\GenesisBlocks\cup\NonGenesisBlocks.
-  \]
+  \begin{align*}
+    \Trunks&=\left\{\langle\height,\delta\rangle\left|\;\height\in\mathbb{N}\text{ and }\delta\in\Deadlines\right.\right\},\\
+    \GenesisBlocks&=\left\{\langle\tau,\alpha\rangle\mid\tau\in\mathbb{N},\ \alpha\in\mathbb{N}\text{ and }\alpha>0\right\},\\
+    \NonGenesisBlocks&=\left\{\left\langle\begin{array}{c}
+    \tau,\alpha,\power,\\
+    \weightedbeat,\trunk,\\
+    \previousblockhash
+    \end{array}\right\rangle\left|\begin{array}{l}
+    \tau\in\mathbb{N},\\
+    \alpha\in\mathbb{N},\ \alpha>0,\\
+    \power\in\mathbb{N},\\
+    \weightedbeat\in\mathbb{N},\\
+    \trunk\in\Trunks,\\
+    \previousblockhash\text{ is a}\\
+    \qquad\text{hash for $h_\block$}
+    \end{array}\right.\right\},\\
+    \Blocks&=\GenesisBlocks\cup\NonGenesisBlocks.
+  \end{align*}
 \end{definition}
 %
 If $b$ is a block, then $b.\tau$ is its creation time (milliseconds from the Unix epoch)
@@ -166,7 +160,7 @@ It must contain exactly one genesis block; there is no hash collision among its 
 and all its blocks must satisfy the \emph{consensus rules}.
 %
 \begin{definition}[Blockchain, Consensus]\label{def:blockchain}
-  A \emph{blockchain} is a set $B\subset\Blocks$ such that:
+  A \emph{blockchain} is a set $B\subseteq\Blocks$ such that:
   \begin{enumerate}
   \item\label{prop:blockchain:genesis} there is exactly one $b\in B\cap\GenesisBlocks$, written as $\genesis(B)$;
   \item\label{prop:blockchain:no_collision} for each hash $h$ of $h_\block$, there is at most
@@ -174,11 +168,13 @@ and all its blocks must satisfy the \emph{consensus rules}.
   \item\label{prop:blockchain:consensus} for each $b\in B$, the predicate $\consensus(B,b)$ holds, where
     %
     \begin{itemize}
-    \item if $b\in\GenesisBlocks$, then the only requirement for consensus is that
-      $b$ is not created in the future:
-      \[
-      \consensus(B,b)=b.\tau\le\tau_\now;
-      \]
+    \item if $b\in\GenesisBlocks$, then the $\consensus(B,b)$ is only the consensus rule:
+      \begin{enumerate}[label=(\alph*)]
+      \item $b$ is not created in the future:
+        \[
+        b.\tau\le\tau_\now;
+        \]
+      \end{enumerate}
     \item if $b\in\NonGenesisBlocks$, then $\consensus(B,b)$ is the logical conjunction
       of all the following consensus rules:
       \begin{enumerate}[label=(\alph*)]
