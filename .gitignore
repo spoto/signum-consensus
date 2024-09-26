@@ -7,6 +7,7 @@
 *.vtc
 *~
 main.pdf
+signum-consensus.pdf
 slides/*.nav
 slides/*.snm
 slides/*.vrb
