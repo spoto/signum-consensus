@@ -15,18 +15,19 @@
   of step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}, then $B\cup\{b'\}$ is a
   blockchain as well. By Def.~\ref{def:next_block}, it is $b'\in\NonGenesisBlocks$.
   Therefore, property~\ref{prop:blockchain:genesis} of Def.~\ref{def:blockchain} remains true.
-  By the assumption on no hash collisions, property~\ref{prop:blockchain:no_collision} remains true.
+  By the assumption on no hash collision, property~\ref{prop:blockchain:no_collision} remains true.
   It remains to prove that property~\ref{prop:blockchain:consensus} remains true as well.
   Let $b\in B\cup\{b'\}$.
   \begin{itemize}
-  \item If $b\in\GenesisBlocks$, it is $b\not=b'$ and then $b\in B$; since $\tau_\now$ only
-    increases with the time, by inductive hypothesis
+  \item If $b\in\GenesisBlocks$, it is $b\not=b'$ and then $b\in B$; since $\tau_\now$
+    cannot decrease with the time, by inductive hypothesis
     the property $b.\tau\le\tau_\now$ was true at the start of the
     algorithm and is still true now.
   \item If $b\in\NonGenesisBlocks$ and $b\in B$, by inductive hypothesis
     all consensus rules held when $b$ was added to
     $B$ and they must still hold now, since $\tau_\now$ only
-    increases with the time and since no block is ever removed from $B$.
+    increases with the time and since no block is ever removed from $B$
+    (nor replaced in $B$, since there is no hash collision).
   \item If $b\in\NonGenesisBlocks$ and $b\not\in B$, it must be $b=b'$. Let us prove that each consensus rule
     in Def.~\ref{def:blockchain} holds.
     \begin{itemize}
@@ -47,8 +48,8 @@
       \begin{align*}
         \Delta.\mathit{value}&=\mathit{value}(\nonce,c)\\
         &=\mathit{value}(\nonce,\Delta.\challenge)\\
-        \text{(Def.~\ref{def:plot})}&=\mathit{value}(\nonce(\nonce.p,\plot.\pi),\Delta)\\
-        \text{(Def.~\ref{def:deadline_from_nonce})}&=\mathit{value}(\nonce(\Delta.p,\Delta.\pi),\Delta).
+        \text{(Def.~\ref{def:plot})}&=\mathit{value}(\nonce(\nonce.p,\plot.\pi),\Delta.\challenge)\\
+        \text{(Def.~\ref{def:deadline_from_nonce})}&=\mathit{value}(\nonce(\Delta.p,\Delta.\pi),\Delta.\challenge).
       \end{align*}
     \item[\ref{prop:consensus:no_dangling}] It is
       \begin{align*}
@@ -87,7 +88,7 @@
 
 \noindent
   Let us proceed by induction on $n$.
-  If $n=0$, since $b_0=b'_0$ the thesis holds.
+  If $n=0$, the thesis holds since $b_0=b'_0$.
   Let $n>0$ and assume that the thesis holds for $n-1$. Let us prove it for $n$.
   By inductive hypothesis, it is enough
   to prove that $\challenge_\mynext(b_n)=\challenge_\mynext(b'_n)$.
