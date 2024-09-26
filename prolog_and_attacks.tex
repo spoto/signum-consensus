@@ -1,21 +1,22 @@
 \section{Prolog Structure, Protection against Attacks}\label{sec:prolog_structure_attacks}
 %
 This section proposes an extension to the framework in~\cite{SignumPlotting} and
-discusses potential attacks to the algorithm.
+discusses which nothing-at-stake attacks work for Signum.
 
 The peers of Def.~\ref{def:blockchain_network} have two functions: to find new deadlines and to
 package new blocks with such deadlines. In practice, two machines perform each of them:
 one (the actual miner) finds deadlines by using plots: it must have a large disk space; the other (the actual peer)
 receives deadlines, packages and whispers new blocks: it must have a good network connection.
 Such machines will work for a blockchain network with a given chain identifier~\cite{Antonopoulos17}.
-Therefore, we propose to use, as prologs, the byte representation of the following structure:
+Therefore, we propose to use, as prologs, the byte representation of the following triple:
 \[
-\langle\text{chain identifier},\text{public key of the peer},\text{public key of the miner}\rangle
+\langle\chainidentifier,\publickeyofpeer,\publickeyofminer\rangle
 \]
-(in~\cite{SignumPlotting}, prologs are just the public key of the miner).
+(in~\cite{SignumPlotting}, prologs are just $\publickeyofminer$).
 Moreover, we add two new consensus rules to Def.~\ref{def:blockchain}. Informally, one requires
-that the chain identifier in $b.\trunk.\delta$ is that of the blockchain; and the other requires that
-the public key of the peer inside $b.\trunk.\delta$ matches the signature of the block $b$. This has many advantages:
+that the chain identifier of the blockchain is $b.\trunk.\delta.\chainidentifier$; and the other requires that
+the signature of $b$ is verified with $b.\trunk.\delta.\publickeyofpeer$.
+This has many advantages:
 %
 \begin{itemize}
 \item the public keys of peer and miner can be used to remunerate them for their contribution,
@@ -28,6 +29,9 @@ the public key of the peer inside $b.\trunk.\delta$ matches the signature of the
   Therefore, it becomes impossible to use the same plot for mining two
   blockchain networks at the same time. This protects against newborn attacks.
 \end{itemize}
+%
+Note that this structure for the prologs entails that deadlines are around $170$ bytes
+(assuming hashes, signatures and chain identifier to be $32$ bytes each).
 
 In~\cite{ParkKFGAP18}, one criticism to Burstcoin was that the validation of a deadline
 (Def.~\ref{def:deadline_validity}) requires to run
@@ -42,26 +46,25 @@ Therefore, the extra time for verifying the deadlines does not seem like a probl
 In any case, step~\ref{step:nonce_construction:first_hash} of
 Alg.~\ref{alg:nonce_construction} currently uses a threshold $\kappa$,
 that was possibly missing when~\cite{ParkKFGAP18} was written.
-Considering that threshold and assuming the specific values and hashing
+Considering $\kappa$ and assuming the specific values and hashing
 used in~\cite{SignumPlotting} (see rightmost column of Tab.~\ref{tab:notations}),
 step~\ref{step:nonce_construction:first_hash}
 hashes at most $\kappa$ bytes and is iterated $2\cdot\numberofscoops$ times, that is,
 it hashes at most $33554432$ bytes.
 Step~\ref{step:nonce_construction:final_hash} hashes $32\cdot 2\cdot 4096$ bytes
-plus the size of the $\seed$, which is around $200$ bytes.
+plus the size of $\seed$, which is reasonably at most $200$ bytes.
 That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
-hashes $33816776$ bytes, which is around $8$ times less than what reported
-in~\cite{ParkKFGAP18}.
+hashes $33816776$ bytes, around $8$ times less than reported in~\cite{ParkKFGAP18}.
 
-In~\cite{ParkPAFG15}, page~28, a potential block grinding attack was hinted for Burstcoin,
+In Appendix~B of~\cite{ParkKFGAP18}, a potential block grinding attack was hinted for Burstcoin,
 since, in~\cite{SignumPlotting}, the next challenge of a previous block used its undefined
 \emph{previous block generator}:
 ``this seems possible to be grinded, by trying
-different sets of transactions to include in a block''~\cite{ParkPAFG15}.
+different sets of transactions to include in a block''~\cite{ParkKFGAP18}.
 As discussed just after our Def.~\ref{def:next_challenge_from_trunk}, that notion is
 just the prolog $\trunk.\delta.\pi$ of the deadline of the trunk in the previous block.
 Consequently, it cannot be grinded: Signum is protected against block grinding attacks.
-But we sympathize with~\cite{ParkPAFG15}: without a formalization,
+But we sympathize with the authors of~\cite{ParkKFGAP18}: without a formalization,
 it was impossible to exclude that attack.
 
 It is also interesting to observe that Signum has partial protection
@@ -74,9 +77,8 @@ might select suboptimal deadlines at step~\ref{step:block_mining:next_deadline}
 of Alg.~\ref{alg:block_mining} (that is, not the minimal one of Def.~\ref{def:deadline_from_plot}),
 hoping that such a sacrifice will generate subsequent challenges for which the peer
 can find very good deadlines.
-%Therefore, in Signum, such an attack should be called \emph{deadline grinding}.
-But that attack does not pay off, since the choice of suboptimal deadlines does not
-affect the sequence of challenges, as shown below.
+But Prop.~\ref{prop:no_challenge_grinding} shows that choice does not pay off, since deadlines do not
+affect the sequence of challenges, only the plots do.
 %
 \begin{proposition}\label{prop:no_challenge_grinding}
   Let $B$ be a blockchain, $\plot\in\Plots$, $b_0,\ldots,b_n$ and
@@ -99,10 +101,10 @@ affect the sequence of challenges, as shown below.
 Intuitively, the sequence of challenges depends only on
 the sequence of prologs used for mining, that is always the same by using a given plot.
 Therefore, a challenge grinding attack in Signum
-would require one to use more plots, with different keys, all in control of the peer,
+would require one to use more plots, with prologs with different keys, all in control of the peer,
 and grind among the plots. However, the number of plots is limited by the space
 allocated to the algorithm and the same set of plots
-would be used at each mining step, since they are to expensive to compute
+would end up being used at each mining step, since they are too expensive to generate
 on the fly during grinding. This highly
 limits the benefits of grinding. For additional protection, it is always possible to use
 one of the techniques presented in~\cite{ParkKFGAP18} (see Sec.~\ref{sec:related_work}).
@@ -110,22 +112,23 @@ one of the techniques presented in~\cite{ParkKFGAP18} (see Sec.~\ref{sec:related
 Signum does not seem to have any protection against mining on different chains instead.
 The only possibility here seems to use the penalty transactions used in~\cite{ParkKFGAP18}
 and challenges that
-are not built from the previous block but from a predecessor block deeper in the chain
+are not built from the trunk of the previous block but from that of a predecessor block deeper in the chain
 (see Sec.~\ref{sec:related_work}).
 
-The original definition of Burstcoin was shown to have a time/memory tradeoff~\cite{ParkKFGAP18}:
-it was possible to store $\finalhash$ only instead of each full nonce
+Appendix~B of~\cite{ParkKFGAP18} shows that the
+original definition of Burstcoin had a time/memory tradeoff:
+it was possible to store only $\finalhash$ instead of each full nonce
 (see step.~\ref{step:nonce_construction:final_hash} of Alg.~\ref{alg:nonce_construction}) and
 reconstruct (some) scoops on demand. The resulting (mining power)/(space used) ratio was proportionally higher
 than by storing the full nonces,
 ``at the price of having to compute a modest number of extra hashes''~\cite{ParkKFGAP18}.
-We agree with the attack but not with the \emph{modest number} part: the discussion in Appendix~B
-of~\cite{ParkKFGAP18} confuses plots with nonces and does not recognize that that modest number
+We agree with the attack but not with the \emph{modest number}: the discussion in~\cite{ParkKFGAP18}
+confuses plots with nonces and does not recognize that that modest number
 must be computed for all nonces in the plot, which are easily too many, considering the
 cost of the shabal256 hashing algorithm (Tab.~\ref{tab:notations}). In any case, the developers
 of Signum have modified Alg.~\ref{alg:nonce_construction} with the addition of
 step~\ref{step:nonce_construction:swap}, in order to cope with this time/memory tradeoff.
-That extra step requires one to compute all $h_i$ in order to compute the scoops.
+That extra step requires one to compute all $h_i$'s in order to compute the scoops.
 Therefore, this specific time/memory tradeoff does not occur anymore. Of course, proving
 that the addition of step~\ref{step:nonce_construction:swap} is enough to ban \emph{all}
 time/memory tradeoffs remains an open question,
