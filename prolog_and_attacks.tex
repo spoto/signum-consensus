@@ -55,6 +55,9 @@ Step~\ref{step:nonce_construction:final_hash} hashes $32\cdot 2\cdot 4096$ bytes
 plus the size of $\seed$, which is reasonably at most $200$ bytes.
 That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
 hashes $33816776$ bytes, around $8$ times less than reported in~\cite{ParkKFGAP18}.
+The difference is more dramatic in terms of actual execution time. Our experiments
+show that the use of the constant $\kappa=4096$ reduces the time for computing
+a nonce by a factor of $27$.
 
 In Appendix~B of~\cite{ParkKFGAP18}, a potential block grinding attack was hinted for Burstcoin,
 since, in~\cite{SignumPlotting}, the next challenge of a previous block used its undefined
