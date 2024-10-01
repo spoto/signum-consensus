@@ -1,6 +1,6 @@
 \section{Nonces and Plots}\label{sec:nonces_and_plots}
 
-This section formalizes the notion of plot, a collection of nonces, and their
+This section formalizes the notions of nonce and plot, a collection of nonces, and their
 algorithmic construction. Signum requires miners to hold one or more plots
 on disk. Their initialization is performed only once and offline, hence it is
 not part of the mining protocol.
@@ -23,7 +23,7 @@ For genericity, our formalization uses three hashing functions, that might actua
 
   $h_\generation$ & hashing function for computing the generations of challenges & shabal256\\\hline
 
-  $h_\block$ & hashing function for computing the hash of the blocks & \\\hline
+  $h_\block$ & hashing function for computing the hash of the blocks & sha256 \\\hline
 
   $\kappa$ & threshold to the number of bytes fed to $h_\deadline$ in Alg.~\ref{alg:nonce_construction} & $4096$\\\hline
 
@@ -62,7 +62,7 @@ The following definitions are used to deal with bytes and hashing.
 \end{definition}
 
 A \emph{scoop} is a pair of hashes.
-A \emph{nonce} is a non-negative \emph{progressive number} $p$, and
+A \emph{nonce} is a natural \emph{progressive number} $p$, and
 a list of $\numberofscoops>0$ scoops.
 %or, equivalenty,
 %a list of $2\cdot\numberofscoops$ hashes for $h_\deadline$.
@@ -84,7 +84,7 @@ In the above definition, angular brackets stand for tuples (in this specific
 case, they stand for pairs). When definitions are given in terms of tuples,
 it is silently assumed that there are selection functions
 for the elements of the tuple. For instance, if $\nonce\in\Nonces$, then $\nonce.p$
-and $\nonce.\scoops$ are its components.
+and $\nonce.\scoops$ are its elements.
 
 A \emph{prolog} is the identifier of the creator of nonces and plots (for instance, its public key).
 For now, it is just a sequence of bytes. Sec.~\ref{sec:prolog_structure_attacks}
@@ -105,19 +105,20 @@ to limit its computational cost, by avoiding hashing very large chunks of data.
   \cdots\append\langle h_{2\cdot\numberofscoops-2},h_{2\cdot\numberofscoops-1}\rangle\rangle\in\Nonces,
   \]
   where the hashes $h_0,\ldots,h_{2\cdot\numberofscoops-1}$ are constructed as
-  follows\footnote{Step.~\ref{step:nonce_construction:swap} has been added
-  in response to some criticism in~\cite{ParkKFGAP18}. See Sec.~\ref{sec:prolog_structure_attacks}.}.
+  follows\footnote{Step.~\ref{step:nonce_construction:swap} and the threshold $\kappa$
+  have been added after the publication of~\cite{ParkKFGAP18},
+  in response to some of their criticisms.
+  See Sec.~\ref{sec:prolog_structure_attacks}.}.
   %
   \begin{enumerate}
   \item Let $\seed=\pi\append\nattobe(p)$.
   \item\label{step:nonce_construction:first_hash}
     For each $i$ from $2\cdot\numberofscoops-1$ to $0$,
     let\footnote{In~\cite{SignumPlotting}, it is said to
-    take the \emph{last} $\kappa$ bytes, but an inspection of their code
+    take the \emph{last} $\kappa$ bytes, that would be meaningless since then
+    the lowest $h_i$'s would coincide. An inspection of their code
     shows that they actually take the \emph{first} $\kappa$ bytes. They
-    probably use \emph{last} here in the sense of \emph{more recently computed}.
-    This $\kappa$ seems to have been added after the
-    publication of~\cite{ParkKFGAP18}.}
+    probably use \emph{last} here in the sense of \emph{more recently computed}.}
     \[
     h_i=h_\deadline\left(\text{first $\kappa$ bytes of}\left(\left(\append_{i<j<2\cdot\numberofscoops}h_j\right)\append\seed\right)\right).
     \]

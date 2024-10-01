@@ -65,9 +65,8 @@ inherent electricity cost.
 For fairness, proof of space protocols should only allow to generate answers of
 quality directly proportional to the allocated space, or otherwise they are said
 to suffer from a time/memory tradeoff. As a drawback,
-cheap answers introduce new \emph{nothing-at-stake} security attacks~\cite{ParkKFGAP18}
-(these are anti-economic with proof of work,
-since computing power can only be dedicated to one mining task):
+cheap answers introduce new \emph{nothing-at-stake} security attacks~\cite{ParkKFGAP18}, that are instead anti-economic with proof of work,
+since computing power can only be dedicated to one mining task:
 %
 \begin{description}
 \item[Block grinding:] Miners might find it profitable (\emph{rational})
@@ -142,7 +141,7 @@ protected from a large class of attacks.
 The rest of this paper is organized as follows.
 Sec.~\ref{sec:nonces_and_plots} formalizes the structure of the space used for mining.
 Sec.~\ref{sec:challenges_and_deadlines} defines the challenges that the consensus
-algorithm must solve, and their answers (deadline).
+algorithm must solve, and their answers (deadlines).
 Sec.~\ref{sec:blockchain_construction} presents Signum's mining algorithm.
 Sec.~\ref{sec:prolog_structure_attacks} studies grinding attacks
 in Signum and proposes a new solution against newborn attacks.
