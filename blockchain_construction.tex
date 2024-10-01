@@ -89,7 +89,7 @@ shows how a challenge is derived from the trunk of a non-genesis block.
   \]
 \end{definition}
 %
-The definition of the generation signature $\sigma$ for the next challenge,
+The construction of the generation signature $\sigma$ for the next challenge,
 in Def.~\ref{def:next_challenge_from_trunk},
 has puzzled us for some time, since~\cite{SignumPlotting} appends a \emph{previous block generator}
 to the previous block's generation signature $\trunk.\delta.\challenge.\sigma$.
@@ -99,7 +99,7 @@ an identifier (more concretely, the public key)
 of the creator of the deadline for the previous block
 (see \url{https://github.com/signum-network/signum-node/blob/main/src/brs/GeneratorImpl.java},
 in the constructor of \<GeneratorStateImpl>).
-We abstract that information with the prolog of the previous deadline, hence
+Our prolog of the previous deadline generalizes that information, hence
 Def.~\ref{def:next_challenge_from_trunk} appends $\trunk.\delta.\pi$ to define $\sigma$.
 
 Later, it will be handy to determine the next challenge for a block. Note that
@@ -121,7 +121,7 @@ in~\cite{SignumPlotting} about this. The computation of the next weighted beat
 gives more or less weight to the previous weighted beat, depending on a constant $\oblivion$
 ($0\le\oblivion\le 1$) that expresses how quickly the acceleration reacts to changes
 in mining power. The computation of the next power uses the same formula
-of Bitcoin~\cite{WalkerG24}, adapted to our context: the ratio between the maximal (hence worse)
+as Bitcoin~\cite{WalkerG24}, adapted to our context: the ratio between the maximal (hence worse)
 deadline's value $2^{8\cdot\size(h_\deadline)}$ and the actual deadline's value
 expresses how much space has been used to compute the deadline.
 %
@@ -139,8 +139,8 @@ expresses how much space has been used to compute the deadline.
   \end{align*}
 \end{definition}
 %
-Finally, Def.~\ref{def:next_block} shows how a next block is constructed, once
-a deadline has been chosen for it.
+Def.~\ref{def:next_block} shows how a next block is constructed, once
+its deadline has been chosen.
 %
 \begin{definition}[Next block]\label{def:next_block}
   Let $b\in\Blocks$ and $\delta\in\Deadlines$. We define
@@ -168,7 +168,7 @@ and all its blocks must satisfy the \emph{consensus rules}.
   \item\label{prop:blockchain:consensus} for each $b\in B$, the predicate $\consensus(B,b)$ holds, where
     %
     \begin{itemize}
-    \item if $b\in\GenesisBlocks$, then the $\consensus(B,b)$ is only the consensus rule:
+    \item if $b\in\GenesisBlocks$, then $\consensus(B,b)$ is only the consensus rule:
       \begin{enumerate}[label=(\alph*)]
       \item $b$ is not created in the future:
         \[
@@ -223,7 +223,7 @@ Moreover, in practice, peers do not hold plots but rather rely on (one or more)
 external services (miners) that hold one or more plots.
 The goal here is to keep the picture as simple as possible and concentrate on the properties of
 Signum's consensus only: Def.~\ref{def:blockchain_network} does not pretend
-to describe a real blockchain implementation.
+to describe a real blockchain implementation in detail.
 
 The block mining algorithm, referred in Def.~\ref{def:blockchain_network},
 looks for the most powerful block in blockchain,
@@ -241,7 +241,7 @@ mines a new block on top of it, adds it to the blockchain and whispers it to the
   \item\label{step:block_mining:next_block} compute $b'=\nextblock(p,\delta')$ (Def.~\ref{def:next_block});
   \item\label{step:block_mining:wait} wait until $b'.\tau\le\tau_\now$;
   \item\label{step:block_mining:add} add $b'$ to $B$;
-  \item whisper $b$ to the peers connected to $P$;
+  \item whisper $b'$ to the peers connected to $P$;
   \item go back to step~\ref{step:block_mining:loop}.
   \end{enumerate}
 \end{alg}

@@ -13,7 +13,7 @@
   as a blockchain, since it explicitly checks it (step~\ref{step:block_mined:add} of
   Alg.~\ref{alg:block_mined}). It remains to show that, if $B$ is a blockchain at the beginning
   of step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}, then $B\cup\{b'\}$ is a
-  blockchain as well. By Def.~\ref{def:next_block}, it is $b'\in\NonGenesisBlocks$.
+  blockchain at its end. By Def.~\ref{def:next_block}, it is $b'\in\NonGenesisBlocks$.
   Therefore, property~\ref{prop:blockchain:genesis} of Def.~\ref{def:blockchain} remains true.
   By the assumption on no hash collision, property~\ref{prop:blockchain:no_collision} remains true.
   It remains to prove that property~\ref{prop:blockchain:consensus} remains true as well.
@@ -21,8 +21,9 @@
   \begin{itemize}
   \item If $b\in\GenesisBlocks$, it is $b\not=b'$ and then $b\in B$; since $\tau_\now$
     cannot decrease with the time, by inductive hypothesis
-    the property $b.\tau\le\tau_\now$ was true at the start of the
-    algorithm and is still true now.
+    the property $b.\tau\le\tau_\now$ was true at the start of
+    step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}
+    is still true at its end.
   \item If $b\in\NonGenesisBlocks$ and $b\in B$, by inductive hypothesis
     all consensus rules held when $b$ was added to
     $B$ and they must still hold now, since $\tau_\now$ only

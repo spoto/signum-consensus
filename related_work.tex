@@ -1,7 +1,7 @@
 \section{Related Work}\label{sec:related_work}
 
 Proof of work was originally meant as protection against email spam~\cite{DworkN92}:
-senders must perform some work to have their emails accepted by the recipients.
+senders must perform some work to have their emails accepted by recipients.
 %The input includes
 %the address of the recipient and the date of sending, in order to ban
 %recycling of work.
@@ -17,9 +17,9 @@ in two seminal papers~\cite{AtenieseBFG14,DziembowskiFKP15}.
 %They feature both similarities and significant differences.
 Both are based on directed acyclic graphs (DAGs) of high pebbling complexity.
 Pebbling, here, is a directed hash decoration of the nodes of the DAG, as in a Merkle tree.
-A prover must keep such a (big) DAG and its pebbling on disk, in order to answer, efficiently,
+A prover must hold such a (big) DAG and its pebbling on disk, in order to answer, efficiently,
 challenges with proofs that should convince a verifier that
-the prover is actually keeping data on disk.
+the prover is actually holding data on disk.
 While~\cite{DziembowskiFKP15} requires space to remain allocated between challenges
 (proof of \emph{persistent} space), \cite{AtenieseBFG14}~requires one
 to allocate space only when answering challenges
@@ -35,7 +35,7 @@ and related techniques: memory-hard functions, proof of secure erasure, provable
 proof of retrievability.
 
 Time/memory tradeoffs are studied in~\cite{Reyzin23}. They occur if
-the prover can store only a part of the data on disk, with a less than proportional
+a prover can store only a part of the data on disk, with a less than proportional
 degradation of its mining capabilities.
 A good proof of space algorithm should make it difficult for a prover to recover the
 missing part, when answering challenges.
@@ -43,10 +43,10 @@ In the context of graph pebbling, the initialization phase prevents most cheatin
 (that is, keeping incomplete data on disk). In~\cite{Reyzin23}, the size
 of the portion of the file not kept on disk is related to the consequent time
 complexity degradation for computing the missing part.
-Ideally, the full file and pebbles must be kept in memory
+Ideally, the full file and pebbling must be kept in memory
 for having no time complexity explosion, but they show
-that this is not the case for existing solutions.
-They provide sufficient conditions for the initialization phase, that guarantee the ideal result.
+that this is not the case for existing solutions and
+provide sufficient conditions for the initialization phase, that guarantee the ideal result.
 
 The use of graph pebbling seems to dominate the literature on proof of space.
 Instead, \cite{AbusalahACKPR17}~proposes an alternative technology that is the
@@ -68,21 +68,22 @@ SpaceMint~\cite{ParkKFGAP18}, previously Spacecoin~\cite{ParkPAFG15}.
 It is not a blockchain implementation,
 but a prototype of the proof of space protocol of~\cite{DziembowskiFKP15}.
 Its code~\cite{SpaceMintCode} has not been maintained in the last nine years.
-Nevertheless, \cite{ParkKFGAP18}~exposes interesting problems (and solutions)
-that are related to the actual game theory and implementation of proof of space.
+Nevertheless, \cite{ParkKFGAP18}~exposes interesting problems (and solutions),
+related to the actual game theory and implementation of proof of space.
 For instance, it uses the public key of the verifier as an input parameter
-for graph pebbling, to discourage the creation of mining pools, often seen
+for pebbling, to discourage the creation of mining pools, often seen
 negatively~\cite{MillerKKS15}.
 Furthermore, it provides solutions for nothing-at-stake problems. Against block grinding,
-they make challenges independent from the transactions in the blocks, by splitting the
+it makes challenges independent from the transactions in the blocks, by splitting the
 blockchain in a proofs blockchain and in a transactions blockchain:
 only the first is used for mining,
 and the two are connected with the signature of the miner.
-Against challenge grinding, they let past blocks influence the quality of short sequences
-of future blocks only. This is similar to the more drastic solution in~\cite{CohenP19}, that
-uses the same challenge for several consecutive blocks,
+Against challenge grinding, it lets past blocks influence the quality of short sequences
+of future blocks only. A similar but more drastic solution, in~\cite{CohenP19}, is to
+use the same challenge for several consecutive blocks,
 since it is unlikely that a challenge will be good for many consecutive blocks.
-Against mining on multiple chains, they propose a technique that spots such behavior and
+Against mining on multiple chains, \cite{ParkKFGAP18} proposes
+a technique that spots such behavior and
 imposes a penalty transaction against the culprit.
 %The latter includes pairs of blocks, as evidence, which is
 %problematic since transactions are, in turn, included in blocks and this makes it impossible to define

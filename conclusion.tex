@@ -2,8 +2,8 @@
 %
 Our formalization of Signum's consensus is valuable because it sheds light
 on a blockchain network that runs since ten years but was missing any formal definition.
-Moreover, it allowed us to understand that Signum is free from block grinding attacks
-and is largely protected from challenge grinding attacks.
+Moreover, it allowed us to understand that Signum is free from block-grinding attacks
+and is largely protected from challenge-grinding attacks.
 
 In the context of proof of space consensus, Signum's advantage is its simplicity,
 the small size of its proofs (deadlines, around $200$ bytes)
@@ -12,7 +12,7 @@ However, its main drawback is that it is
 perfectly possible to mine new blocks in a proof of work style: instead of storing a plot,
 Def.~\ref{def:deadline_from_plot} could recompute the nonces on the fly. This is currently
 not convenient, since Alg.~\ref{alg:nonce_construction} is relatively slow, in particular
-by using the shabal256 hashing algorithm for $h_\deadline$ (Tab.~\ref{tab:notations}).
+by using the notoriously slow shabal256 hashing for $h_\deadline$ (Tab.~\ref{tab:notations}).
 But the situation might change in the future
 with the use of ASICs. At the end, it will be the relative
 increase of ASICs speed and memory size that will decide if Signum remains a

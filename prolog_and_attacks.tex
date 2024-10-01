@@ -55,32 +55,30 @@ Step~\ref{step:nonce_construction:final_hash} hashes $32\cdot 2\cdot 4096$ bytes
 plus the size of $\seed$, which is reasonably at most $200$ bytes.
 That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
 hashes $33816776$ bytes, around $8$ times less than reported in~\cite{ParkKFGAP18}.
-The difference is more dramatic in terms of actual execution time. Our experiments
-show that the use of the constant $\kappa=4096$ reduces the time for computing
-a nonce by a factor of $27$.
 
-In Appendix~B of~\cite{ParkKFGAP18}, a potential block grinding attack was hinted for Burstcoin,
+In Appendix~B of~\cite{ParkKFGAP18}, a potential block-grinding attack was hinted for Burstcoin,
 since, in~\cite{SignumPlotting}, the next challenge of a previous block used its undefined
 \emph{previous block generator}:
 ``this seems possible to be grinded, by trying
 different sets of transactions to include in a block''~\cite{ParkKFGAP18}.
 As discussed just after our Def.~\ref{def:next_challenge_from_trunk}, that notion is
 just the prolog $\trunk.\delta.\pi$ of the deadline of the trunk in the previous block.
-Consequently, it cannot be grinded: Signum is protected against block grinding attacks.
+Consequently, it cannot be grinded: Signum is protected against block-grinding attacks.
 But we sympathize with the authors of~\cite{ParkKFGAP18}: without a formalization,
 it was impossible to exclude that attack.
 
 It is also interesting to observe that Signum has partial protection
-against challenge grinding attacks.
-The challenge for the a block is actually uniquely determined by the trunk in its
+against challenge-grinding attacks.
+The challenge for the a block is actually uniquely determined by the trunk of its
 previous block
 (consensus rule~\ref{prop:consensus:answer} of Def.~\ref{def:blockchain}
 and Def.~\ref{def:next_challenge_from_block}) but a peer
 might select suboptimal deadlines at step~\ref{step:block_mining:next_deadline}
 of Alg.~\ref{alg:block_mining} (that is, not the minimal one of Def.~\ref{def:deadline_from_plot}),
-hoping that such a sacrifice will generate subsequent challenges for which the peer
+hoping that such a sacrifice will generate subsequent challenges for which it
 can find very good deadlines.
-But Prop.~\ref{prop:no_challenge_grinding} shows that choice does not pay off, since deadlines do not
+But Prop.~\ref{prop:no_challenge_grinding} shows that that
+choice does not pay off, since deadlines do not
 affect the sequence of challenges, only the plots do.
 %
 \begin{proposition}\label{prop:no_challenge_grinding}
@@ -120,7 +118,7 @@ are not built from the trunk of the previous block but from that of a predecesso
 
 Appendix~B of~\cite{ParkKFGAP18} shows that the
 original definition of Burstcoin had a time/memory tradeoff:
-it was possible to store only $\finalhash$ instead of each full nonce
+it was possible to store only each $\finalhash$ instead of each full nonce
 (see step.~\ref{step:nonce_construction:final_hash} of Alg.~\ref{alg:nonce_construction}) and
 reconstruct (some) scoops on demand. The resulting (mining power)/(space used) ratio was proportionally higher
 than by storing the full nonces,
