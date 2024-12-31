@@ -25,7 +25,7 @@ This is an efficiency and security issue: frequent history changes allow
 and once in the updated history. The actual genious of Nakamoto~\cite{Nakamoto08} was to
 (largely) solve this issue with a consensus rule requiring blocks to answer a \emph{challenge}
 contained in their previous block. Namely, the binary hash of each block must be smaller than
-a \emph{difficulty} value computed at the previous block, directly bound to the quality of the chain.
+a \emph{difficulty} value computed from the previous blocks, directly bound to the quality of the chain.
 Therefore, who creates (\emph{mines}) of a new block runs a \emph{proof of work} algorithm
 that rotates (\emph{grinds}) many alternative values for a block field (\emph{nonce}), until
 the hash of the block is smaller than the difficulty. This hardens the creation of new blocks,
@@ -34,6 +34,9 @@ incentive to expanding the best chain only,
 rather than creating alternative histories by mining on multiple chains,
 since otherwise the miner
 risks spending work (concretely, electricity) for creating blocks discarded by its peers.
+The difficulty changes overtime, to account for change in the total hashing power
+of the network. As shown in~\cite{GarayKL17}, this both stabilizes the block creation rate and
+supports network consistency (all honest peers see the same chain, eventually).
 %A miner gets remunerated for its work whenever it finds a new block before all other miners.
 
 Proof of work is a brute-force algorithm,

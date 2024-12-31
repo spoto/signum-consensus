@@ -121,7 +121,7 @@ in~\cite{SignumPlotting} about this. The computation of the next weighted beat
 gives more or less weight to the previous weighted beat, depending on a constant $\oblivion$
 ($0\le\oblivion\le 1$) that expresses how quickly the acceleration reacts to changes
 in mining power. The computation of the next power uses the same formula
-as Bitcoin~\cite{WalkerG24}, adapted to our context: the ratio between the maximal (hence worse)
+as Bitcoin~\cite{WalkerG24,GarayKL17}, adapted to our context: the ratio between the maximal (hence worse)
 deadline's value $2^{8\cdot\size(h_\deadline)}$ and the actual deadline's value
 expresses how much space has been used to compute the deadline.
 %
@@ -278,7 +278,9 @@ their connected peers. Instead, they do not check the validity of the blocks tha
 mine themselves (step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining}),
 since they are valid by construction. Namely,
 Prop.~\ref{prop:mining_is_sound} guarantees that $B$ remains a blockchain in every peer.
-The hypothesis on no hash collision is standard for blockchains.
+The hypothesis on no hash collision is standard. Namely, all existing
+blockchains make that hypothesis and they would all collapse otherwise,
+because they all identify blocks by their hash.
 %
 \begin{proposition}\label{prop:mining_is_sound}
   If no hash collision occurs at step~\ref{step:block_mining:add} of Alg.~\ref{alg:block_mining},

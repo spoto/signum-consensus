@@ -12,6 +12,22 @@ moved to proof of stake. The latter can be seen as a
 Byzantine consensus algorithm, as pioneered by Tendermint~\cite{Kwon14}.
 Most current blockchains use some form of proof of stake nowadays.
 
+Traditional properties of consensus algorithms are \emph{consistency}
+(all honest peers eventually see the same blockchain), \emph{liveness}
+(a transaction submitted to the network gets eventually included in blockchain, after
+a \emph{reasonable} time) and \emph{order-fairness} (peers include transactions
+in a block in their order of arrival). This paper does not discuss them because Signum's consensus
+behaves exactly as Bitcoin's proof of work consensus \wrt these properties.
+Namely, step~\ref{step:block_mining:loop} of Alg.~\ref{alg:block_mining}
+guarantees that all honest peers follow the same chain (if whispering is working);
+while liveness and order-fairness hold for honest peers but might be invalidated
+if a dishonest peer holds a large part of the total mining power
+of the network (as in the 51\% attack).
+Note that order-fairness is more easily lost in other consensus algorithms, such
+as Byzantine consensus algorithms, since the decision power of validators, there,
+is independent from their mining power. Solutions, for that context, are reported
+in~\cite{KelkarZGJ20}.
+
 The theoretical background of proof of space was independently developed
 in two seminal papers~\cite{AtenieseBFG14,DziembowskiFKP15}.
 %They feature both similarities and significant differences.
