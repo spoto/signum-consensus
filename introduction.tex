@@ -37,7 +37,6 @@ risks spending work (concretely, electricity) for creating blocks discarded by i
 The difficulty changes overtime, to account for change in the total hashing power
 of the network. As shown in~\cite{GarayKL17}, this both stabilizes the block creation rate and
 supports network consistency (all honest peers see the same chain, eventually).
-%A miner gets remunerated for its work whenever it finds a new block before all other miners.
 
 Proof of work is a brute-force algorithm,
 because of the non-correlation property of hash functions.
@@ -121,9 +120,11 @@ of its consensus algorithm exists, discontinued in~2014.
 
 Our target of analysis has been Signum~\cite{Signum}, instead, since we wanted a fully-fledged implementation,
 which gives practical relevance to our work. It is
-actually deployed and runs continously since~2014. Nothing of that can be said about SpaceMint or
-Permacoin, that only exist as minimal prototype implementations of only their consensus
-algorithm, are not deployed blockchains and their code has been discontinued a decade ago.
+actually deployed and runs continously since~2014. It provides smart contracts on top of its consensus algorithms.
+Nothing of that can be said about SpaceMint or
+Permacoin, that only exist as minimal prototype implementations limited to only their consensus
+algorithm, are not deployed blockchains, have not been shown to support smart contracts
+and their code has been discontinued a decade ago.
 Signum (previously Burstcoin) is not based on graph pebbling: instead,
 each miner precomputes a large \emph{plot file} of hashes, that is not shared nor
 stored in blockchain.
