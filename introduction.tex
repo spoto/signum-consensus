@@ -95,8 +95,10 @@ effectively taking its control.
 
 Most theoretical formalizations of proof of space~\cite{AtenieseBFG14,DziembowskiFKP15,RenD16} are
 based on challenges against graphs of high pebbling complexity, but
-no actual blockchain has ever been built using such theory: only SpaceMint, a prototype and non-maintained
-implementation of the protocol, exists~\cite{ParkKFGAP18}. This has two reasons:
+no actual blockchain has ever been built using such theory: only SpaceMint~\cite{ParkKFGAP18} exists,
+but it is not a real blockchain but only a minimal non-maintained prototype
+of the theoretical consensus protocol. Namely, a real graph pebbling blockchain has
+never been implemented because:
 %
 \begin{enumerate}
 \item the protocol includes an \emph{initialization phase},
@@ -111,20 +113,37 @@ implementation of the protocol, exists~\cite{ParkKFGAP18}. This has two reasons:
   included in blockchain, are relatively large~\cite{AbusalahACKPR17}:
   kilobytes or even megabytes for proofs created in the initialization phase.
 \end{enumerate}
+%
+An alternative is Permacoin~\cite{MillerJSPK14}, based on proof of retrievability rather than
+graph pebbling, still in the family of the proof of space algorithms~\cite{RenD16}.
+But also Permacoin has never been implemented: only a prototypical and minimal implementation
+of its consensus algorithm exists, discontinued in~2014.
 
-Signum~\cite{Signum} is a fully-fledged implementation, but it is not based on graph pebbling.
-In Signum (previously Burstcoin),
+Our target of analysis has been Signum~\cite{Signum}, instead, since we wanted a fully-fledged implementation,
+which gives practical relevance to our work. It is
+actually deployed and runs continously since~2014. Nothing of that can be said about SpaceMint or
+Permacoin, that only exist as minimal prototype implementations of only their consensus
+algorithm, are not deployed blockchains and their code has been discontinued a decade ago.
+Signum (previously Burstcoin) is not based on graph pebbling: instead,
 each miner precomputes a large \emph{plot file} of hashes, that is not shared nor
 stored in blockchain.
 A peer that wants to mine the next block derives a challenge from the current blockchain head
 and challenges a miner for an answer, called
-\emph{deadline}\ie a small (less than $200$ bytes) data structure, derived from the plot,
-with a quality measure
+\emph{deadline}\ie a small (less than $200$ bytes) data structure, that can be very quickly
+derived from the plot, with a quality measure
 (its \emph{waiting time}) proportional, on average, to the size of the plot.
 Signum's protocol is attractive since it has no initialization phase (each miner creates its plot file
 independently and off-line) and its answers are very small.
-But the theory behind Signum has never been formalized nor defined up to now.
-Moroever, \cite{ParkKFGAP18}~warns about a potential block grinding attack.
+In principle, Signum can be mined as described above (proof of space)
+but also by recomputing the plot on-the-fly, at each challenge, without allocating anything on disk
+(proof of work). Because of that, Signum's mining is sometimes related as \emph{proof of capacity}.
+However, Signum's proof of work version remains theoretical and there is no evidence that Signum has ever
+been mined with proof of work. This is because plots use an expensive hashing algorithm (shabal256) and are very big.
+Specialized hardware might change the situation in the future but, from its inception in 2014 to
+the present day, Signum seems to have been mined with proof of space only.
+
+The actual drawback of Signum is that the underlying theory has never been formalized nor defined up to now.
+Moroever, \cite{ParkKFGAP18}~warned about a potential block grinding attack.
 Without a formalization, it is impossible to judge if it is real.
 
 Therefore, this paper provides the following contributions about Signum:
@@ -149,11 +168,11 @@ Sec.~\ref{sec:blockchain_construction} presents Signum's mining algorithm.
 Sec.~\ref{sec:prolog_structure_attacks} studies grinding attacks
 in Signum and proposes a new solution against newborn attacks.
 Sec.~\ref{sec:related_work} presents related work.
-Sec.~\ref{sec:conclusion} concludes.
+Sec.~\ref{sec:conclusion} concludes. Proofs are reported as an appendix to the paper.
 
 \vspace*{1ex}
 \textbf{Acknowledgments:}
-Acknowledgments have been removed for anonymization.\newpage
+Acknowledgments have been removed for anonymization. %\newpage
 %We thank the developers of Signum for discussions on their Discord channel
 %and K.\ Pietrzak for discussing solutions to
 %grinding attacks and theoretical issues about Signum.

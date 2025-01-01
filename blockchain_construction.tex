@@ -226,8 +226,14 @@ Signum's consensus only: Def.~\ref{def:blockchain_network} does not pretend
 to describe a real blockchain implementation in detail.
 
 The block mining algorithm, referred in Def.~\ref{def:blockchain_network},
-looks for the most powerful block in blockchain,
-mines a new block on top of it, adds it to the blockchain and whispers it to the connected peers.
+is given below. It is an infinite loop that
+looks for the most powerful block $p$ in blockchain (step~\ref{step:block_mining:loop}),
+derives a challenge $c$ from $p$ (step~\ref{step:block_mining:next_challenge}),
+uses a plot to compute a best deadline $\delta$ for $c$ (step~\ref{step:block_mining:next_deadline}),
+computes the next block $b'$ for $\delta$ (step~\ref{step:block_mining:next_block}) and waits for $\delta$
+to expire (step~\ref{step:block_mining:wait}). Then it adds $b'$ in blockchain
+(step~\ref{step:block_mining:add}), whispers $b'$ to all peers (step~\ref{step:block_mining:whisper})
+and restarts.
 %
 \begin{alg}[Block mining]\label{alg:block_mining}
   The \emph{block mining} algorithm of a peer $P$, holding blockchain $B$,
@@ -241,7 +247,7 @@ mines a new block on top of it, adds it to the blockchain and whispers it to the
   \item\label{step:block_mining:next_block} compute $b'=\nextblock(p,\delta')$ (Def.~\ref{def:next_block});
   \item\label{step:block_mining:wait} wait until $b'.\tau\le\tau_\now$;
   \item\label{step:block_mining:add} add $b'$ to $B$;
-  \item whisper $b'$ to the peers connected to $P$;
+  \item\label{step:block_mining:whisper} whisper $b'$ to the peers connected to $P$;
   \item go back to step~\ref{step:block_mining:loop}.
   \end{enumerate}
 \end{alg}

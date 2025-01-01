@@ -48,9 +48,14 @@ The following definitions are used to deal with bytes and hashing.
   is used to concatenate a sequence to an element or an element to a sequence.
 \end{definition}
 %
+The following byte representation of natural numbers is used in~\cite{SignumPlotting},
+wich is the standard representation in most computers nowadays.
+%
 \begin{definition}[$\nattobe$ and $\betonat$]
   The operators $\nattobe$ and $\betonat$ transform natural numbers
-  into their big-endian byte representation, and vice versa.
+  into their big-endian byte representation, and vice versa. We recall that
+  the big-endian representation of a natural number is its
+  binary representation, split in bytes, with the most significant byte put first.
 \end{definition}
 %
 \begin{definition}[Hashing function]
@@ -97,6 +102,13 @@ will give structure to prologs and see how they can be useful.
 The following algorithm constructs a nonce, given its progressive number and a prolog.
 It uses a constant $\kappa>0$ (Tab.~\ref{tab:notations})
 to limit its computational cost, by avoiding hashing very large chunks of data.
+This algorithm first derives a sequence of hashes (steps~\ref{step:nonce_construction:seed}
+and~\ref{step:nonce_construction:first_hash}) then constructs a \emph{final} hash from
+all of them (step~\ref{step:nonce_construction:final_hash}) that uses to modify
+the original sequence of hashes (step~\ref{step:nonce_construction:modify}).
+Finally, it shuffles the sequence (step~\ref{step:nonce_construction:swap}), which intuitively
+guarantees that, in order to compute a given scoop of the nonce
+(\textit{ie.\ }a pair of consecutive hashes), the whole algorithm must be executed.
 %
 \begin{alg}[$\nonce(p,\pi)$]\label{alg:nonce_construction}
   Given $p\in\mathbb{N}$ and $\pi\in\Prologs$, we define
@@ -111,7 +123,7 @@ to limit its computational cost, by avoiding hashing very large chunks of data.
   See Sec.~\ref{sec:prolog_structure_attacks}.}.
   %
   \begin{enumerate}
-  \item Let $\seed=\pi\append\nattobe(p)$.
+  \item\label{step:nonce_construction:seed} Let $\seed=\pi\append\nattobe(p)$.
   \item\label{step:nonce_construction:first_hash}
     For each $i$ from $2\cdot\numberofscoops-1$ to $0$,
     let\footnote{In~\cite{SignumPlotting}, it is said to
@@ -127,7 +139,7 @@ to limit its computational cost, by avoiding hashing very large chunks of data.
     \[
     \finalhash=h_\deadline\left(\left(\append_{0\le j<2\cdot\numberofscoops}h_j\right)\append\seed\right).
     \]
-  \item For each $i$ from $0$ to $2\cdot\numberofscoops-1$, reassign
+  \item\label{step:nonce_construction:modify} For each $i$ from $0$ to $2\cdot\numberofscoops-1$, reassign
     $h_i$ to $h_i\xor\finalhash$.
   \item\label{step:nonce_construction:swap}
     For each odd $i$ from $1$ to $2\cdot\numberofscoops-1$, swap
