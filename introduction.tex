@@ -15,27 +15,29 @@ However, peers expand the blockchain, independently from the other
 peers, hence the blockchain becomes a tree rather than a list.
 A notion of chain quality incentivizes peers to append blocks to the highest-quality chain
 (the \emph{best} chain).
-Therefore, a peer might replace its current best chain with another, even better chain,
+Therefore, a peer could replace its current best chain with another, even better chain,
 a so called \emph{history change}.
 
 As presented above, peers are free to generate new blocks at maximal speed, flood the network
 with new blocks and make the emergence of a best chain difficult.
 This is an efficiency and security issue: frequent history changes allow
-\emph{double spending}, when the same money is moved in the ledger twice, once in the current history
-and once in the updated history. The actual genious of Nakamoto~\cite{Nakamoto08} was to
+\emph{double spending} and network forks.
+%, when the same money is moved in the ledger twice, once in the current history
+%and once in the updated history.
+The actual genious of Nakamoto~\cite{Nakamoto08} was to
 (largely) solve this issue with a consensus rule requiring blocks to answer a \emph{challenge}
-contained in their previous block. Namely, the binary hash of each block must be smaller than
+contained in their previous block. Namely, the hash of each block must be smaller than
 a \emph{difficulty} value computed from the previous blocks, directly bound to the quality of the chain.
-Therefore, who creates (\emph{mines}) of a new block runs a \emph{proof of work} algorithm
+Therefore, who creates (\emph{mines}) a new block runs a \emph{proof of work} algorithm
 that rotates (\emph{grinds}) many alternative values for a block field (\emph{nonce}), until
 the hash of the block is smaller than the difficulty. This hardens the creation of new blocks,
 makes it impossible to create blocks at arbitrary speed and introduces an
 incentive to expanding the best chain only,
-rather than creating alternative histories by mining on multiple chains,
-since otherwise the miner
-risks spending work (concretely, electricity) for creating blocks discarded by its peers.
+rather than creating alternative histories by mining on multiple chains.
+%, since otherwise the miner
+%risks spending work (concretely, electricity) for creating blocks discarded by its peers.
 The difficulty changes overtime, to account for change in the total hashing power
-of the network. As shown in~\cite{GarayKL17}, this both stabilizes the block creation rate and
+of the network. As shown in~\cite{GarayKL17}, this stabilizes the block creation rate and
 supports network consistency (all honest peers see the same chain, eventually).
 
 Proof of work is a brute-force algorithm,
@@ -46,15 +48,14 @@ worthwhile only in countries where electricity is cheap; furthermore, it
 is more efficient over dedicated, expensive hardware (such as ASICs),
 against the promise of a democratic and open network.
 Therefore, the current trend is towards the \emph{proof of stake}.
-This comes in different flavors, but
-the common idea is that mining is limited to a (static or dynamic, exclusive or delegatable)
-set of peers, that \emph{stake} a collateral in exchange of mining rights.
+Its different flavors share the common idea that mining is limited
+to a (static or dynamic, exclusive or delegatable)
+set of peers (\emph{validators}), that \emph{stake} a collateral in exchange of mining rights.
 Many criticize proof of stake for being centralized and undemocratic
 (\emph{rich becomes richer}).
 Moreover, it suffers from what we call a \emph{start-up issue}: as long as the cryptocurrency
-of a newborn blockchain has still no value, it is hard to convince miners to work and
-be updated, since there is no incentive for that. Moreover, miners in
-a proof of stake blockchain get punished (\emph{slashed}) if they misbehave or are offline, which
+of a newborn blockchain has still no value, validators have no incentive to work
+and be updated. Moreover, validators get punished (\emph{slashed}) if they misbehave or are offline, which
 might be perceived as unfair if that happens because of a connectivity issue or black-out.
 
 A further alternative is \emph{proof of space}~\cite{AtenieseBFG14,DziembowskiFKP15}, where
@@ -67,7 +68,8 @@ inherent electricity cost.
 For fairness, proof of space protocols should only allow to generate answers of
 quality directly proportional to the allocated space, or otherwise they are said
 to suffer from a time/memory tradeoff. As a drawback,
-cheap answers introduce new \emph{nothing-at-stake} security attacks~\cite{ParkKFGAP18}, that are instead anti-economic with proof of work,
+cheap answers introduce new \emph{nothing-at-stake} security
+attacks~\cite{ParkKFGAP18}, that are instead anti-economic with proof of work,
 since computing power can only be dedicated to one mining task:
 %
 \begin{description}
@@ -92,11 +94,11 @@ mining for a newborn, small network $N'$. If the total space used by the peers o
 initially relatively small, it could be possible for the miner to hijack the history of $N'$,
 effectively taking its control.
 
-Most theoretical formalizations of proof of space~\cite{AtenieseBFG14,DziembowskiFKP15,RenD16} are
+Most formalizations of proof of space~\cite{AtenieseBFG14,DziembowskiFKP15,RenD16} are
 based on challenges against graphs of high pebbling complexity, but
-no actual blockchain has ever been built using such theory: only SpaceMint~\cite{ParkKFGAP18} exists,
-but it is not a real blockchain but only a minimal non-maintained prototype
-of the theoretical consensus protocol. Namely, a real graph pebbling blockchain has
+no actual blockchain has ever been built that way: only SpaceMint~\cite{ParkKFGAP18} exists
+which is not a real blockchain but a minimal non-maintained prototype
+of the theoretical consensus protocol only. Namely, a real graph pebbling blockchain has
 never been implemented because:
 %
 \begin{enumerate}
@@ -115,17 +117,18 @@ never been implemented because:
 %
 An alternative is Permacoin~\cite{MillerJSPK14}, based on proof of retrievability rather than
 graph pebbling, still in the family of the proof of space algorithms~\cite{RenD16}.
-But also Permacoin has never been implemented: only a prototypical and minimal implementation
-of its consensus algorithm exists, discontinued in~2014.
+But neither Permacoin has been implemented: only a prototypical and minimal implementation
+of only its consensus algorithm exists, discontinued in~2014. Neither SpaceMint nor Permacoin
+have been shown to support smart contracts.
 
 Our target of analysis has been Signum~\cite{Signum}, instead, since we wanted a fully-fledged implementation,
-which gives practical relevance to our work. It is
+which gives practical relevance to our work. Signum (previously Burstcoin) is
 actually deployed and runs continously since~2014. It provides smart contracts on top of its consensus algorithms.
-Nothing of that can be said about SpaceMint or
-Permacoin, that only exist as minimal prototype implementations limited to only their consensus
-algorithm, are not deployed blockchains, have not been shown to support smart contracts
-and their code has been discontinued a decade ago.
-Signum (previously Burstcoin) is not based on graph pebbling: instead,
+%Nothing of that can be said about SpaceMint or
+%Permacoin, that only exist as minimal prototype implementations limited to only their consensus
+%algorithm, are not deployed blockchains, have not been shown to support smart contracts
+%and their code has been discontinued a decade ago.
+Signum is not based on graph pebbling: instead,
 each miner precomputes a large \emph{plot file} of hashes, that is not shared nor
 stored in blockchain.
 A peer that wants to mine the next block derives a challenge from the current blockchain head
@@ -136,12 +139,12 @@ derived from the plot, with a quality measure
 Signum's protocol is attractive since it has no initialization phase (each miner creates its plot file
 independently and off-line) and its answers are very small.
 In principle, Signum can be mined as described above (proof of space)
-but also by recomputing the plot on-the-fly, at each challenge, without allocating anything on disk
+but also by recomputing the plot file on-the-fly, at each challenge, without any disk allocation
 (proof of work). Because of that, Signum's mining is sometimes related as \emph{proof of capacity}.
-However, Signum's proof of work version remains theoretical and there is no evidence that Signum has ever
-been mined with proof of work. This is because plots use an expensive hashing algorithm (shabal256) and are very big.
+However, the proof of work version of Signum remains theoretical and there is no evidence that Signum has ever
+been mined like that. This is because plots use an expensive hashing algorithm (shabal256) and are very big.
 Specialized hardware might change the situation in the future but, from its inception in 2014 to
-the present day, Signum seems to have been mined with proof of space only.
+the present day, Signum seems to have been only mined with proof of space.
 
 The actual drawback of Signum is that the underlying theory has never been formalized nor defined up to now.
 Moroever, \cite{ParkKFGAP18}~warned about a potential block grinding attack.
@@ -152,24 +155,23 @@ Therefore, this paper provides the following contributions about Signum:
 \begin{itemize}
 \item a formalization of its algorithm, recostructed and interpolated from a very informal and partial
   description~\cite{SignumPlotting} and its poorly commented code~\cite{SignumSource};
-\item a proof that block grinding attacks are impossible, contrary to previous hints~\cite{ParkKFGAP18};
+\item a proof that block grinding attacks are impossible, against previous hints~\cite{ParkKFGAP18};
 \item a proof that challenge grinding attacks are limited;
 \item a new protection against newborn attacks.
 \end{itemize}
 %
 These results are relevant since they show that Signum's consensus
-is actually supported by a formal theory and
-protected from a large class of attacks.
+is actually supported by a formal theory and protected from a large class of attacks.
 
 The rest of this paper is organized as follows.
-Sec.~\ref{sec:nonces_and_plots} formalizes the structure of the space used for mining.
+Sec.~\ref{sec:nonces_and_plots} formalizes the structure of the plot files.
 Sec.~\ref{sec:challenges_and_deadlines} defines the challenges that the consensus
 algorithm must solve, and their answers (deadlines).
 Sec.~\ref{sec:blockchain_construction} presents Signum's mining algorithm.
 Sec.~\ref{sec:prolog_structure_attacks} studies grinding attacks
 in Signum and proposes a new solution against newborn attacks.
 Sec.~\ref{sec:related_work} presents related work.
-Sec.~\ref{sec:conclusion} concludes. Proofs are reported as an appendix to the paper.
+Sec.~\ref{sec:conclusion} concludes. Proofs are reported in appendix.
 
 \vspace*{1ex}
 \textbf{Acknowledgments:}
