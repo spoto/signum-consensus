@@ -1,7 +1,7 @@
 \section{Introduction}\label{sec:introduction}
 
 A blockchain is a list of \emph{blocks}, each reporting the hash
-of its previous block, satisfying some consistency or \emph{consensus} rules.
+of a previous block, satisfying some consistency or \emph{consensus} rules.
 Blocks hold \emph{transactions}, whose exact nature is not relevant here:
 they are requests to update the state of a global abstract machine
 (a ledger of payments as in Bitcoin~\cite{Nakamoto08,Antonopoulos17})
@@ -11,7 +11,7 @@ By using hashes as machine-independent
 pointers, blockchains can be distributed in a network of peers.
 This is desirable since data gets safely duplicated
 and no special peer determines the history by itself.
-However, peers expand the blockchain, independently from the other
+However, peers expand the blockchain, independently from other
 peers, hence the blockchain becomes a tree rather than a list.
 A notion of chain quality incentivizes peers to append blocks to the highest-quality chain
 (the \emph{best} chain).
@@ -38,7 +38,7 @@ rather than creating alternative histories by mining on multiple chains.
 %risks spending work (concretely, electricity) for creating blocks discarded by its peers.
 The difficulty changes overtime, to account for change in the total hashing power
 of the network. As shown in~\cite{GarayKL17}, this stabilizes the block creation rate and
-supports network consistency (all honest peers see the same chain, eventually).
+supports network consistency (all honest peers converge to the same chain, eventually).
 
 Proof of work is a brute-force algorithm,
 because of the non-correlation property of hash functions.
@@ -47,7 +47,7 @@ moreover, it is not egalitarian, being
 worthwhile only in countries where electricity is cheap; furthermore, it
 is more efficient over dedicated, expensive hardware (such as ASICs),
 against the promise of a democratic and open network.
-Therefore, the current trend is towards the \emph{proof of stake}.
+Therefore, the current trend is towards \emph{proof of stake}.
 Its different flavors share the common idea that mining is limited
 to a (static or dynamic, exclusive or delegatable)
 set of peers (\emph{validators}), that \emph{stake} a collateral in exchange of mining rights.
@@ -60,7 +60,7 @@ might be perceived as unfair if that happens because of a connectivity issue or 
 
 A further alternative is \emph{proof of space}~\cite{AtenieseBFG14,DziembowskiFKP15}, where
 miners must dedicate a large chunk of disk memory for answering challenges.
-Its energy consumption is close to zero and no special
+Its energy consumption is negligeable and no special
 hardware helps for mining, currently: the technology is both cheap
 and democratic. Moreover, proof of space allows
 one to capitalize on unused memory, for free, while proof of work has always an
@@ -101,8 +101,9 @@ which is not a real blockchain but a minimal non-maintained prototype
 of the theoretical consensus protocol only. Namely, a real graph pebbling blockchain has
 never been implemented because:
 %
-\begin{enumerate}
-\item the protocol includes an \emph{initialization phase},
+%\begin{enumerate}
+%\item
+(1) the protocol includes an \emph{initialization phase},
   run for each new prover (miner) that joins the blockchain,
   that complicates the protocol itself and
   requires to spend cryptocurrency \emph{before}
@@ -110,11 +111,12 @@ never been implemented because:
   %Compare this with Bitcoin, for instance, that allows one to start mining
   %and \emph{later} collect cryptocurrency. This initialization is a barrier against new
   %miners, that is, a limit to democracy;
-\item answers to challenges (\emph{proofs}),
+  %\item
+(2) answers to challenges (\emph{proofs}),
   included in blockchain, are relatively large~\cite{AbusalahACKPR17}:
   kilobytes or even megabytes for proofs created in the initialization phase.
-\end{enumerate}
-%
+%\end{enumerate}
+
 An alternative is Permacoin~\cite{MillerJSPK14}, based on proof of retrievability rather than
 graph pebbling, still in the family of the proof of space algorithms~\cite{RenD16}.
 But neither Permacoin has been implemented: only a prototypical and minimal implementation
@@ -140,9 +142,9 @@ Signum's protocol is attractive since it has no initialization phase (each miner
 independently and off-line) and its answers are very small.
 In principle, Signum can be mined as described above (proof of space)
 but also by recomputing the plot file on-the-fly, at each challenge, without any disk allocation
-(proof of work). Because of that, Signum's mining is sometimes related as \emph{proof of capacity}.
+(proof of work). Because of that, Signum's mining is sometimes called \emph{proof of capacity}.
 However, the proof of work version of Signum remains theoretical and there is no evidence that Signum has ever
-been mined like that. This is because plots use an expensive hashing algorithm (shabal256) and are very big.
+been mined like that. This is because plots use an expensive hashing algorithm (shabal256) and are very big, so that their recomputation takes longer than the block creation rate.
 Specialized hardware might change the situation in the future but, from its inception in 2014 to
 the present day, Signum seems to have been only mined with proof of space.
 
@@ -155,7 +157,7 @@ Therefore, this paper provides the following contributions about Signum:
 \begin{itemize}
 \item a formalization of its algorithm, recostructed and interpolated from a very informal and partial
   description~\cite{SignumPlotting} and its poorly commented code~\cite{SignumSource};
-\item a proof that block grinding attacks are impossible, against previous hints~\cite{ParkKFGAP18};
+\item a proof that block grinding attacks are impossible, against a previous hint~\cite{ParkKFGAP18};
 \item a proof that challenge grinding attacks are limited;
 \item a new protection against newborn attacks.
 \end{itemize}
@@ -172,10 +174,46 @@ Sec.~\ref{sec:prolog_structure_attacks} studies grinding attacks
 in Signum and proposes a new solution against newborn attacks.
 Sec.~\ref{sec:related_work} presents related work.
 Sec.~\ref{sec:conclusion} concludes. Proofs are reported in appendix.
+Tab.~\ref{tab:notations} collects notations used throughout the paper.
+It also reports specific choices
+made in~\cite{SignumPlotting} (rightmost column), but this paper remains parametric \wrt them.
+For instance, for genericity,
+our formalization uses three hashing functions, that might actually coincide.
+
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+  \textbf{notation} & \textbf{meaning} & \textbf{in~\cite{SignumPlotting}}\\\hline\hline
+
+  $\append$ & concatenation of sequences & \\\hline
+  $\numberofscoops$ & number of scoops contained in a nonce & $4096$\\\hline
+
+  $h_\deadline$ & hashing function for computing nonces, plots and deadlines & shabal256\\\hline
+
+  $h_\generation$ & hashing function for computing the generations of challenges & shabal256\\\hline
+
+  $h_\block$ & hashing function for computing the hash of the blocks & sha256 \\\hline
+
+  $\kappa$ & threshold to the number of bytes fed to $h_\deadline$ in Alg.~\ref{alg:nonce_construction} & $4096$\\\hline
+
+  $\beat$ & target block creation time interval (ms) & $240000$ \\\hline
+
+  $\sigma_\genesis$ & generation signature for the genesis block & \\\hline
+
+  $\tau_\now$ & current time (ms from Unix epoch) & \\\hline
+
+  $\oblivion$ & acceleration reaction to changes of mining power ($0$ to $1$) & \\\hline
+\end{tabular}
+\end{center}
+\caption{Notations and contextual information used in our formalization and their specific instantiations
+  used in~\cite{SignumPlotting}, when available.}
+\label{tab:notations}
+\end{table}
 
 \vspace*{1ex}
 \textbf{Acknowledgments:}
-Acknowledgments have been removed for anonymization. %\newpage
+Removed for anonymization. %\newpage
 %We thank the developers of Signum for discussions on their Discord channel
 %and K.\ Pietrzak for discussing solutions to
 %grinding attacks and theoretical issues about Signum.

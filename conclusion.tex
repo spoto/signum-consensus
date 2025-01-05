@@ -1,19 +1,21 @@
 \section{Conclusion}\label{sec:conclusion}
 %
+In the context of proof of space consensus, Signum's advantage is its simplicity,
+the small size of its proofs (deadlines, around $200$ bytes)
+and the absence of an initialization phase and transactions.
+Moreover, it is the only fully implemented and deployed solution and
+supports smart contracts.
+Its drawback is that it is
+theoretically possible to mine new blocks in a proof of work style, although
+this is not been observed in practice up to now.
 Our formalization of Signum's consensus is valuable because it sheds light
 on a blockchain network that runs since ten years but was missing any formal definition.
 Moreover, it allowed us to understand that Signum is free from block-grinding attacks
 and is largely protected from challenge-grinding attacks.
-
-In the context of proof of space consensus, Signum's advantage is its simplicity,
-the small size of its proofs (deadlines, around $200$ bytes)
-and the absence of an initialization phase and transactions.
-However, its main drawback is that it is
-perfectly possible to mine new blocks in a proof of work style: instead of storing a plot,
-Def.~\ref{def:deadline_from_plot} could recompute the nonces on the fly. This is currently
-not convenient, since Alg.~\ref{alg:nonce_construction} is relatively slow, in particular
-by using the notoriously slow shabal256 hashing for $h_\deadline$ (Tab.~\ref{tab:notations}).
-But the situation might change in the future
-with the use of ASICs. At the end, it will be the relative
-increase of ASICs speed and memory size that will decide if Signum remains a
-proof of space network or if it becomes more rational to mine it with proof of work.
+%This is currently not convenient since Alg.~\ref{alg:nonce_construction} is
+%relatively slow, in particular
+%by using the expensive shabal256 hashing for $h_\deadline$ (Tab.~\ref{tab:notations}).
+%But ASICs might change the situation in the future.
+%At the end, it will be the relative
+%increase of ASICs speed and memory size that will decide if Signum remains a
+%proof of space network or if it becomes more rational to mine it with proof of work.

@@ -1,7 +1,8 @@
 \section{Prolog Structure, Protection against Attacks}\label{sec:prolog_structure_attacks}
 %
-This section proposes an extension to the framework in~\cite{SignumPlotting} and
-discusses which nothing-at-stake attacks work for Signum.
+This section uses the formalization of the previous sections to
+extend the framework in~\cite{SignumPlotting} and
+understand if nothing-at-stake attacks might work for Signum.
 
 The peers of Def.~\ref{def:blockchain_network} have two functions: to find new deadlines and to
 package new blocks with such deadlines. In practice, two machines perform each of them:
@@ -14,8 +15,8 @@ Therefore, we propose to use, as prologs, the byte representation of the followi
 \]
 (in~\cite{SignumPlotting}, prologs are just $\publickeyofminer$).
 Moreover, we add two new consensus rules to Def.~\ref{def:blockchain}. Informally, one requires
-that the chain identifier of the blockchain is $b.\trunk.\delta.\chainidentifier$; and the other requires that
-the signature of $b$ is verified with $b.\trunk.\delta.\publickeyofpeer$.
+that the chain identifier of the blockchain is $b.\trunk.\delta.\pi.\chainidentifier$; and the other requires that
+the signature of $b$ is verified with $b.\trunk.\delta.\pi.\publickeyofpeer$.
 This has many advantages:
 %
 \begin{itemize}
@@ -33,28 +34,28 @@ This has many advantages:
 Note that this structure for the prologs entails that deadlines are around $170$ bytes
 (assuming hashes, signatures and chain identifier to be $32$ bytes each).
 
-In~\cite{ParkKFGAP18}, one criticism to Burstcoin was that the validation of a deadline
+In~\cite{ParkKFGAP18}, Burstcoin was criticized because the validation of a deadline
 (Def.~\ref{def:deadline_validity}) requires to run
-Alg.~\ref{alg:nonce_construction}, that in turn
+Alg.~\ref{alg:nonce_construction} that, they say,
 requires hashing $8\cdot 10^6\cdot 32=256000000$ bytes.
 It must be stated that
 such hashing can actually be computed in a few milliseconds nowadays,
-for a minimal energy cost. Moreover, that time is largely dominated
-by the time for verifying the transactions in a block, in particular
-for a blockchain, such as Signum, that allows smart contracts.
-Therefore, the extra time for verifying the deadlines does not seem like a problem to us.
+with a minimal energy cost. Moreover, it is largely dominated
+by that for verifying the transactions in a block, in particular
+for Signum that allows smart contracts.
+Therefore, this time for deadline validation seems largely acceptable to us.
 In any case, step~\ref{step:nonce_construction:first_hash} of
 Alg.~\ref{alg:nonce_construction} currently uses a threshold $\kappa$,
 that was possibly missing when~\cite{ParkKFGAP18} was written.
-Considering $\kappa$ and assuming the specific values and hashing
-used in~\cite{SignumPlotting} (see rightmost column of Tab.~\ref{tab:notations}),
+Considering $\kappa$ and the specific values and hashing
+used in~\cite{SignumPlotting} (rightmost column of Tab.~\ref{tab:notations}),
 step~\ref{step:nonce_construction:first_hash}
 hashes at most $\kappa$ bytes and is iterated $2\cdot\numberofscoops$ times, that is,
 it hashes at most $33554432$ bytes.
 Step~\ref{step:nonce_construction:final_hash} hashes $32\cdot 2\cdot 4096$ bytes
 plus the size of $\seed$, which is reasonably at most $200$ bytes.
 That is, it hashes $262344$ bytes. In total, Alg.~\ref{alg:nonce_construction}
-hashes $33816776$ bytes, around $8$ times less than reported in~\cite{ParkKFGAP18}.
+hashes $33816776$ bytes, around $8$ times less than what was reported in~\cite{ParkKFGAP18}.
 
 In Appendix~B of~\cite{ParkKFGAP18}, a potential block-grinding attack was hinted for Burstcoin,
 since, in~\cite{SignumPlotting}, the next challenge of a previous block used its undefined
@@ -63,22 +64,23 @@ since, in~\cite{SignumPlotting}, the next challenge of a previous block used its
 different sets of transactions to include in a block''~\cite{ParkKFGAP18}.
 As discussed just after our Def.~\ref{def:next_challenge_from_trunk}, that notion is
 just the prolog $\trunk.\delta.\pi$ of the deadline of the trunk in the previous block.
-Consequently, it cannot be grinded: Signum is protected against block-grinding attacks.
+Consequently, it cannot be grinded. That is, Signum is protected against block-grinding attacks.
 But we sympathize with the authors of~\cite{ParkKFGAP18}: without a formalization,
 it was impossible to exclude that attack.
 
-It is also interesting to observe that Signum has partial protection
+We furthermore observe that Signum has some protection
 against challenge-grinding attacks.
 The challenge for the a block is actually uniquely determined by the trunk of its
 previous block
-(consensus rule~\ref{prop:consensus:answer} of Def.~\ref{def:blockchain}
+(rule~\ref{prop:consensus:answer} of Def.~\ref{def:blockchain}
 and Def.~\ref{def:next_challenge_from_block}) but a peer
 might select suboptimal deadlines at step~\ref{step:block_mining:next_deadline}
-of Alg.~\ref{alg:block_mining} (that is, not the minimal one of Def.~\ref{def:deadline_from_plot}),
-hoping that such a sacrifice will generate subsequent challenges for which it
+of Alg.~\ref{alg:block_mining} (\textit{ie.}, not the minimal one
+of Def.~\ref{def:deadline_from_plot}),
+hoping that such a sacrifice will lead to subsequent challenges for which it
 can find very good deadlines.
 But Prop.~\ref{prop:no_challenge_grinding} shows that that
-choice does not pay off, since deadlines do not
+choice does not pay off: deadlines do not
 affect the sequence of challenges, only the plots do.
 %
 \begin{proposition}\label{prop:no_challenge_grinding}
@@ -92,10 +94,10 @@ affect the sequence of challenges, only the plots do.
     b'_i.\trunk.\delta&=\delta(\nonce'_i,\plot.\pi,\challenge_\mynext(b'_{i-1}))
   \end{align*}
   %
-  for suitable $\nonce_i,\nonce_i'\in\plot.\nonces$, for every $1\le i\le n$. Then
-  \[
+  for suitable $\nonce_i,\nonce_i'\in\plot.\nonces$, for every $1\le i\le n$. Then it holds
+  $%\[
   \challenge_\mynext(b_j)=\challenge_\mynext(b'_j)
-  \]
+  $ %\]
   for every $0\le j\le n$.
 \end{proposition}
 %
