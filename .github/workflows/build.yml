@@ -20,16 +20,24 @@ jobs:
       - name: Compile paper
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: main.tex
+          working_directory: ./wtsc_2025
+          root_file: wtsc_2025.tex
       - name: Check PDF file
         run: |
-          file main.pdf | grep -q ' PDF '
-      - name: Rename PDF file
-        run: mv main.pdf signum-consensus.pdf
+          file wtsc_2025/wtsc_2025.pdf | grep -q ' PDF '
+      - name: Compile Reunion 2025 slides
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: ./slides
+          root_file: Reunion2025.tex
+      - name: Check PDF file
+        run: |
+          file slides/Reunion2025.pdf | grep -q ' PDF '
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: signum-consensus
           path: |
-            signum-consensus.pdf
+            wtsc_2025/wtsc_2025.pdf
+            slides/Reunion2025.pdf
         if: always()

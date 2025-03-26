@@ -6,8 +6,7 @@
 *.out
 *.vtc
 *~
-main.pdf
-signum-consensus.pdf
+*.pdf
 slides/*.nav
 slides/*.snm
 slides/*.vrb
