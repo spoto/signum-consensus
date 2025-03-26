@@ -14,8 +14,8 @@ You can download it by clicking on the [topmost action run](https://github.com/s
 
 ## Compilation of the PDF
 
-You can compile the latest version of the PDF by running
+In alternative, you can compile the latest version of the PDF by running
 
 ```shell
-pdflatex -jobname=signum-consensus main.tex; bibtex signum-consensus; pdflatex -jobname=signum-consensus main.tex; pdflatex -jobname=signum-consensus main.tex
+cd wtsc_2025; pflatex wtsc_2025.tex; bibtex wtsc_2025; pdflatex wtsc_2025.tex; pdflatex wtsc_2025.tex; mv wtsc_2025.pdf ..; cd ..
 ```
