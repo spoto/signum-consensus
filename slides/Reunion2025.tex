@@ -240,7 +240,7 @@
     such that $\hash(\mathbf{next})>\difficulty$
   \item<7->[{\color{red}answer:}] reply with a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$, obtained
     by rotating all possible values for an unused field of $\mathbf{next}$, until $\hash(\mathbf{next})>\difficulty$
-  \item<8->[{\color{red}competition:}] in case of more answers, select that with the largest hash
+  \item<8->[{\color{red}competition:}] in case of more answers, select the one with the largest hash
   \end{description}
 
 \end{frame}
@@ -266,7 +266,7 @@
     with $\hash(\mathbf{block})$, that contains a $\nonce$ obtained
     by scanning a large set of nonces precomputed on disk
     and choosing the one that minimizes $\delay(\nonce,\challenge)$
-  \item<5->[{\color{red}competition:}] in case of more answers, select that with the smallest
+  \item<5->[{\color{red}competition:}] in case of more answers, select the one with the smallest
     $\delay(\nonce,\challenge)$
   \end{description}
 
@@ -367,10 +367,13 @@
 
   \begin{align*}
     \challenge(\genesis)&=\langle 0,\sigma_\genesis\rangle,\quad\sigma_\genesis\text{ is an arbitrary byte array}\\
+    \mbox{}\\
+    \visible<2->{
     \challenge(\block)&=\langle\hash(\sigma\bowtie(\previous.\height+1))\ \mathit{mod}\ n,\sigma\rangle\\
-    &\text{where $\sigma=\hash(\challenge(\previous).\sigma\bowtie\pi)$}
+    &\text{where $\sigma=\hash(\challenge(\previous).\sigma\bowtie\pi)$}}
   \end{align*}
 
+  \visible<2->{
   \begin{center}
     \begin{tikzpicture}
       \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
@@ -382,13 +385,16 @@
       \draw [fill=Yellow, thick] (0,4.5) rectangle (4,5.5);
       \draw (2,5) node{$\previousblockhash$};
       \draw[->,thick] (0,5) -- (-1,5) node [midway,left,xshift=-.5cm] {$\previous$};
-      \draw (2,4) node{$\block$};
+      \draw (2,4.2) node{block};
     \end{tikzpicture}
   \end{center}
+  }
 
+  \visible<3->{
   \begin{center}
     \textbf{Proposition.} Challenges depends on the trunks only (simple proof by induction): Signum has no block-grinding attacks
   \end{center}
+  }
 
 \end{frame}
 
@@ -571,7 +577,7 @@
 
   \pause
   \begin{center}
-    \textbf{Proposition.} Signum is largely protected from challenge-grinding attacks.
+    \textbf{Proposition.} Signum is largely protected from challenge-grinding attacks
   \end{center}
 
 \end{frame}
@@ -586,7 +592,9 @@
 
   \medskip
 
-  Expensive with PoW: CPU power can only be used for a single network
+  \begin{center}
+    Expensive with PoW: CPU power can only be used for a single network
+  \end{center}
 
   \bigskip
 
