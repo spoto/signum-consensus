@@ -5,9 +5,18 @@ the small size of its proofs (deadlines, around $200$ bytes)
 and the absence of an initialization phase and transactions.
 Moreover, it is the only fully implemented and deployed solution and
 supports smart contracts.
-Its drawback is that it is
+Signum has recently added a layer of proof of commitment, that amplifies
+the fees for miners that staked more crypto. This seems just a way to sustain
+the value of their cyprotcurrency and is irrelevant \wrt the
+underlying proof of space algorithm described in this paper.
+There are, of course, drawbacks in Signum's algorithm.
+First of all, it is
 theoretically possible to mine new blocks in a proof of work style, although
 this is not been observed in practice up to now.
+More generally, there are drawbacks of proof of space that still need to
+be investigated: waste of storage, SSD degradation and even storage farm
+centralization.
+
 Our formalization of Signum's consensus is valuable because it sheds light
 on a blockchain network that runs since ten years but was missing any formal definition.
 Moreover, it allowed us to understand that Signum is free from block-grinding attacks

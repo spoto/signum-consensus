@@ -113,6 +113,13 @@ guarantees that, in order to compute a given scoop of the nonce
   \end{enumerate}
 \end{alg}
 %
+Step~\ref{step:nonce_construction:modify} makes each $h_i$ dependent on the others, so that
+one must compute them all in order to compute each of them.
+This is strengthened by the use of the xor, that limits the risk of hash collisions.
+Step~\ref{step:nonce_construction:swap} makes each scoop dependent on one $h_i$ with $i\ge\numberofscoops$,
+so that smaller scoops are not easier to compute than the others. This avoids a potential
+time/memory tradeoff (see Sec.~\ref{sec:prolog_structure_attacks}).
+
 %As usual in this context, the complexity of the algorithm is better expressed
 %in terms of how much data is hashed, since that is the expensive operation that dominates
 %Alg.~\ref{alg:nonce_construction}. The following result assumes that
@@ -138,7 +145,7 @@ guarantees that, in order to compute a given scoop of the nonce
 %  \end{align*}
 %  \qed
 %\end{proof}
-%
+
 A \emph{plot} is a set of nonces constructed with Alg.~\ref{alg:nonce_construction},
 for a finite non-empty set of progressive numbers $P$ and
 for a given prolog $\pi$, recorded in the plot.
