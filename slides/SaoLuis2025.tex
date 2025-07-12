@@ -12,6 +12,7 @@
 % See the License for the specific language governing permissions and
 % limitations under the License.
 
+%\RequirePackage{luatex85}
 \documentclass[11pt]{beamer}  %% versione proiettore
 %%\documentclass[11pt,handout]{beamer} %% versione stampa
 \usepackage{lucidiJb-2ed}
@@ -23,7 +24,11 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{tikz}
+%\usetikzlibrary {arrows.meta,graphs,graphdrawing}
+%\usegdlibrary{layered}
+%\usegdlibrary{trees}
 \usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary {arrows.meta}
 
 \mode<article>
 {
@@ -269,6 +274,50 @@
   \bigskip
 
   The rest of this presentation can only focus on the specific case of cryptocurrency mining.
+
+\end{frame}
+
+\begin{frame}{The blockchain peer-to-peer network}
+
+  \newcommand{\computer}{\includegraphics[width=1.3cm]{pictures/computer}}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.5,>=Stealth]
+      \colorlet{alicecolor}{green!90!black}
+      \colorlet{bobcolor}{red!90!black}
+      \colorlet{faustocolor}{yellow!90!black}
+
+      \draw[thick] (-10,0) -- (0,3.5) -- (10,0) -- cycle;
+
+      \draw (-10,0) node[above=0.2] {\computer} node[below=0.2,fill=faustocolor] {Fausto};
+      \draw (-10.5,3.5) rectangle +(1,0.5) [fill=gray!30!white];
+      \draw[->] (-10,4.5) -- +(0,-0.5);
+      \draw (-10.5,4.5) rectangle +(1,0.5) [fill=pink!70!white];
+      \draw[->] (-10,5.5) -- +(0,-0.5); 
+      \draw (-10.5,5.5) rectangle +(1,0.5) [fill=blue!30!white];
+
+      \draw (10,0) node[above=0.2] {\computer} node[below=0.2,fill=bobcolor] {Bob};
+      \draw (9.5,3.5) rectangle +(1,0.5) [fill=gray!30!white];
+      \draw[->] (10,4.5) -- +(0,-0.5);
+      \draw (9.5,4.5) rectangle +(1,0.5) [fill=pink!70!white];
+      \draw[->] (10,5.5) -- +(0,-0.5); 
+      \draw (9.5,5.5) rectangle +(1,0.5) [fill=blue!30!white];
+
+      \draw[->] (0,3.5) node[above=0.2] {\computer} node[below=0.2,fill=alicecolor] {Alice};
+      \only<2>{\filldraw [fill=gray!10!white] (0,8.25) circle [radius=1,very thick];}
+      \draw (-0.5,7) rectangle +(1,0.5) [fill=gray!30!white];
+      \draw[->] (0,8) -- +(0,-0.5);
+      \draw (-0.5,8) rectangle +(1,0.5) [fill=pink!70!white];
+      \draw[->] (0,9) -- +(0,-0.5);
+      \draw (-0.5,9) rectangle +(1,0.5) [fill=blue!30!white];
+
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{center}
+    \only<1>{All peers hold a private copy of the same blockchain data structure.}
+    \only<2>{Let us inspect a block of the blockchain.}
+  \end{center}
 
 \end{frame}
 
