@@ -17,6 +17,7 @@
 %%\documentclass[11pt,handout]{beamer} %% versione stampa
 \usepackage{lucidiJb-2ed}
 
+\usepackage{animate}
 \usepackage{mathtools}
 \usepackage{relsize}
 \usepackage[normalem]{ulem}
@@ -125,6 +126,8 @@
   \vfill
   \end{frame}
 }
+
+\newcount\mymix
 
 \begin{document}
 
@@ -317,6 +320,51 @@
   \begin{center}
     \only<1>{All peers hold a private copy of the same blockchain data structure.}
     \only<2>{Let us inspect a block of the blockchain.}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{Blocks (simplified)}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.9]
+      \visible<2->{\draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+        (4.5,6.5) -- (4.5,4.5) node [midway,right,xshift=.2cm] {trunk};}
+      \only<1-13,15->{\draw [fill=VioletRed, thick] (0,5.5) rectangle +(4.5,1);}
+      \only<14>{\shadedraw [inner color=VioletRed,outer color=white, draw=black, thick] (0,5.5) rectangle +(4.5,1);}
+      \draw (2.25,6) node{height};
+      \draw [fill=VioletRed, thick] (0,4.5) rectangle +(4.5,1);
+      \visible<2->{\draw (2.25,5) node{$\pi$ (creator's key)};}
+      \only<1-12,14->{\draw [fill=Yellow, thick] (0,3.5) rectangle +(4.5,1);}
+      \only<13>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,3.5) rectangle +(4.5,1);}
+      \only<3->{\draw (2.25,4) node{$\previousblockhash$};}
+      \only<-3>{\phantom{\draw[->,thick] (0,4) -- (-1,4) node [midway,left,xshift=-.5cm] {$\previous$};}}
+      \only<3->{\draw[->,thick] (0,4) -- (-1,4) node [midway,left,xshift=-.5cm] {$\previous$};}
+
+      \draw [fill=Yellow, thick] (0,2.5) rectangle +(4.5,1);
+      \visible<4->{\draw (2.25,3) node{nonce\,(arbitrary\,number)};}
+      \only<1-14,16->{\draw [fill=Yellow, thick] (0,1.5) rectangle +(4.5,1);}
+      \only<15>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,1.5) rectangle +(4.5,1);}
+      \visible<5->{\draw (2.25,2) node{$\tau$ (creation time)};}
+
+      \only<1-6,8-15>{\draw [fill=SpringGreen, thick] (0,-1) rectangle +(4.5,2.5);}
+      \only<7,16>{\draw [inner color=SpringGreen,outer color=white, draw=black, thick] (0,-1) rectangle +(4.5,2.5);}
+      \visible<6-7>{\draw (2.25,0.3) node{transactions};}
+      \visible<8->{\draw (2.25,1.1) node{Alice $\xRightarrow{100}$ Bob};}
+      \only<16>{\draw (4,1.1) node{\includegraphics[width=0.5cm]{pictures/signature}};}
+      \visible<9->{\draw (2.25,0.5) node{Fausto $\xRightarrow{500}$ John};}
+      \visible<10->{\draw (2.25,-0.1) node{Donald $\xRightarrow{350}$ Alice};}
+      \visible<11->{\draw (2.25,-0.7) node{Donald $\xRightarrow{2500}$ John};}
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{center}
+    \only<1-6>{\phantom{Rule 2: $\previous$ actually exists (no dangling pointers)}}
+    \only<7-11>{Let us inspect the list of transactions}
+    \only<12>{Valid blocks satisfy all \alert{consensus rules}}
+    \only<13>{\alert{Rule 1:} $\previous$ actually exists (no dangling pointers)}
+    \only<14>{\alert{Rule 2:} The height increases: $\height=\previous.\height+1$}
+    \only<15>{\alert{Rule 3:} The creation time is not in the future: $\tau\le\tau_\now$}
+    \only<16>{\alert{Rule 4:} Each transaction is correctly signed by its sender}
   \end{center}
 
 \end{frame}
