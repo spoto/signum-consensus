@@ -105,6 +105,10 @@
 \newcommand{\NonGenesisBlocks}{{\mathsf{NonGenesisBlocks}}}
 \newcommand{\Deadlines}{{\mathsf{Deadlines}}}
 
+\newcommand{\computer}{\includegraphics[width=1.3cm]{pictures/computer}}
+\newcommand{\leftArrow}{\includegraphics[width=0.6cm]{pictures/left_arrow}}
+\newcommand{\signature}{\includegraphics[width=0.3cm]{pictures/signature}}
+    
 \subtitle{ReACT'25, S\~ao Luis, Brasil, 23/7/2025}
 \title{Ecological Cryptomining, Theoretical Background and a Concrete Implementation}
 \institute{Universit\`a di Verona, Italy}
@@ -282,8 +286,6 @@
 
 \begin{frame}{The blockchain peer-to-peer network}
 
-  \newcommand{\computer}{\includegraphics[width=1.3cm]{pictures/computer}}
-
   \begin{center}
     \begin{tikzpicture}[scale=0.5,>=Stealth]
       \colorlet{alicecolor}{green!90!black}
@@ -293,11 +295,15 @@
       \draw[thick] (-10,0) -- (0,3.5) -- (10,0) -- cycle;
 
       \draw (-10,0) node[above=0.2] {\computer} node[below=0.2,fill=faustocolor] {Fausto};
+      \only<2>{\draw (-7.5,1.7) node[above] {\leftArrow};}
+      \only<2>{\draw (-6,2.5) node[above] {{\tiny\signature\ Alice $\xRightarrow{100}$ Donald}};}
       \draw (-10.5,3.5) rectangle +(1,0.5) [fill=gray!30!white];
       \draw[->] (-10,4.5) -- +(0,-0.5);
       \draw (-10.5,4.5) rectangle +(1,0.5) [fill=pink!70!white];
       \draw[->] (-10,5.5) -- +(0,-0.5); 
       \draw (-10.5,5.5) rectangle +(1,0.5) [fill=blue!30!white];
+      \only<3->{\draw[->] (-10,6.5) -- +(0,-0.5); 
+        \draw (-10.5,6.5) rectangle +(1,0.5) [fill=brown!70!white];}
 
       \draw (10,0) node[above=0.2] {\computer} node[below=0.2,fill=bobcolor] {Bob};
       \draw (9.5,3.5) rectangle +(1,0.5) [fill=gray!30!white];
@@ -305,26 +311,34 @@
       \draw (9.5,4.5) rectangle +(1,0.5) [fill=pink!70!white];
       \draw[->] (10,5.5) -- +(0,-0.5); 
       \draw (9.5,5.5) rectangle +(1,0.5) [fill=blue!30!white];
+      \only<3->{\draw[->] (10,6.5) -- +(0,-0.5); 
+        \draw (9.5,6.5) rectangle +(1,0.5) [fill=brown!70!white];}
 
       \draw[->] (0,3.5) node[above=0.2] {\computer} node[below=0.2,fill=alicecolor] {Alice};
-      \only<2>{\filldraw [fill=gray!10!white] (0,8.25) circle [radius=1,very thick];}
+      \only<4>{\filldraw [fill=gray!10!white] (0,8.25) circle [radius=1,very thick];}
+      \only<2>{\draw (2.5,3.7) node[above] {\leftArrow};}
+      \only<2>{\draw (4,4.5) node[above] {{\tiny\signature\ Donald $\xRightarrow{2500}$ John}};}
       \draw (-0.5,7) rectangle +(1,0.5) [fill=gray!30!white];
       \draw[->] (0,8) -- +(0,-0.5);
       \draw (-0.5,8) rectangle +(1,0.5) [fill=pink!70!white];
       \draw[->] (0,9) -- +(0,-0.5);
       \draw (-0.5,9) rectangle +(1,0.5) [fill=blue!30!white];
+      \visible<3->{\draw[->] (0,10) -- +(0,-0.5); 
+        \draw (-0.5,10) rectangle +(1,0.5) [fill=brown!70!white];}
 
     \end{tikzpicture}
   \end{center}
 
   \begin{center}
-    \only<1>{All peers hold a private copy of the same blockchain data structure.}
-    \only<2>{Let us inspect a block of the blockchain.}
+    \only<1>{Each peer holds a private copy of the same blockchain data structure}
+    \only<2>{Users can send signed transactions to any peer}
+    \only<3>{Such transactions get eventually boxed into new blocks}
+    \only<4>{Let us inspect a block of the blockchain}
   \end{center}
 
 \end{frame}
 
-\begin{frame}{Blocks (simplified)}
+\begin{frame}{Blocks}
   \begin{center}
     \begin{tikzpicture}[scale=0.9]
       \visible<2->{\draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
@@ -342,18 +356,17 @@
 
       \draw [fill=Yellow, thick] (0,2.5) rectangle +(4.5,1);
       \visible<4->{\draw (2.25,3) node{nonce\,(arbitrary\,number)};}
-      \only<1-14,16->{\draw [fill=Yellow, thick] (0,1.5) rectangle +(4.5,1);}
-      \only<15>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,1.5) rectangle +(4.5,1);}
+      \only<1-14,17->{\draw [fill=Yellow, thick] (0,1.5) rectangle +(4.5,1);}
+      \only<15,16>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,1.5) rectangle +(4.5,1);}
       \visible<5->{\draw (2.25,2) node{$\tau$ (creation time)};}
 
-      \only<1-6,8-15>{\draw [fill=SpringGreen, thick] (0,-1) rectangle +(4.5,2.5);}
-      \only<7,16>{\draw [inner color=SpringGreen,outer color=white, draw=black, thick] (0,-1) rectangle +(4.5,2.5);}
+      \only<1-6,8-16>{\draw [fill=SpringGreen, thick] (0,-1) rectangle +(4.5,2.5);}
+      \only<7,17>{\draw [inner color=SpringGreen,outer color=white, draw=black, thick] (0,-1) rectangle +(4.5,2.5);}
       \visible<6-7>{\draw (2.25,0.3) node{transactions};}
-      \visible<8->{\draw (2.25,1.1) node{Alice $\xRightarrow{100}$ Bob};}
-      \only<16>{\draw (4,1.1) node{\includegraphics[width=0.5cm]{pictures/signature}};}
-      \visible<9->{\draw (2.25,0.5) node{Fausto $\xRightarrow{500}$ John};}
-      \visible<10->{\draw (2.25,-0.1) node{Donald $\xRightarrow{350}$ Alice};}
-      \visible<11->{\draw (2.25,-0.7) node{Donald $\xRightarrow{2500}$ John};}
+      \visible<8->{\draw (2.25,1.1) node{\signature\ Alice $\xRightarrow{100}$ Donald};}
+      \visible<9->{\draw (2.25,0.5) node{\signature\ Fausto $\xRightarrow{500}$ John};}
+      \visible<10->{\draw (2.25,-0.1) node{\signature\ Donald $\xRightarrow{350}$ Alice};}
+      \visible<11->{\draw (2.25,-0.7) node{\signature\ Donald $\xRightarrow{2500}$ John};}
     \end{tikzpicture}
   \end{center}
 
@@ -363,9 +376,141 @@
     \only<12>{Valid blocks satisfy all \alert{consensus rules}}
     \only<13>{\alert{Rule 1:} $\previous$ actually exists (no dangling pointers)}
     \only<14>{\alert{Rule 2:} The height increases: $\height=\previous.\height+1$}
-    \only<15>{\alert{Rule 3:} The creation time is not in the future: $\tau\le\tau_\now$}
-    \only<16>{\alert{Rule 4:} Each transaction is correctly signed by its sender}
+    \only<15>{\alert{Rule 3:} The creation time increases: $\previous.\tau<\tau$}
+    \only<16>{\alert{Rule 4:} The creation time is not in the future: $\tau\le\tau_\now$}
+    \only<17>{\alert{Rule 5:} Each transaction is correctly signed by its sender}
   \end{center}
+
+\end{frame}
+
+\begin{frame}{Each peer (Alice) can expand a \textbf{block} with a \textbf{next} block}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.9]
+      \draw (2,7) node{\textbf{block}};
+      \draw [fill=VioletRed, thick] (0,4.5) rectangle (4,6.5);
+      \draw (2,6) node{height};
+      \draw [fill=VioletRed, thick] (0,3.5) rectangle (4,5.5);
+      \draw (2,5) node{$\pi$ (creator's key)};
+      \draw [fill=Yellow, thick] (0,3.5) rectangle (4,4.5);
+      \draw (2,4) node{$\previousblockhash$};
+
+      \draw [fill=Yellow, thick] (0,2.5) rectangle (4,3.5);
+      \draw (2,3) node{nonce};
+      \draw [fill=Yellow, thick] (0,1.5) rectangle (4,2.5);
+      \draw (2,2) node{$\tau$ (creation time)};
+
+      \draw [fill=SpringGreen, thick] (0,-1) rectangle (4,1.5);
+      \draw (2,0.25) node{transactions};
+
+      \visible<2->{
+      \draw (9,7) node{\textbf{next}};
+      \draw [fill=VioletRed, thick] (6,5.5) rectangle (12,6.5);
+      \draw (9,6) node{height+1};
+      }
+      \visible<3->{
+      \draw [fill=VioletRed, thick] (6,4.5) rectangle (12,5.5);
+      \draw (9,5) node{Alice's public key};
+      }
+      \visible<4->{
+      \draw [fill=Yellow, thick] (6,3.5) rectangle (12,4.5);
+      \draw (9,4) node{$\hash(\mathbf{block})$};
+      \draw[->,very thick] (6,4) -- (4,4);
+      }
+
+      \visible<5->{
+      \draw [fill=Yellow, thick] (6,2.5) rectangle (12,3.5);
+      \draw (9,3) node{42 (or 17, or 13, or your bday)};
+      }
+      \visible<6->{
+      \draw [fill=Yellow, thick] (6,1.5) rectangle (12,2.5);
+      \draw (9,2) node{$\tau_\now$};
+      }
+
+      \visible<7->{
+      \draw [fill=SpringGreen, thick] (6,-1) rectangle (12,1.5);
+      \draw (9,1) node{\signature\ Alice $\xRightarrow{100}$ Donald};
+      \draw (9,0.25) node{\signature\ Donald $\xRightarrow{2500}$ John};
+      }
+
+      \visible<8->{
+      \draw (9,-0.5) node{\textbf{ $\xRightarrow{432}$ Alice}};
+      }
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{Peers create (``mine'') new blocks}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.5,>=Stealth]
+      \colorlet{alicecolor}{green!90!black}
+      \colorlet{bobcolor}{red!90!black}
+      \colorlet{faustocolor}{yellow!90!black}
+
+      \draw[thick] (-10,0) -- (0,3.5) -- (10,0) -- cycle;
+
+      \draw (-10,0) node[above=0.2] {\computer} node[below=0.2,fill=faustocolor] {Fausto};
+      \draw (-10.5,3.5) rectangle +(1,0.5) [fill=gray!30!white];
+      \draw[->] (-10,4.5) -- +(0,-0.5);
+      \draw (-10.5,4.5) rectangle +(1,0.5) [fill=pink!70!white];
+      \draw[->] (-10,5.5) -- +(0,-0.5); 
+      \draw (-10.5,5.5) rectangle +(1,0.5) [fill=blue!30!white];
+      \visible<2-3,5,7-8,10>{\draw[->] (-10,6.5) -- +(0,-0.5);}
+      \visible<9>{\draw[->] (-10.5,6.5) -- +(0.5,-0.5);}
+      \visible<9>{\draw[->] (-9.5,6.5) -- +(-0.5,-0.5);}
+      \visible<2-3,8>{\draw (-10.5,6.5) rectangle +(1,0.5) [fill=faustocolor];}
+      \visible<5,10>{\draw (-10.5,6.5) rectangle +(1,0.5) [fill=alicecolor];}
+      \visible<7>{\draw (-10.5,6.5) rectangle +(1,0.5) [fill=bobcolor];}
+      \visible<9>{\draw (-11.2,6.5) rectangle +(1,0.5) [fill=faustocolor];}
+      \visible<9>{\draw (-9.8,6.5) rectangle +(1,0.5) [fill=alicecolor];}
+
+      \draw (10,0) node[above=0.2] {\computer} node[below=0.2,fill=bobcolor] {Bob};
+      \draw (9.5,3.5) rectangle +(1,0.5) [fill=gray!30!white];
+      \draw[->] (10,4.5) -- +(0,-0.5);
+      \draw (9.5,4.5) rectangle +(1,0.5) [fill=pink!70!white];
+      \draw[->] (10,5.5) -- +(0,-0.5); 
+      \draw (9.5,5.5) rectangle +(1,0.5) [fill=blue!30!white];
+      \visible<3,5-7,10>{\draw[->] (10,6.5) -- +(0,-0.5);}
+      \visible<9>{\draw[->] (9.5,6.5) -- +(0.5,-0.5);}
+      \visible<9>{\draw[->] (10.5,6.5) -- +(-0.5,-0.5);}
+      \visible<3>{\draw (9.5,6.5) rectangle +(1,0.5) [fill=faustocolor];}
+      \visible<5,10>{\draw (9.5,6.5) rectangle +(1,0.5) [fill=alicecolor];}
+      \visible<6-7>{\draw (9.5,6.5) rectangle +(1,0.5) [fill=bobcolor];}
+      \visible<9>{\draw (8.8,6.5) rectangle +(1,0.5) [fill=faustocolor];}
+      \visible<9>{\draw (10.2,6.5) rectangle +(1,0.5) [fill=alicecolor];}
+
+      \draw[->] (0,3.5) node[above=0.2] {\computer} node[below=0.2,fill=alicecolor] {Alice};
+      \draw (-0.5,7) rectangle +(1,0.5) [fill=gray!30!white];
+      \draw[->] (0,8) -- +(0,-0.5);
+      \draw (-0.5,8) rectangle +(1,0.5) [fill=pink!70!white];
+      \draw[->] (0,9) -- +(0,-0.5);
+      \draw (-0.5,9) rectangle +(1,0.5) [fill=blue!30!white];
+      \visible<3-5,7-8,10>{\draw[->] (0,10) -- +(0,-0.5);}
+      \visible<9>{\draw[->] (-0.5,10) -- +(0.5,-0.5);}
+      \visible<9>{\draw[->] (0.5,10) -- +(-0.5,-0.5);}
+      \visible<3>{\draw (-0.5,10) rectangle +(1,0.5) [fill=faustocolor];}
+      \visible<4-5,8,10>{\draw (-0.5,10) rectangle +(1,0.5) [fill=alicecolor];}
+      \visible<7>{\draw (-0.5,10) rectangle +(1,0.5) [fill=bobcolor];}
+      \visible<9>{\draw (-1.2,10) rectangle +(1,0.5) [fill=faustocolor];}
+      \visible<9>{\draw (0.2,10) rectangle +(1,0.5) [fill=alicecolor];}
+
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{overprint}
+    \onslide<2-3>
+    \centering Fausto creates a new block\ldots
+    \onslide<4-5>
+    \centering \ldots or Alice creates a new block
+    \onslide<6-7>
+    \centering \ldots or Bob creates a new block
+    \onslide<8-9>
+    \centering \ldots or Fausto and Alice create a new block!
+    \onslide<10>
+    \centering Peers select the block with the largest hash
+  \end{overprint}
 
 \end{frame}
 
