@@ -24,12 +24,17 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsfonts}
 \usepackage{tikz}
 %\usetikzlibrary {arrows.meta,graphs,graphdrawing}
 %\usegdlibrary{layered}
 %\usegdlibrary{trees}
 \usetikzlibrary{decorations.pathreplacing}
 \usetikzlibrary {arrows.meta}
+\usepackage{algorithm,algpseudocode}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 \mode<article>
 {
@@ -108,7 +113,11 @@
 \newcommand{\computer}{\includegraphics[width=1.3cm]{pictures/computer}}
 \newcommand{\leftArrow}{\includegraphics[width=0.6cm]{pictures/left_arrow}}
 \newcommand{\signature}{\includegraphics[width=0.3cm]{pictures/signature}}
-    
+
+\colorlet{alicecolor}{green!90!black}
+\colorlet{bobcolor}{red!90!black}
+\colorlet{faustocolor}{yellow!90!black}
+      
 \subtitle{ReACT'25, S\~ao Luis, Brasil, 23/7/2025}
 \title{Ecological Cryptomining, Theoretical Background and a Concrete Implementation}
 \institute{Universit\`a di Verona, Italy}
@@ -288,10 +297,6 @@
 
   \begin{center}
     \begin{tikzpicture}[scale=0.5,>=Stealth]
-      \colorlet{alicecolor}{green!90!black}
-      \colorlet{bobcolor}{red!90!black}
-      \colorlet{faustocolor}{yellow!90!black}
-
       \draw[thick] (-10,0) -- (0,3.5) -- (10,0) -- cycle;
 
       \draw (-10,0) node[above=0.2] {\computer} node[below=0.2,fill=faustocolor] {Fausto};
@@ -445,9 +450,6 @@
 
   \begin{center}
     \begin{tikzpicture}[scale=0.5,>=Stealth]
-      \colorlet{alicecolor}{green!90!black}
-      \colorlet{bobcolor}{red!90!black}
-      \colorlet{faustocolor}{yellow!90!black}
 
       \draw[thick] (-10,0) -- (0,3.5) -- (10,0) -- cycle;
 
@@ -481,7 +483,7 @@
       \visible<9>{\draw (8.8,6.5) rectangle +(1,0.5) [fill=faustocolor];}
       \visible<9>{\draw (10.2,6.5) rectangle +(1,0.5) [fill=alicecolor];}
 
-      \draw[->] (0,3.5) node[above=0.2] {\computer} node[below=0.2,fill=alicecolor] {Alice};
+      \draw (0,3.5) node[above=0.2] {\computer} node[below=0.2,fill=alicecolor] {Alice};
       \draw (-0.5,7) rectangle +(1,0.5) [fill=gray!30!white];
       \draw[->] (0,8) -- +(0,-0.5);
       \draw (-0.5,8) rectangle +(1,0.5) [fill=pink!70!white];
@@ -513,6 +515,116 @@
   \end{overprint}
 
 \end{frame}
+
+\begin{frame}{Blockchain mining as a competitive puzzle}
+
+  Mining of a \textbf{next} block on top of a \textbf{block}:
+  \quad\begin{tikzpicture}[scale=0.5,>=Stealth]
+    \draw (0,1.5) rectangle +(2,1) [fill=alicecolor];
+    \draw[->] (1,1.5) -- +(0,-0.5);
+    \draw (0,0) rectangle +(2,1) [fill=pink!70!white];
+    \draw (1,0) node[above] {\textbf{block}};
+    \draw (1,1.5) node[above] {\textbf{next}};
+  \end{tikzpicture}
+
+  \begin{description}
+  \item[{\color{red}challenge:}] \only<2->{derive (deterministically) a challenge from the \textbf{block}}
+  \item[{\color{red}answer:}] \only<3->{send all peers a \textbf{next} that satisfies the challenge}
+  \item[{\color{red}competition:}] \only<4->{in case of more \textbf{next}, select a \emph{best} one}
+  \end{description}
+
+  \bigskip
+  \visible<5->{Bitcoin's Proof of Work (PoW):}
+  \begin{description}
+  \item<6->[{\color{red}challenge:}] find a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$,
+    such that $\hash(\mathbf{next})>\difficulty$
+  \item<7->[{\color{red}answer:}] send all peers a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$, obtained
+    by rotating among possible values for the nonce of $\mathbf{next}$, until $\hash(\mathbf{next})>\difficulty$
+  \item<8->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the largest hash
+  \end{description}
+
+\end{frame}
+
+\begin{frame}[fragile]{Bitcoin's proof of work mining is brute force}
+ 
+\begin{algorithm}[H] 
+\caption{Bitcoin's Proof of Work}
+\begin{algorithmic}[1]
+\Require{$block$, $difficulty$, $max$} 
+\Ensure{$next$ (a valid child of $block$, or null)}
+\Statex
+\State {$next$ $\gets$ null}
+\For{$nonce \gets 0$ to $max$}
+\State {$candidate$ $\gets$ valid block pointing back to $block$ and using $nonce$}
+\If{hash($candidate$) $\ge$ $difficulty$}
+\If{$next$ = null \textbf{or} hash($candidate$) $>$ hash($next$)}
+\State {$next$ $\gets$ $candidate$}
+\EndIf
+\EndIf
+\EndFor
+\State \Return {$next$}
+\end{algorithmic}
+\end{algorithm} 
+
+\end{frame}
+
+\begin{frame}\frametitle{Evolution of Bitcoin's mining hardware}
+
+  \begin{center}
+    \includegraphics[scale=0.55,clip=false]{pictures/mining-hardware}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Bitcoin's difficulty over the years}
+
+  \begin{center}
+    \includegraphics[width=0.9\textwidth,clip=false]{pictures/difficulty}
+  \end{center}
+
+  \begin{center}
+    {\tiny (source: \url{https://thresh0ld.com/bitcoin-mining-difficulty-and-price-correlation})}
+  \end{center}
+    
+\end{frame}
+
+\begin{frame}\frametitle{Bitcoin's energy consumption over the years}
+
+  \begin{center}
+    \includegraphics[width=0.9\textwidth,clip=false]{pictures/bitcoin-energy-consumption}
+  \end{center}
+
+  \begin{center}
+    {\tiny (source: \url{https://digiconomist.net/bitcoin-energy-consumption})}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Annualized Bitcoin's total footprint}
+
+  \begin{center}
+    \includegraphics[width=0.85\textwidth,clip=false]{pictures/footprint-annual}
+  \end{center}
+
+  \begin{center}
+    {\tiny (source: \url{https://digiconomist.net/bitcoin-energy-consumption})}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Bitcoin's footprint for a single transaction}
+
+  \begin{center}
+    \includegraphics[width=0.85\textwidth,clip=false]{pictures/footprint-single}
+  \end{center}
+
+  \begin{center}
+    {\tiny (source: \url{https://digiconomist.net/bitcoin-energy-consumption})}
+  \end{center}
+
+\end{frame}
+
+\end{document}
 
 \begin{frame}{What we knew so far about Signum}
 
@@ -582,28 +694,6 @@
     The degradation of the space of explorable nonces should be at least linear with
     the reduction of the precomputed nonces
   \end{redbox}
-
-\end{frame}
-
-\begin{frame}{Blockchain mining as a competitive puzzle}
-
-  Mining of a \textbf{next} block on top of a \textbf{block}:
-
-  \begin{description}
-  \item[{\color{red}challenge:}] \only<2->{derive (deterministically) a challenge from the \textbf{block}}
-  \item[{\color{red}answer:}] \only<3->{reply with a \textbf{next} that satisfies the challenge}
-  \item[{\color{red}competition:}] \only<4->{in case of more \textbf{next}, select a \emph{best} one}
-  \end{description}
-
-  \bigskip
-  \visible<5->{Bitcoin's Proof of Work (PoW):}
-  \begin{description}
-  \item<6->[{\color{red}challenge:}] find a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$,
-    such that $\hash(\mathbf{next})>\difficulty$
-  \item<7->[{\color{red}answer:}] reply with a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$, obtained
-    by rotating all possible values for an unused field of $\mathbf{next}$, until $\hash(\mathbf{next})>\difficulty$
-  \item<8->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the largest hash
-  \end{description}
 
 \end{frame}
 
