@@ -140,12 +140,25 @@
   \end{frame}
 }
 
-\newcount\mymix
-
 \begin{document}
 
 \begin{frame}
   \titlepage
+\end{frame}
+
+\begin{frame}{About myself}
+  \begin{itemize}
+  \item Associate Professor, Department of Computer Science, University of Verona, Italy
+  \item software engineering and verification (1995-today)
+  \item smart contracts, consensus, blockchain programming (2018-today)
+  \end{itemize}
+
+  \medskip
+
+  \begin{center}
+    \includegraphics[width=3cm]{pictures/verona_map}
+  \end{center}
+
 \end{frame}
 
 \begin{frame}{The IT green dream (1990-2010)}
@@ -289,8 +302,21 @@
 
   \bigskip
 
-  The rest of this presentation can only focus on the specific case of cryptocurrency mining.
+  The rest of this presentation can only focus on the specific case of
+  cryptocurrency mining
 
+\end{frame}
+
+\begin{frame}{Cryptocurrencies}
+  Cryptocurrencies are one of the applications of blockchain technology:
+  \begin{itemize}
+  \item decentralized money (Bitcoin, Ethereum, Cardano, Solana\ldots)
+  \item decentralized smart contracts
+  \item decentralized identities
+  \item decentralized elections
+  \item decentralized supply chains
+  \item \ldots
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{The blockchain peer-to-peer network}
@@ -366,7 +392,7 @@
       \visible<5->{\draw (2.25,2) node{$\tau$ (creation time)};}
 
       \only<1-6,8-16>{\draw [fill=SpringGreen, thick] (0,-1) rectangle +(4.5,2.5);}
-      \only<7,17>{\draw [inner color=SpringGreen,outer color=white, draw=black, thick] (0,-1) rectangle +(4.5,2.5);}
+      \only<7,17,18>{\draw [inner color=SpringGreen,outer color=white, draw=black, thick] (0,-1) rectangle +(4.5,2.5);}
       \visible<6-7>{\draw (2.25,0.3) node{transactions};}
       \visible<8->{\draw (2.25,1.1) node{\signature\ Alice $\xRightarrow{100}$ Donald};}
       \visible<9->{\draw (2.25,0.5) node{\signature\ Fausto $\xRightarrow{500}$ John};}
@@ -384,6 +410,7 @@
     \only<15>{\alert{Rule 3:} The creation time increases: $\previous.\tau<\tau$}
     \only<16>{\alert{Rule 4:} The creation time is not in the future: $\tau\le\tau_\now$}
     \only<17>{\alert{Rule 5:} Each transaction is correctly signed by its sender}
+    \only<18>{\alert{Rule 6:} Senders hold the money that they send}
   \end{center}
 
 \end{frame}
@@ -620,6 +647,103 @@
 
   \begin{center}
     {\tiny (source: \url{https://digiconomist.net/bitcoin-energy-consumption})}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{The proof of stake approach}
+
+  \begin{center}
+    Jae Kwon, \emph{Tendermint, Consensus without Mining}, 2014
+  \end{center}
+
+  \begin{greenbox}{}
+    A selected set of peers (\emph{validators}) decide the next blocks, in
+    a round robin way or according to any other \emph{fair} policy, typically
+    based on the amount of money \emph{staked} by each validator.
+    Byzantine algorithms ensure the survival of the peer-to-peer network if
+    some validator misbehaves.
+  \end{greenbox}
+
+  \medskip
+
+  \begin{center}
+    Pros: no CPU mining anymore, higher throughput
+  \end{center}
+
+  \begin{center}
+    Cons: more centralized, the rich become richer
+  \end{center}
+
+  \begin{center}
+    $99\%$ of cryptocurrencies are based on proof of stake nowadays
+  \end{center}
+
+  \pause
+
+  \begin{center}
+    \alert{Are Bitcoin and its proof of work dead then?}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{It's the economy, stupid!}
+
+  \begin{center}
+    Bitcoin (proof of work) to USD\\
+    \vspace*{1ex}
+    \includegraphics[width=\textwidth]{pictures/BTCUSD}
+  \end{center}
+
+  \medskip
+
+  \begin{overprint}
+    \onslide<2>
+    \begin{center}
+      Ethereum (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/ETHUSD}
+    \end{center}
+    \onslide<3>
+    \begin{center}
+      Solana (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/SOLUSD}
+    \end{center}
+    \onslide<4>
+    \begin{center}
+      Cardano (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/ADAUSD}
+    \end{center}
+    \onslide<5>
+    \begin{center}
+      Polygon (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/MATICUSD}
+    \end{center}
+    \centering \ldots or Fausto and Alice create a new block!
+    \onslide<6>
+    \begin{center}
+      Dogecoin (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/DOGEUSD}
+    \end{center}
+  \end{overprint}
+
+\end{frame}
+
+\begin{frame}{Looking for the chimera}
+
+  \begin{center}
+    As decentralized as Bitcoin's proof of work, as cheap as proof of stake
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{pictures/chimera}\\
+    {\tiny Florence, Etruscan chimera, 400 BC}
   \end{center}
 
 \end{frame}
