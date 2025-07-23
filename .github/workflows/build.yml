@@ -41,6 +41,14 @@ jobs:
       - name: Check PDF file
         run: |
           file slides/WTSC2025.pdf | grep -q ' PDF '
+      - name: Compile Sao Luis 2025 slides
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: ./slides
+          root_file: SaoLuis2025.tex
+      - name: Check PDF file
+        run: |
+          file slides/SaoLuis2025.pdf | grep -q ' PDF '
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
@@ -49,4 +57,5 @@ jobs:
             wtsc_2025/wtsc_2025.pdf
             slides/Reunion2025.pdf
             slides/WTSC2025.pdf
+            slides/SaoLuis2025.pdf
         if: always()

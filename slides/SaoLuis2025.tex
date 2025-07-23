@@ -129,10 +129,15 @@
 \newcommand{\computer}{\includegraphics[width=1.3cm]{pictures/computer}}
 \newcommand{\leftArrow}{\includegraphics[width=0.6cm]{pictures/left_arrow}}
 \newcommand{\signature}{\includegraphics[width=0.3cm]{pictures/signature}}
+\newcommand{\leftplug}{\includegraphics[width=0.7cm]{pictures/plug_left}}
+\newcommand{\rightplug}{\includegraphics[width=0.7cm]{pictures/plug_right}}
+\newcommand{\ssd}{\includegraphics[width=0.8cm]{pictures/ssd}}
 
 \colorlet{alicecolor}{green!90!black}
 \colorlet{bobcolor}{red!90!black}
 \colorlet{faustocolor}{yellow!90!black}
+\colorlet{lightred}{red!50!white}
+\colorlet{verylightgray}{gray!25!white}
       
 \subtitle{ReACT'25, S\~ao Luis, Brasil, 23/7/2025}
 \title{Ecological Cryptomining, Theoretical Background and Concrete Implementation}
@@ -196,7 +201,7 @@
   \end{center}
 
   \begin{center}
-    Who needs a war when we are so social?
+    Who starts a war when we are so social?
   \end{center}
 
   \begin{center}
@@ -205,7 +210,7 @@
 
 \end{frame}
 
-\begin{frame}{The IT reality ($>$2010)}
+\begin{frame}{The IT reality (after 2010)}
 
   \begin{center}
     \includegraphics[width=0.7\textwidth]{pictures/forecast}
@@ -217,14 +222,14 @@
     
 \end{frame}
 
-\begin{frame}{The IT reality ($>$2010)}
+\begin{frame}{The IT reality (after 2010)}
 
   \begin{center}
     \includegraphics[width=0.7\textwidth]{pictures/data-centers-electricity-use}
   \end{center}
 
   \begin{center}
-    Exercise: find Amazon Web Services in the map
+    Exercise: find Amazon Web Services in the map.
   \end{center}
 
   \begin{center}
@@ -240,7 +245,7 @@
   \end{center}
 
   \begin{center}
-    Data centers need (lot of) water for cooling
+    Data centers need (lot of) water for cooling.
   \end{center}
 
   \begin{center}
@@ -319,7 +324,7 @@
   \bigskip
 
   The rest of this presentation can only focus on the specific case of
-  cryptocurrency mining
+  cryptocurrency mining.
 
 \end{frame}
 
@@ -377,10 +382,10 @@
   \end{center}
 
   \begin{center}
-    \only<1>{Each peer holds a private copy of the same blockchain data structure}
-    \only<2>{Users can send signed transactions to any peer}
-    \only<3>{Such transactions get eventually boxed into new blocks}
-    \only<4>{Let us inspect a block of the blockchain}
+    \only<1>{Each peer holds a private copy of the same blockchain data structure.}
+    \only<2>{Users can send signed transactions to any peer.}
+    \only<3>{Such transactions get eventually boxed into new blocks.}
+    \only<4>{Let us inspect a block of the blockchain.}
   \end{center}
 
 \end{frame}
@@ -402,7 +407,7 @@
       \only<3->{\draw[->,thick] (0,4) -- (-1,4) node [midway,left,xshift=-.5cm] {$\previous$};}
 
       \draw [fill=Yellow, thick] (0,2.5) rectangle +(4.5,1);
-      \visible<4->{\draw (2.25,3) node{nonce\,(arbitrary\,number)};}
+      \visible<4->{\draw (2.25,3) node{nonce\,(arbitrary data)};}
       \only<1-14,17->{\draw [fill=Yellow, thick] (0,1.5) rectangle +(4.5,1);}
       \only<15,16>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,1.5) rectangle +(4.5,1);}
       \visible<5->{\draw (2.25,2) node{$\tau$ (creation time)};}
@@ -419,8 +424,8 @@
 
   \begin{center}
     \only<1-6>{\phantom{Rule 2: $\previous$ actually exists (no dangling pointers)}}
-    \only<7-11>{Let us inspect the list of transactions}
-    \only<12>{Valid blocks satisfy all \alert{consensus rules}}
+    \only<7-11>{Let us inspect the list of transactions.}
+    \only<12>{Valid blocks satisfy all \alert{consensus rules}:}
     \only<13>{\alert{Rule 1:} $\previous$ actually exists (no dangling pointers)}
     \only<14>{\alert{Rule 2:} The height increases: $\height=\previous.\height+1$}
     \only<15>{\alert{Rule 3:} The creation time increases: $\previous.\tau<\tau$}
@@ -554,7 +559,7 @@
     \onslide<8-9>
     \centering \ldots or Fausto and Alice create a new block!
     \onslide<10>
-    \centering Peers select the block with the largest hash
+    \centering Peers select the block with the largest hash.
   \end{overprint}
 
 \end{frame}
@@ -580,7 +585,7 @@
   \visible<5->{Bitcoin's Proof of Work (PoW):}
   \begin{description}
   \item<6->[{\color{red}challenge:}] find a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$,
-    such that $\hash(\mathbf{next})>\difficulty$
+    such that $\hash(\mathbf{next})\ge\difficulty$
   \item<7->[{\color{red}answer:}] send all peers a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$, obtained
     by rotating among possible values for the nonce of $\mathbf{next}$, until $\hash(\mathbf{next})>\difficulty$
   \item<8->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the largest hash
@@ -691,8 +696,10 @@
     Cons: more centralized, the rich become richer
   \end{center}
 
+  \medskip
+
   \begin{center}
-    $99\%$ of cryptocurrencies are based on proof of stake nowadays
+    $99\%$ of cryptocurrencies are based on proof of stake nowadays.
   \end{center}
 
   \pause
@@ -825,7 +832,6 @@
     \item Dziembowski, Faust, Kolmogorov, Pietrzak: \emph{Proofs of Space}, 2015 (DAG pebbling) $\Rightarrow$
       {\color{red}SpaceMint}: \url{https://github.com/kwonalbert/spacemint}
     \item Abusalah, Alwen, Cohen, Khilko, Pietrzak, Reyzin: \emph{Beyond Hellman's Time-Memory Trade-Offs with Applications to Proofs of Space}, 2017 (proof of sequential work + proof of space) $\Rightarrow$ {\color{red}Chia}: \url{https://www.chia.net/wp-content/uploads/2022/07/ChiaGreenPaper.pdf}
-    \item \emph{Signum Community Website and Documentation Project} (plot files) $\Rightarrow$ {\color{red}Signum}: \url{https://wiki.signum.network}
     \end{itemize}
 
   \begin{center}
@@ -857,14 +863,14 @@
   
   \begin{redbox}{Time/memory trade-off}
     The degradation of the space of explorable data should be at least linear with
-    the reduction of the precomputed data
+    the reduction of the precomputed data.
   \end{redbox}
 
 \end{frame}
 
 \begin{frame}\frametitle{Signum's proof of space}
 
-  \visible<1->{Blocks are enriched with a $\nonce$ data structure of size $n$ and creator $\pi$}
+  \visible<1->{Blocks use a $\nonce$ data structure of size $n$ and creator $\pi$.}
   \medskip
 
   \begin{description}
@@ -951,7 +957,7 @@
 
 \begin{frame}[fragile]{Create your own small plot file ($5000$ nonces)}
 
-  You can run this command on a Linux machine with docker installed (\alert{it is a single line command!})
+  You can run this command on a Linux machine with docker installed (\alert{beware: it is a single line command!})
 
   \medskip
 
@@ -996,7 +1002,7 @@ docker run --rm -it \
 
   \visible<3->{
   \begin{center}
-    \textbf{Proposition.} Challenges depends on the trunks only (simple proof by induction): Signum has no block-grinding attacks
+    \textbf{Proposition.} Challenges depends on the trunks only (simple proof by induction): Signum has no block-grinding attacks.
   \end{center}
   }
 
@@ -1089,7 +1095,7 @@ docker run --rm -it \
 
 \end{frame}
 
-\begin{frame}{Mokamint}
+\begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
 
   \begin{center}
     \includegraphics[width=0.4\textwidth]{pictures/mokamint_logo}\\
@@ -1098,8 +1104,8 @@ docker run --rm -it \
 
 
   \begin{center}
-    A new blockchain based on proof of space, similar to Signum but \alert{generic}
-    wrt.\ the supported \alert{application}
+    A new open-source (Apache 2.0) blockchain based on proof of space, similar to Signum but \alert{generic}
+    wrt.\ the supported \alert{application}.
   \end{center}
 
   \medskip
@@ -1122,6 +1128,53 @@ docker run --rm -it \
 
 \end{frame}
 
+\begin{frame}{The Mokamint+Hotmoka testnet}
+
+  Currently composed of two peers at \url{ws://panarea.hotmoka.io}:
+
+  \begin{center}
+    \begin{tikzpicture}
+      \draw [fill=lightblue,thick] (0,1) rectangle +(3,1.5);
+      \draw (1.5,1.75) node {{\scriptsize A73djtmYeXDLu2k\ldots}};
+      \draw [fill=lightblue,thick] (0,4) rectangle +(3,1.5);
+      \draw (1.5,4.75) node {{\scriptsize 7ELCyBDtwi3qmdf\ldots}};
+      \draw [fill=lightred,thick] (4,4.35) rectangle +(4,0.8);
+      \draw (5.5,4.75) node {{\scriptsize 9mDETtrYAzPUqR\ldots}};
+      \draw (6,5.4) node {{\scriptsize local miner}};
+      \draw (7.4,4.75) node {\ssd};
+      \draw[-, thick] (3,4.75) -- (4,4.75);
+      \draw [fill=lightred,thick] (4,2) rectangle +(4,0.8);
+      \draw (6,3.1) node {{\scriptsize local miner}};
+      \draw (5.5,2.4) node {{\scriptsize 5wJjYDTFRZogoH\ldots}};
+      \draw (7.4,2.4) node {\ssd};
+      \draw[-, thick] (3,2.4) -- (4,2.4);
+      \draw[-, thick] (3,1.1) -- (4,1.1);
+      \draw[-, thick, dashed] (1.5,2.5) -- (1.5,4);
+      \draw (0.8,2.7) node {{\scriptsize port 8030}};
+      \draw (0.8,3.7) node {{\scriptsize port 8032}};
+      \draw (4.3,1.1) node {\leftplug};
+      \draw (4.3,0.6) node {{\scriptsize remote miner}};
+      \visible<1>{\draw (5.6,1.1) node {{\scriptsize port 8025}};}
+      \visible<2>{
+        \draw [fill=verylightgray,dashed] (6.3,0.2) rectangle +(6,1.6);
+        \draw[-, thick, dashed] (4.8,1.1) -- (6.4,1.1);
+        \draw (5.6,1.4) node {{\scriptsize port 8025}};
+        \draw[-, thick] (7.15,1.1) -- (8.1,1.1);
+        \draw [fill=lightred,thick] (8.2,0.7) rectangle +(4,0.8);
+        \draw (6.8,1.1) node {\rightplug};
+        \draw (10.1,0.4) node {{\scriptsize local miner in our machine}};
+        \draw (9.5,1.1) node {{\scriptsize our public key}};
+        \draw (11.6,1.1) node {\ssd};
+      }
+      \draw (1.5,0.7) node {{peer1}};
+      \draw (1.5,0.3) node {{\scriptsize (Mokamint+Hotmoka)}};
+      \draw (1.5,6.2) node {{peer2}};
+      \draw (1.5,5.8) node {{\scriptsize (Mokamint+Hotmoka)}};
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
 \begin{frame}[fragile]{Become a miner of the Mokamint+Hotmoka testnet}
 
   \begin{greenbox}{Mine with the previoulsy created plot file}
@@ -1133,6 +1186,11 @@ docker run -it \
 \end{verbatim}
   \end{greenbox}
 
+  \begin{center}
+    I will use my minimalistic machine (250\$):\\
+    \includegraphics[width=8cm]{pictures/my_machine}
+  \end{center}
+  
 \end{frame}
 
 \begin{frame}[fragile]{Check that your miner contributes to the blockchain}
@@ -1160,6 +1218,26 @@ docker run --rm -it mokamint/mokamint:1.3.1 \
   \item it introduces a new protection against newborn attacks
   \item it supports the clean, generic Mokamint implementation
   \end{itemize}
+
+\end{frame}
+
+\begin{frame}\frametitle{Future work}
+
+  \begin{itemize}
+  \item formalize time-memory trade-offs and prove that Signum has no such issues
+  \item prove that the energy consumption for mining with Mokamint is almost zero
+  \item complete a mobile app for mining for Mokamint (Android/iOS)
+  \item prove that the battery charge of a mobile phone is not affected by the mining app
+  \item write applications of Hotmoka smart contracts over proof of space
+  \item debugging, debugging, debugging
+  \item documentation
+  \item official testnet: September 2025
+  \item first mainnet: early 2026
+  \end{itemize}
+
+  \begin{center}
+    \alert{Want to help? \url{fausto.spoto@univr.it}}
+  \end{center}
 
 \end{frame}
 
