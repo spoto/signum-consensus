@@ -135,7 +135,7 @@
 \colorlet{faustocolor}{yellow!90!black}
       
 \subtitle{ReACT'25, S\~ao Luis, Brasil, 23/7/2025}
-\title{Ecological Cryptomining, Theoretical Background and a Concrete Implementation}
+\title{Ecological Cryptomining, Theoretical Background and Concrete Implementation}
 \institute{Universit\`a di Verona, Italy}
 \date{23/7/2025}
 
@@ -864,13 +864,12 @@
 
 \begin{frame}\frametitle{Signum's proof of space}
 
-  \visible<1->{Block are enriched with a $\nonce$ data structure of size $n$ and creator $\pi$}
+  \visible<1->{Blocks are enriched with a $\nonce$ data structure of size $n$ and creator $\pi$}
   \medskip
 
   \begin{description}
-  \item<2->[{\color{red}challenge:}] given a $\challenge=\langle i,\sigma\rangle$
-    derived from \textbf{block} (with $0\le i<n$
-    and $\sigma$ a byte array) find a block \textbf{next}, with backwards pointer
+  \item<2->[{\color{red}challenge:}] given a $\challenge$
+    derived from \textbf{block}, find a block \textbf{next}, with backwards pointer
     $\hash(\mathbf{block})$, with a $\nonce$ data structure for the same creator of the block,
     such that $\delay(\nonce,\challenge)$ is as smaller as possible
   \item<3->[{\color{red}answer:}] reply with a \textbf{next}, pointing back
@@ -1091,9 +1090,39 @@ docker run --rm -it \
 \end{frame}
 
 \begin{frame}{Mokamint}
+
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{pictures/mokamint_logo}\\
+    \url{https://github.com/Mokamint-chain/mokamint}
+  \end{center}
+
+
+  \begin{center}
+    A new blockchain based on proof of space, similar to Signum but \alert{generic}
+    wrt.\ the supported \alert{application}
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.7]
+      \draw [fill=VioletRed, thick] (0,0) rectangle +(5,1);
+      \draw (2.5,0.5) node{networking};
+      \draw [fill=VioletRed, thick] (0,1) rectangle +(5,1);
+      \draw (2.5,1.5) node{consensus};
+      \draw[<->, thick] (2.5,2) -- (2.5,3);
+      \draw (3.2,2.5) node{API};
+      \draw [fill=Yellow, thick] (0,3) rectangle +(5,1);
+      \draw (2.5,3.5) node{application};
+      \draw (5,3.5) node [right] {e.g.\ Hotmoka};
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (5,2) -- (5,0) node [midway,right,xshift=.2cm] {Mokamint};
+    \end{tikzpicture}
+  \end{center}
+
 \end{frame}
 
-\begin{frame}[fragile]{Become a miner of the Hotmoka/Mokamint testnet}
+\begin{frame}[fragile]{Become a miner of the Mokamint+Hotmoka testnet}
 
   \begin{greenbox}{Mine with the previoulsy created plot file}
 \begin{verbatim}
