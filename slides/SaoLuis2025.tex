@@ -584,10 +584,10 @@
   \bigskip
   \visible<5->{Bitcoin's Proof of Work (PoW):}
   \begin{description}
-  \item<6->[{\color{red}challenge:}] find a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$,
+  \item<6->[{\color{red}challenge:}] find a valid \textbf{next} of \textbf{block}
     such that $\hash(\mathbf{next})\ge\difficulty$
-  \item<7->[{\color{red}answer:}] send all peers a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$, obtained
-    by rotating among possible values for the nonce of $\mathbf{next}$, until $\hash(\mathbf{next})>\difficulty$
+  \item<7->[{\color{red}answer:}] send all peers a \textbf{next} obtained
+    by rotating among possible values for its nonce, until $\hash(\mathbf{next})\ge\difficulty$
   \item<8->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the largest hash
   \end{description}
 
@@ -603,7 +603,7 @@
 \Statex
 \State {$next$ $\gets$ null}
 \For{$nonce \gets 0$ to $max$}
-\State {$candidate$ $\gets$ valid block pointing back to $block$ and using $nonce$}
+\State {$candidate$ $\gets$ valid next of block that uses $nonce$}
 \If{hash($candidate$) $\ge$ $difficulty$}
 \If{$next$ = null \textbf{or} hash($candidate$) $>$ hash($next$)}
 \State {$next$ $\gets$ $candidate$}
@@ -679,7 +679,7 @@
   \end{center}
 
   \begin{greenbox}{}
-    A selected set of peers (\emph{validators}) decide the next blocks, in
+    A selected set of peers (\emph{validators}) decides the next block, in
     a round robin way or according to any other \emph{fair} policy, typically
     based on the amount of money \emph{staked} by each validator.
     Byzantine algorithms ensure the survival of the peer-to-peer network if
@@ -802,15 +802,14 @@
 
   \begin{itemize}
   \item very simple protocol for proof of space (PoSp)
-  \item running since 2014 (as Burstcoin)
-  \item possibly the first ever smart contracts (before Ethereum!)
-  \item proof of space (they call it proof of capacity)
   \item recently, proof of space + proof of commitment
     \begin{itemize}
     \item[] just a factor multiplication of proof of space
       based on the committed cryptocurrency, as an incentive
       to buying their cryptocurrency
     \end{itemize}
+  \item running since 2014 (as Burstcoin)
+  \item possibly the first ever smart contracts (before Ethereum!)
   \item commercial web page: \url{https://signum.network/}
   \item very informal documentation:
     \url{https://wiki.signum.network}
@@ -875,13 +874,13 @@
 
   \begin{description}
   \item<2->[{\color{red}challenge:}] given a $\challenge$
-    derived from \textbf{block}, find a block \textbf{next}, with backwards pointer
-    $\hash(\mathbf{block})$, with a $\nonce$ data structure for the same creator of the block,
+    derived from \textbf{block}, find a valid \textbf{next} of \textbf{block}
+    with a $\nonce$ data structure for the same creator of the block,
     such that $\delay(\nonce,\challenge)$ is as smaller as possible
-  \item<3->[{\color{red}answer:}] reply with a \textbf{next}, pointing back
-    with $\hash(\mathbf{block})$, that contains a $\nonce$ from
+  \item<3->[{\color{red}answer:}] reply with a valid \textbf{next} of \textbf{block}
+    that contains a $\nonce$ from
     a large set of nonces precomputed on disk,
-    choosing the one minimizing $\delay(\nonce,\challenge)$
+    choosing the one that minimizes $\delay(\nonce,\challenge)$
     and using as block's creator the same creator of $\nonce$
   \item<4->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the smallest
     $\delay(\nonce,\challenge)$
@@ -1036,7 +1035,7 @@ docker run --rm -it \
 \State {$best\_nonce$ $\gets$ $nonce$}
 \EndIf
 \EndFor
-\State \Return {valid block pointing back to $block$, created by $\pi$ and using $best\_nonce$}
+\State \Return {valid $next$ of $block$, created by $\pi$ and using $best\_nonce$}
 \end{algorithmic}
 \end{algorithm} 
 
@@ -1216,7 +1215,7 @@ docker run --rm -it mokamint/mokamint:1.3.1 \
   \item it proves that challenge-grinding attacks are impractical
   \item it proves that Signum is immune from censorship attacks
   \item it introduces a new protection against newborn attacks
-  \item it supports the clean, generic Mokamint implementation
+  \item it supported the clean, generic Mokamint implementation
   \end{itemize}
 
 \end{frame}
