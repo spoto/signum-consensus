@@ -598,8 +598,7 @@
 
   \bigskip
 
-  The rest of this presentation can only focus on the specific case of
-  cryptocurrency mining.
+  Let us dive deep inside Bitcoin to understand if we can do anything for that specific case.
 
 \end{frame}
 
@@ -1350,7 +1349,7 @@ docker run --rm -it \
 
 \end{frame}
 
-\section{Mokamint}
+\section{Mokamint and Hotmoka}
 
 \begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
 
@@ -1361,8 +1360,9 @@ docker run --rm -it \
 
 
   \begin{center}
-    A new open-source (Apache 2.0) blockchain based on proof of space, similar to Signum but \alert{generic}
-    wrt.\ the supported \alert{application}.
+    A new open-source (Apache 2.0) blockchain engine
+    based on proof of space, similar to Signum but \alert{generic}
+    \wrt the supported \alert{application}.
   \end{center}
 
   \medskip
@@ -1385,35 +1385,89 @@ docker run --rm -it \
 
 \end{frame}
 
-\section{Hotmoka}
+\begin{frame}\frametitle{The Mokamint $\Leftrightarrow$ application API}
 
-\begin{frame}{The Mokamint+Hotmoka testnet}
+  \begin{itemize}
+  \item Loosely inspired by Tendermint's Application BlockChain Interface (ABCI)
+  \item It specifies the operational small-step semantics
+    of an infinite state machine (the application)
+  \end{itemize}
 
-  Currently composed of two peers at \url{ws://panarea.hotmoka.io}:
+  \pause
+  \bigskip
+
+  \begin{algorithm}[H] 
+    \caption{Block's State Validation Algorithm of Mokamint}
+    \begin{algorithmic}[1]
+      \Require{a block $\beta$, typically whispered from a peer} 
+      \Ensure{correctness of $\beta$'s final state identifier or a block rejected exception}
+      \Statex
+      \State {$groupId$ $\gets$ {\color{red}beginBlock}($\beta$.height, $\beta$.previous.finalStateId, $\beta.\tau$)}
+      \For{tx $\in$ $\beta$.transactions}
+      \State {{\color{red}checkTransaction}(tx)}
+      \State {{\color{red}deliverTransaction}(tx, groupId)}
+      \EndFor
+      \State {$finalStateId$ $\gets$ {\color{red}endBlock}(groupId, $\beta.\deadline$)}      
+      \State \Return {$finalStateId$ == $\beta$.finalStateId}
+    \end{algorithmic}
+  \end{algorithm}
+  
+\end{frame}
+
+\begin{frame}{The testnet at \url{ws://panarea.hotmoka.io}}
 
   \begin{center}
-    \begin{tikzpicture}
-      \draw [fill=lightblue,thick] (0,1) rectangle +(3,1.5);
-      \draw (1.5,1.75) node {{\scriptsize A73djtmYeXDLu2k\ldots}};
-      \draw [fill=lightblue,thick] (0,4) rectangle +(3,1.5);
-      \draw (1.5,4.75) node {{\scriptsize 7ELCyBDtwi3qmdf\ldots}};
-      \draw [fill=lightred,thick] (4,4.35) rectangle +(4,0.8);
-      \draw (5.5,4.75) node {{\scriptsize 9mDETtrYAzPUqR\ldots}};
-      \draw (6,5.4) node {{\scriptsize local miner}};
-      \draw (7.4,4.75) node {\ssd};
-      \draw[-, thick] (3,4.75) -- (4,4.75);
+    \begin{tikzpicture}[scale=0.95]
+      \draw [fill=VioletRed,thick] (0,1) rectangle +(3,1.5);
+      \draw[-, thick,dashed] (1.5,0.25) -- (1.5,1);
+      \draw [fill=Yellow,thick] (0,-0.75) rectangle +(3,1);
+      \draw (1.5,-0.25) node {{\scriptsize peer1 (Hotmoka)}};
+      \draw (1.5,2) node {{\scriptsize peer1 (Mokamint)}};
+      \draw (1.5,1.5) node {{\scriptsize 8dE4pHgtvFAXgB\ldots}};
+      \draw [fill=VioletRed,thick] (0,4) rectangle +(3,1.5);
+      \draw[-, thick,dashed] (1.5,5.5) -- (1.5,6.25);
+      \draw [fill=Yellow,thick] (0,6.25) rectangle +(3,1);
+      \draw (1.5,6.75) node {{\scriptsize peer2 (Hotmoka)}};
+      \draw (1.5,5) node {{\scriptsize peer2 (Mokamint)}};
+
+      \draw (4.3,6.75) node {\leftplug};
+      \draw (4.3,6.25) node {{\scriptsize remote client}};
+      \draw[-, thick] (3,6.75) -- (4,6.75);
+      \draw (5.5,6.75) node {{\scriptsize port 80}};
+      
+      \draw (1.5,4.5) node {{\scriptsize AhYvJj737BtY24\ldots}};
+
+      \draw [fill=lightred,thick] (4,4.85) rectangle +(4,0.8);
+      \draw (5.5,5.25) node {{\scriptsize GaWKnFs1s2syow\ldots}};
+      \draw (6,5.9) node {{\scriptsize local miner}};
+      \draw (7.4,5.25) node {\ssd};
+      \draw[-, thick] (3,5.25) -- (4,5.25);
+
+      \draw (4.3,4.1) node {\leftplug};
+      \draw (4.3,3.6) node {{\scriptsize remote miner}};
+      \draw[-, thick] (3,4.1) -- (4,4.1);
+      \draw (5.6,4.1) node {{\scriptsize port 8026}};
+
       \draw [fill=lightred,thick] (4,2) rectangle +(4,0.8);
       \draw (6,3.1) node {{\scriptsize local miner}};
-      \draw (5.5,2.4) node {{\scriptsize 5wJjYDTFRZogoH\ldots}};
+      \draw (5.5,2.4) node {{\scriptsize FbXZjuFsZvQ1Ae\ldots}};
       \draw (7.4,2.4) node {\ssd};
       \draw[-, thick] (3,2.4) -- (4,2.4);
-      \draw[-, thick] (3,1.1) -- (4,1.1);
+
       \draw[-, thick, dashed] (1.5,2.5) -- (1.5,4);
       \draw (0.8,2.7) node {{\scriptsize port 8030}};
       \draw (0.8,3.7) node {{\scriptsize port 8032}};
+
       \draw (4.3,1.1) node {\leftplug};
       \draw (4.3,0.6) node {{\scriptsize remote miner}};
+      \draw[-, thick] (3,1.1) -- (4,1.1);
       \visible<1>{\draw (5.6,1.1) node {{\scriptsize port 8025}};}
+      
+      \draw (4.3,-0.2) node {\leftplug};
+      \draw (4.3,-0.7) node {{\scriptsize remote client}};
+      \draw[-, thick] (3,-0.2) -- (4,-0.2);
+      \draw (5.6,-0.2) node {{\scriptsize port 8001}};
+
       \visible<2>{
         \draw [fill=verylightgray,dashed] (6.3,0.2) rectangle +(6,1.6);
         \draw[-, thick, dashed] (4.8,1.1) -- (6.4,1.1);
@@ -1425,10 +1479,6 @@ docker run --rm -it \
         \draw (9.5,1.1) node {{\scriptsize our public key}};
         \draw (11.6,1.1) node {\ssd};
       }
-      \draw (1.5,0.7) node {{peer1}};
-      \draw (1.5,0.3) node {{\scriptsize (Mokamint+Hotmoka)}};
-      \draw (1.5,6.2) node {{peer2}};
-      \draw (1.5,5.8) node {{\scriptsize (Mokamint+Hotmoka)}};
     \end{tikzpicture}
   \end{center}
 
@@ -1446,8 +1496,25 @@ docker run -it \
   \end{greenbox}
 
   \begin{center}
-    I will use my minimalistic machine (250\$):\\
+    You can use a minimalistic machine (250\$):\\
     \includegraphics[width=8cm]{pictures/my_machine}
+  \end{center}
+  
+\end{frame}
+
+\begin{frame}[fragile]{Become a miner of the Mokamint+Hotmoka testnet}
+
+  Since proof of space is computationally inexpensive, you can also mine
+  with your $150\$$ mobile phone!
+
+  \medskip
+
+  \begin{greenbox}{Install the Mokaminter app from Google Play}
+    \url{https://play.google.com/store/apps/details?id=io.mokamint.android.mokaminter}
+  \end{greenbox}
+
+  \begin{center}
+    \includegraphics[width=5.5cm]{pictures/Mokaminter}
   \end{center}
   
 \end{frame}
@@ -1466,33 +1533,14 @@ docker run --rm -it mokamint/mokamint:1.3.1 \
 
 \section{Programming Hotmoka}
 
-\begin{frame}\frametitle{Conclusion}
-
-  The only existing formalization of Signum
-
-  \begin{itemize}
-  \item it clarifies how Signum works
-  \item it proves that a suspected time-memory trade-off does not exist (but others might exist! a general proof is still missing)
-  \item it proves that block-grinding attacks cannot occur
-  \item it proves that challenge-grinding attacks are impractical
-  \item it proves that Signum is immune from censorship attacks
-  \item it introduces a new protection against newborn attacks
-  \item it supported the clean, generic Mokamint implementation
-  \end{itemize}
-
-\end{frame}
-
 \begin{frame}\frametitle{Future work}
 
   \begin{itemize}
   \item formalize time-memory trade-offs and prove that Signum has no such issues
   \item prove that the energy consumption for mining with Mokamint is almost zero
-  \item complete a mobile app for mining for Mokamint (Android/iOS)
   \item prove that the battery charge of a mobile phone is not affected by the mining app
   \item write applications of Hotmoka smart contracts over proof of space
-  \item debugging, debugging, debugging
   \item documentation
-  \item official testnet: September 2025
   \item first mainnet: early 2026
   \end{itemize}
 
