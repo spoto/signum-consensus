@@ -176,35 +176,13 @@
   
 \end{frame}
 
-\begin{frame}\frametitle{Proof of space: The general idea}
-
-  \begin{description}
-  \item[Ideal PoSp:] the computation of the answer can only be achieved by allocating
-    a big data structure on disk (Ateniese et al., Dziembowski et al., Abusalah et al.)
-    \medskip
-  \item[Signum's PoSp:] the computation of the answer can also be achieved without
-    allocating a big data structure on disk (precomputed \emph{nonces}),
-    but in that case it becomes so
-    computationally expensive (to recompute the nonces on-the-fly)
-    that the space of explorable nonces, before the next block is created, is very small
-  \end{description}
-
-  \bigskip
-  
-  \begin{redbox}{Time/memory trade-off}
-    The degradation of the space of explorable nonces should be at least linear with
-    the reduction of the precomputed nonces
-  \end{redbox}
-
-\end{frame}
-
 \begin{frame}{Blockchain mining as a competitive puzzle}
 
   Mining of a \textbf{next} block on top of a \textbf{block}:
 
   \begin{description}
   \item[{\color{red}challenge:}] \only<2->{derive (deterministically) a challenge from the \textbf{block}}
-  \item[{\color{red}answer:}] \only<3->{reply with a \textbf{next} that satisfies the challenge}
+  \item[{\color{red}solution:}] \only<3->{reply with a \textbf{next} that satisfies the challenge}
   \item[{\color{red}competition:}] \only<4->{in case of more \textbf{next}, select a \emph{best} one}
   \end{description}
 
@@ -213,7 +191,7 @@
   \begin{description}
   \item<6->[{\color{red}challenge:}] find a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$,
     such that $\hash(\mathbf{next})>\difficulty$
-  \item<7->[{\color{red}answer:}] reply with a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$, obtained
+  \item<7->[{\color{red}solution:}] reply with a \textbf{next}, with backwards pointer $\hash(\mathbf{block})$, obtained
     by rotating all possible values for an unused field of $\mathbf{next}$, until $\hash(\mathbf{next})>\difficulty$
   \item<8->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the largest hash
   \end{description}
@@ -231,7 +209,7 @@
     and $\sigma$ a byte array) find a block \textbf{next}, with backwards pointer
     $\hash(\mathbf{block})$, with a $\nonce$ data structure
     such that $\delay(\nonce,\challenge)$ is as smaller as possible
-  \item<3->[{\color{red}answer:}] reply with a \textbf{next}, pointing back
+  \item<3->[{\color{red}solution:}] reply with a \textbf{next}, pointing back
     with $\hash(\mathbf{block})$, that contains a $\nonce$ from
     a large set of nonces precomputed on disk,
     choosing the one minimizing $\delay(\nonce,\challenge)$
@@ -239,6 +217,12 @@
     $\delay(\nonce,\challenge)$
   \end{description}
 
+  \bigskip
+
+  \visible<4->{The recomputation of the nonces on-the-fly is possible but must be too expensive to explore
+  a sufficient number of nonces before the next block creation or otherwise a time/memory
+  trade-off would make a PoW solution more rational}
+  
 \end{frame}
 
 \begin{frame}{Plan of the work}
@@ -613,6 +597,28 @@
   \item it proves that challenge-grinding attacks are impractical
   \item it introduces a new protection against newborn attacks
   \end{itemize}
+
+\end{frame}
+
+\begin{frame}\frametitle{Proof of space: The general idea}
+
+  \begin{description}
+  \item[Ideal PoSp:] the computation of the solution can only be achieved by allocating
+    a big data structure on disk (Ateniese et al., Dziembowski et al., Abusalah et al.)
+    \medskip
+  \item[Signum's PoSp:] the computation of the solution can also be achieved without
+    allocating a big data structure on disk (precomputed \emph{nonces}),
+    but in that case it becomes so
+    computationally expensive (to recompute the nonces on-the-fly)
+    that the space of explorable nonces, before the next block is created, is very small
+  \end{description}
+
+  \bigskip
+  
+  \begin{redbox}{Time/memory trade-off}
+    The degradation of the space of explorable nonces should be at least linear with
+    the reduction of the precomputed nonces
+  \end{redbox}
 
 \end{frame}
 
