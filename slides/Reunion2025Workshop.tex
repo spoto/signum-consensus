@@ -71,6 +71,7 @@
 \newcommand{\noncesize}{{\mathit{nonce}_{\mathit{size}}}}
 \newcommand{\byte}{{\mathit{byte}}}
 \newcommand{\nonce}{{\mathit{nonce}}}
+\newcommand{\execute}{{\mathit{execute}}}
 \newcommand{\bestNonce}{{\mathit{best\_nonce}}}
 \newcommand{\nonces}{{\mathit{nonces}}}
 \newcommand{\scoops}{{\mathit{scoops}}}
@@ -88,6 +89,7 @@
 \newcommand{\mynext}{{\mathit{next}}}
 \newcommand{\nextchallenge}{\challenge_\mynext}
 \newcommand{\initialchallenge}{{\mathit{initialChallenge}}}
+\newcommand{\finalstateid}{{\mathit{finalStateId}}}
 \newcommand{\height}{{\mathit{height}}}
 \newcommand{\trunk}{{\mathit{trunk}}}
 \renewcommand{\block}{{\mathit{block}}}
@@ -102,6 +104,7 @@
 \newcommand{\hashfirstk}{{\mathit{hash\ of\ first\ \kappa\ bytes\ of}}}
 \newcommand{\previousblockhash}{{\mathit{previousBlockHash}}}
 \newcommand{\waitingtime}{{\mathit{waitingTime}}}
+\newcommand{\transactions}{{\mathit{transactions}}}
 \newcommand{\nextwaitingtime}{\tau_\mynext}
 \newcommand{\nextpower}{\power_\mynext}
 \newcommand{\nextacceleration}{\alpha_\mynext}
@@ -656,33 +659,38 @@
 
 \begin{frame}{Blocks}
   \begin{center}
-    \begin{tikzpicture}[scale=0.9]
+    \begin{tikzpicture}[scale=0.8]
       \visible<2->{\draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
-        (4.5,6.5) -- (4.5,4.5) node [midway,right,xshift=.2cm] {trunk};}
-      \only<1-13,15->{\draw [fill=VioletRed, thick] (0,5.5) rectangle +(4.5,1);}
-      \only<14>{\shadedraw [inner color=VioletRed,outer color=white, draw=black, thick] (0,5.5) rectangle +(4.5,1);}
-      \draw (2.25,6) node{height};
-      \draw [fill=VioletRed, thick] (0,4.5) rectangle +(4.5,1);
-      \visible<2->{\draw (2.25,5) node{$\pi$ (creator's key)};}
-      \only<1-12,14->{\draw [fill=Yellow, thick] (0,3.5) rectangle +(4.5,1);}
-      \only<13>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,3.5) rectangle +(4.5,1);}
-      \only<3->{\draw (2.25,4) node{$\previousblockhash$};}
-      \only<-3>{\phantom{\draw[->,thick] (0,4) -- (-1,4) node [midway,left,xshift=-.5cm] {$\previous$};}}
-      \only<3->{\draw[->,thick] (0,4) -- (-1,4) node [midway,left,xshift=-.5cm] {$\previous$};}
+        (4.5,7.5) -- (4.5,5.5) node [midway,right,xshift=.2cm] {trunk};}
+      \only<1-13,15->{\draw [fill=VioletRed, thick] (0,6.5) rectangle +(4.5,1);}
+      \only<14>{\shadedraw [inner color=VioletRed,outer color=white, draw=black, thick] (0,6.5) rectangle +(4.5,1);}
+      \draw (2.25,7) node{height};
+      \draw [fill=VioletRed, thick] (0,5.5) rectangle +(4.5,1);
+      \visible<2->{\draw (2.25,6) node{$\pi$ (creator's key)};}
+      \only<1-12,14->{\draw [fill=Yellow, thick] (0,4.5) rectangle +(4.5,1);}
+      \only<13>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,4.5) rectangle +(4.5,1);}
+      \only<3->{\draw (2.25,5) node{$\previousblockhash$};}
+      \only<-3>{\phantom{\draw[->,thick] (0,5) -- (-1,5) node [midway,left,xshift=-.5cm] {$\previous$};}}
+      \only<3->{\draw[->,thick] (0,5) -- (-1,5) node [midway,left,xshift=-.5cm] {$\previous$};}
 
-      \draw [fill=Yellow, thick] (0,2.5) rectangle +(4.5,1);
-      \visible<4->{\draw (2.25,3) node{nonce\,(arbitrary data)};}
-      \only<1-14,17->{\draw [fill=Yellow, thick] (0,1.5) rectangle +(4.5,1);}
-      \only<15,16>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,1.5) rectangle +(4.5,1);}
-      \visible<5->{\draw (2.25,2) node{$\tau$ (creation time)};}
+      \draw [fill=Yellow, thick] (0,3.5) rectangle +(4.5,1);
+      \visible<4->{\draw (2.25,4) node{nonce\,(arbitrary data)};}
 
-      \only<1-6,8-16>{\draw [fill=SpringGreen, thick] (0,-1) rectangle +(4.5,2.5);}
+      \only<1-14,17->{\draw [fill=Yellow, thick] (0,2.5) rectangle +(4.5,1);}
+      \only<15,16>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,2.5) rectangle +(4.5,1);}
+      \visible<5->{\draw (2.25,3) node{$\tau$ (creation time)};}
+
+      \only<1-18>{\draw [fill=Yellow, thick] (0,1.5) rectangle +(4.5,1);}
+      \only<19>{\draw [inner color=Yellow,outer color=white, draw=black, thick] (0,1.5) rectangle +(4.5,1);}
+      \visible<11->{\draw (2.25,2) node{finalStateId};}
+
+      \only<1-6,8-16,19>{\draw [fill=SpringGreen, thick] (0,-1) rectangle +(4.5,2.5);}
       \only<7,17,18>{\draw [inner color=SpringGreen,outer color=white, draw=black, thick] (0,-1) rectangle +(4.5,2.5);}
       \visible<6-7>{\draw (2.25,0.3) node{transactions};}
-      \visible<8->{\draw (2.25,1.1) node{\signature\ Alice $\xRightarrow{100}$ Donald};}
-      \visible<9->{\draw (2.25,0.5) node{\signature\ Fausto $\xRightarrow{500}$ John};}
-      \visible<10->{\draw (2.25,-0.1) node{\signature\ Donald $\xRightarrow{350}$ Alice};}
-      \visible<11->{\draw (2.25,-0.7) node{\signature\ Donald $\xRightarrow{2500}$ John};}
+      \visible<8->{\draw (2.25,1) node{\signature\ Alice $\xRightarrow{100}$ Donald};}
+      \visible<9->{\draw (2.25,0.4) node{\signature\ Fausto $\xRightarrow{500}$ John};}
+      \visible<10->{\draw (2.25,-0.2) node{\signature\ Donald $\xRightarrow{350}$ Alice};}
+      \visible<11->{\draw (2.25,-0.8) node{\signature\ Donald $\xRightarrow{2500}$ John};}
     \end{tikzpicture}
   \end{center}
 
@@ -696,6 +704,7 @@
     \only<16>{\alert{Rule 4:} The creation time is not in the future: $\tau\le\tau_\now$}
     \only<17>{\alert{Rule 5:} Each transaction is correctly signed by its sender}
     \only<18>{\alert{Rule 6:} Senders hold the money that they send}
+    \only<19>{\alert{Rule 7:} $\finalstateid=\previous.\finalstateid+\transactions$}
   \end{center}
 
 \end{frame}
@@ -703,55 +712,72 @@
 \begin{frame}{Each peer (Alice) can expand a \textbf{block} with a \textbf{next} block}
 
   \begin{center}
-    \begin{tikzpicture}[scale=0.9]
-      \draw (2,7) node{\textbf{block}};
+    \begin{tikzpicture}[scale=0.81]
+      \draw (2,8) node{\textbf{block}};
+
+      \draw [fill=VioletRed, thick] (0,5.5) rectangle (4,7.5);
+      \draw (2,7) node{height};
       \draw [fill=VioletRed, thick] (0,4.5) rectangle (4,6.5);
-      \draw (2,6) node{height};
-      \draw [fill=VioletRed, thick] (0,3.5) rectangle (4,5.5);
-      \draw (2,5) node{$\pi$ (creator's key)};
+      \draw (2,6) node{$\pi$ (creator's key)};
+
+      \draw [fill=Yellow, thick] (0,4.5) rectangle (4,5.5);
+      \draw (2,5) node{$\previousblockhash$};
+
       \draw [fill=Yellow, thick] (0,3.5) rectangle (4,4.5);
-      \draw (2,4) node{$\previousblockhash$};
+      \draw (2,4) node{nonce};
 
       \draw [fill=Yellow, thick] (0,2.5) rectangle (4,3.5);
-      \draw (2,3) node{nonce};
+      \draw (2,3) node{$\tau$ (creation time)};
+      
       \draw [fill=Yellow, thick] (0,1.5) rectangle (4,2.5);
-      \draw (2,2) node{$\tau$ (creation time)};
+      \draw (2,2) node{$\finalstateid$};
 
       \draw [fill=SpringGreen, thick] (0,-1) rectangle (4,1.5);
       \draw (2,0.25) node{transactions};
 
       \visible<2->{
-      \draw (9,7) node{\textbf{next}};
-      \draw [fill=VioletRed, thick] (6,5.5) rectangle (12,6.5);
-      \draw (9,6) node{height+1};
+      \draw (9.5,8) node{\textbf{next}};
+      \draw [fill=VioletRed, thick] (6,6.5) rectangle (13,7.5);
+      \draw (9.5,7) node{height+1};
       }
       \visible<3->{
-      \draw [fill=VioletRed, thick] (6,4.5) rectangle (12,5.5);
-      \draw (9,5) node{Alice's public key};
+      \draw [fill=VioletRed, thick] (6,5.5) rectangle (13,6.5);
+      \draw (9.5,6) node{Alice's public key};
       }
       \visible<4->{
-      \draw [fill=Yellow, thick] (6,3.5) rectangle (12,4.5);
-      \draw (9,4) node{$\hash(\mathbf{block})$};
-      \draw[->,very thick] (6,4) -- (4,4);
+      \draw [fill=Yellow, thick] (6,4.5) rectangle (13,5.5);
+      \draw (9.5,5) node{$\hash(\mathbf{block})$};
+      \draw[->,very thick] (6,5) -- (4,5);
       }
 
       \visible<5->{
-      \draw [fill=Yellow, thick] (6,2.5) rectangle (12,3.5);
-      \draw (9,3) node{42 (or 17, or 13, or your bday)};
+      \draw [fill=Yellow, thick] (6,3.5) rectangle (13,4.5);
+      \draw (9.5,4) node{42 (or 17, or 13, or your bday)};
       }
       \visible<6->{
-      \draw [fill=Yellow, thick] (6,1.5) rectangle (12,2.5);
-      \draw (9,2) node{$\tau_\now$};
+      \draw [fill=Yellow, thick] (6,2.5) rectangle (13,3.5);
+      \draw (9.5,3) node{$\tau_\now$};
+      }
+
+      \visible<9->{
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (13,1.5) -- (13,-0.1) node [midway,right,xshift=.2cm] {$\xi$};
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (13,7.5) -- (13,5.5) node [midway,right,xshift=.2cm] {$\xi$};
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (13,3.5) -- (13,2.5) node [midway,right,xshift=.2cm] {$\xi$};
+      \draw [fill=Yellow, thick] (6,1.5) rectangle (13,2.5);
+      \draw (9.5,2) node{$\execute(\finalstateid,\xi)$};
       }
 
       \visible<7->{
-      \draw [fill=SpringGreen, thick] (6,-1) rectangle (12,1.5);
-      \draw (9,1) node{\signature\ Alice $\xRightarrow{100}$ Donald};
-      \draw (9,0.25) node{\signature\ Donald $\xRightarrow{2500}$ John};
+      \draw [fill=SpringGreen, thick] (6,-1) rectangle (13,1.5);
+      \draw (9.5,0.9) node{\signature\ Alice $\xRightarrow{100}$ Donald};
+      \draw (9.5,0.15) node{\signature\ Donald $\xRightarrow{2500}$ John};
       }
 
       \visible<8->{
-      \draw (9,-0.5) node{\textbf{ $\xRightarrow{432}$ Alice}};
+      \draw (9.5,-0.6) node{\textbf{ $\xRightarrow{432}$ Alice (implicit, coinbase)}};
       }
     \end{tikzpicture}
   \end{center}
@@ -1172,7 +1198,7 @@
 
 \begin{frame}{Point~1: The nonce data structure}
   \begin{center}
-    $p\in\mathbb{N}$ (\emph{progressive}) and $\pi\in\mathit{byte}^*$ (public key of creator)
+    $p\in\mathbb{N}$ (\emph{progressive}) and $\pi\in\mathit{byte}^*$ (at least the public key of the creator)
   \end{center}
   \[\begin{array}{l}
   \pause
@@ -1195,7 +1221,7 @@
   \pause
 
   \[
-  \nonce(p,\pi)=\langle p,\underbrace{{\color{blue}h_0},{\color{blue}h_{2n-1}}}_{\scoop_0},\underbrace{{\color{blue}h_2},{\color{blue}h_{2n-3}}}_{\scoop_1},\ldots,\underbrace{{\color{blue}h_{2n-4}},{\color{blue}h_3}}_{\scoop_{n-2}},\underbrace{{\color{blue}h_{2n-2}},{\color{blue}h_1}}_{\scoop_{n-1}}\rangle
+  \nonce(p,\pi)=\langle p,\pi,\underbrace{\underbrace{{\color{blue}h_0},{\color{blue}h_{2n-1}}}_{\scoop_0},\underbrace{{\color{blue}h_2},{\color{blue}h_{2n-3}}}_{\scoop_1},\ldots,\underbrace{{\color{blue}h_{2n-4}},{\color{blue}h_3}}_{\scoop_{n-2}},\underbrace{{\color{blue}h_{2n-2}},{\color{blue}h_1}}_{\scoop_{n-1}}}_{\text{precomputed information, expensive to recompute on the fly}}\rangle
   \]
 
   \begin{overprint}
@@ -1266,7 +1292,7 @@ docker run --rm -it \
 
   \begin{center}
   Let $\challenge={\color{blue}\langle i,\sigma\rangle}$ and
-  $\nonce=\langle p,\underbrace{h_0,h_{2n-1}}_{\scoop_0},\underbrace{h_2,h_{2n-3}}_{\scoop_1},\ldots,\underbrace{h_{2n-4},h_3}_{\scoop_{n-2}},\underbrace{h_{2n-2},h_1}_{\scoop_{n-1}}\rangle$:
+  $\nonce=\langle p,\pi,\underbrace{h_0,h_{2n-1}}_{\scoop_0},\underbrace{h_2,h_{2n-3}}_{\scoop_1},\ldots,\underbrace{h_{2n-4},h_3}_{\scoop_{n-2}},\underbrace{h_{2n-2},h_1}_{\scoop_{n-1}}\rangle$:
   \end{center}
   \bigskip
   \[
@@ -1299,50 +1325,66 @@ docker run --rm -it \
 \begin{frame}{Miner $\pi$ selects its $\bestNonce$ and builds a next block}
 
   \begin{center}
-    \begin{tikzpicture}
-      \draw (2,7) node{\textbf{block}};
+    \begin{tikzpicture}[scale=0.85]
+      \draw (2,8) node{\textbf{block}};
+      \draw [fill=VioletRed, thick] (0,5.5) rectangle (4,7.5);
+      \draw (2,7) node{height};
       \draw [fill=VioletRed, thick] (0,4.5) rectangle (4,6.5);
-      \draw (2,6) node{height};
-      \draw [fill=VioletRed, thick] (0,3.5) rectangle (4,5.5);
-      \draw (2,5) node{creator's key};
+      \draw (2,6) node{creator's key};
+      \draw [fill=Yellow, thick] (0,4.5) rectangle (4,5.5);
+      \draw (2,5) node{$\previousblockhash$};
+
       \draw [fill=Yellow, thick] (0,3.5) rectangle (4,4.5);
-      \draw (2,4) node{$\previousblockhash$};
+      \draw (2,4) node{nonce};
 
       \draw [fill=Yellow, thick] (0,2.5) rectangle (4,3.5);
-      \draw (2,3) node{nonce};
+      \draw (2,3) node{$\tau$ (creation time)};
+
       \draw [fill=Yellow, thick] (0,1.5) rectangle (4,2.5);
-      \draw (2,2) node{$\tau$ (creation time)};
+      \draw (2,2) node{$\finalstateid$};
 
       \draw [fill=SpringGreen, thick] (0,0) rectangle (4,1.5);
-      \draw (2,0.75) node{transactions};
+      \draw (2,0.75) node{$\transactions$};
 
       \visible<2->{
-      \draw (8.5,7) node{\textbf{next}};
-      \draw [fill=VioletRed, thick] (5,5.5) rectangle (12,6.5);
-      \draw (8.5,6) node{height+1};
+      \draw (9,8) node{\textbf{next}};
+      \draw [fill=VioletRed, thick] (5,6.5) rectangle (13,7.5);
+      \draw (9,7) node{height+1};
       }
       \visible<3->{
-      \draw [fill=VioletRed, thick] (5,4.5) rectangle (12,5.5);
-      \draw (8.5,5) node{$\pi$ (creator's key)};
+      \draw [fill=VioletRed, thick] (5,5.5) rectangle (13,6.5);
+      \draw (9,6) node{$\pi$ (creator's key)};
       }
       \visible<4->{
-      \draw [fill=Yellow, thick] (5,3.5) rectangle (12,4.5);
-      \draw (8.5,4) node{$\hash(\mathbf{block})$};
-      \draw[->,very thick] (5,4) -- (4,4);
+      \draw [fill=Yellow, thick] (5,4.5) rectangle (13,5.5);
+      \draw (9,5) node{$\hash(\mathbf{block})$};
+      \draw[->,very thick] (5,5) -- (4,5);
       }
 
       \visible<5->{
-      \draw [fill=Yellow, thick] (5,2.5) rectangle (12,3.5);
-      \draw (8.5,3) node{$\bestNonce$};
+      \draw [fill=Yellow, thick] (5,3.5) rectangle (13,4.5);
+      \draw (9,4) node{$\bestNonce$};
       }
+
       \visible<6->{
-      \draw [fill=Yellow, thick] (5,1.5) rectangle (12,2.5);
-      \draw (8.5,2) node{$\tau+\delay(\bestNonce,\challenge(\block))$};
+      \draw [fill=Yellow, thick] (5,2.5) rectangle (13,3.5);
+      \draw (9,3) node{$\tau+\delay(\bestNonce,\challenge(\block))$};
+      }
+
+      \visible<8->{
+        \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+        (13,1.5) -- (13,0) node [midway,right,xshift=.2cm] {$\xi$};
+        \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+        (13,4.5) -- (13,2.5) node [midway,right,xshift=.2cm] {$\xi$};
+        \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+        (13,7.5) -- (13,6.5) node [midway,right,xshift=.2cm] {$\xi$};
+        \draw [fill=Yellow, thick] (5,1.5) rectangle (13,2.5);
+        \draw (9,2) node{$\execute(\finalstateid,\xi)$};
       }
 
       \visible<7->{
-      \draw [fill=SpringGreen, thick] (5,0) rectangle (12,1.5);
-      \draw (8.5,0.75) node{transactions'};
+      \draw [fill=SpringGreen, thick] (5,0) rectangle (13,1.5);
+      \draw (9,0.75) node{$\transactions'$};
       }
     \end{tikzpicture}
   \end{center}
@@ -1388,27 +1430,27 @@ docker run --rm -it \
 \begin{frame}\frametitle{The Mokamint $\Leftrightarrow$ application API}
 
   \begin{itemize}
-  \item Loosely inspired by Tendermint's Application BlockChain Interface (ABCI)
-  \item It specifies the operational small-step semantics
-    of an infinite state machine (the application)
+  \item Loosely inspired by Tendermint's Application BlockChain Interface
+  \item Operational small-step semantics of an infinite state machine
   \end{itemize}
 
-  \pause
   \bigskip
 
   \begin{algorithm}[H] 
-    \caption{Block's State Validation Algorithm of Mokamint}
+    \caption{Execution of the transactions of a block $\beta$}
     \begin{algorithmic}[1]
-      \Require{a block $\beta$, typically whispered from a peer} 
-      \Ensure{correctness of $\beta$'s final state identifier or a block rejected exception}
+      \Require{$\finalstateid$ of $\beta$'s previous block}
+      \Require{selected data $\xi=(\height,\nonce,\tau,\transactions)$ of $\beta$}
+      \Ensure{$\execute(\finalstateid,\xi)$}
       \Statex
-      \State {$groupId$ $\gets$ {\color{red}beginBlock}($\beta$.height, $\beta$.previous.finalStateId, $\beta.\tau$)}
-      \For{tx $\in$ $\beta$.transactions}
+      \State {$groupId$ $\gets$ {\color{red}beginBlock}($\height$, $\finalstateid$, $\tau$)}\qquad\textbf{[git checkout]}
+      \For{tx $\in$ $\transactions$}
       \State {{\color{red}checkTransaction}(tx)}
-      \State {{\color{red}deliverTransaction}(tx, groupId)}
+      \State {{\color{red}deliverTransaction}(tx, groupId)}\hspace*{16ex}\textbf{[git add]}
       \EndFor
-      \State {$finalStateId$ $\gets$ {\color{red}endBlock}(groupId, $\beta.\deadline$)}      
-      \State \Return {$finalStateId$ == $\beta$.finalStateId}
+      \State {$\finalstateid'$ $\gets$ {\color{red}endBlock}(groupId, $\nonce$)}\hspace*{8.5ex}\textbf{[git add]}
+      \State {{\color{red}commitBlock}(groupId)}\hspace*{27ex}\textbf{[git commit]}
+      \State \Return {$\finalstateid'$}
     \end{algorithmic}
   \end{algorithm}
   
