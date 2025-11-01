@@ -704,7 +704,7 @@
     \only<16>{\alert{Rule 4:} The creation time is not in the future: $\tau\le\tau_\now$}
     \only<17>{\alert{Rule 5:} Each transaction is correctly signed by its sender}
     \only<18>{\alert{Rule 6:} Senders hold the money that they send}
-    \only<19>{\alert{Rule 7:} $\finalstateid=\previous.\finalstateid+\transactions$}
+    \only<19>{\alert{Rule 7:} $\finalstateid$ is derived from $\previous.\finalstateid$ and $\transactions$}
   \end{center}
 
 \end{frame}
@@ -1235,24 +1235,6 @@
 
 \end{frame}
 
-\begin{frame}[fragile]{Create your own small plot file ($5000$ nonces)}
-
-  You can run this command on a Linux machine with docker installed (\alert{beware: it is a single line command!})
-
-  \medskip
-
-  \begin{greenbox}{Create a plot of $5000$ nonces for a given remote service}
-\begin{verbatim}
-docker run --rm -it \
- -e MINER_PUBLIC_SERVICE_URI=ws://panarea.hotmoka.io:8025 \
- -e PLOT_SIZE="5000" \
- -v miner_configuration:/home/mokamint/miner_configuration \
- mokamint/mokamint:1.3.1 config-miner
-\end{verbatim}
-  \end{greenbox}
-
-\end{frame}
-
 \begin{frame}[fragile]{Point~2: Derivation of a challenge from a block}
 
   \begin{align*}
@@ -1391,6 +1373,56 @@ docker run --rm -it \
 
 \end{frame}
 
+\begin{frame}{The life of a blockchain peer}
+
+  A blockchain peer computer holds:
+  \begin{itemize}
+  \item a blockchain $B$
+  \item a set of nonces precomputed on disk, called $\plot$
+  \item a network connection to some other peers
+  \end{itemize}
+
+  \bigskip
+  \pause
+  It performs two algorithms concurrently:
+  \begin{enumerate}
+    \pause
+  \item the block mining algorithm (produce blocks and send them to peers)
+    \pause
+  \item the block mined algorithm (receive blocks from peers and check them)
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}{The block mining algorithm}
+
+  \begin{greenbox}{An infinite loop}
+    \begin{enumerate}[<+->]
+    \item\label{step:block_mining:loop} identify a most powerful $\mathbf{block}\in B$
+    \item\label{step:block_mining:next_challenge} compute $c=\challenge(\mathbf{block})$
+    \item\label{step:block_mining:next_deadline} select a nonce $\nu$ in $\plot$ that minimizes $\delay(\nu,c)$
+    \item\label{step:block_mining:next_block} build block \textbf{next} by using $\nu$
+    \item\label{step:block_mining:wait} wait until $\mathbf{next}.\tau\le\tau_\now$
+    \item\label{step:block_mining:add} add $\mathbf{next}$ to $B$ [no check: consensus holds for \textbf{next} by construction]
+    \item\label{step:block_mining:whisper} whisper $\mathbf{next}$ to the connected peers
+    \item go back to step~\ref{step:block_mining:loop}
+    \end{enumerate}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}{The block mined algorithm}
+
+  \begin{greenbox}{An infinite loop}
+    \begin{enumerate}[<+->]
+    \item\label{step:block_mined:loop} wait for a \textbf{block} whispered from some connected peer
+    \item\label{step:block_mined:add} if $B\cup\{\mathbf{block}\}$ satifies consensus, add $\mathbf{block}$ to $B$ [consensus check: peers might be cheating]
+    \item go back to step~\ref{step:block_mined:loop}
+    \end{enumerate}
+  \end{greenbox}
+
+\end{frame}
+
 \section{Mokamint and Hotmoka}
 
 \begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
@@ -1526,15 +1558,44 @@ docker run --rm -it \
 
 \end{frame}
 
+\begin{frame}[fragile]{Create your own small plot file ($5000$ nonces)}
+
+  \begin{greenbox}{Enter the Mokamint container, run subsequent commands inside it}
+\begin{verbatim}
+docker run --rm -it mokamint/mokamint:1.6.1 /bin/bash
+\end{verbatim}
+  \end{greenbox}
+
+  \pause
+  \bigskip
+
+  \begin{greenbox}{Create your key pair as a miner}
+\begin{verbatim}
+mokamint-node keys create miner.pem
+\end{verbatim}
+  \end{greenbox}
+
+  \pause
+  \bigskip
+
+  \begin{greenbox}{Create a plot with your key pair as creator}
+\begin{verbatim}
+MINER_PUBLIC_SERVICE_URI=ws://panarea.hotmoka.io:8025
+PLOT_SIZE="5000"
+PUBLIC_KEY_MINER_BASE58="use the key printed above"
+config-miner
+\end{verbatim}
+  \end{greenbox}
+
+\end{frame}
+
 \begin{frame}[fragile]{Become a miner of the Mokamint+Hotmoka testnet}
 
-  \begin{greenbox}{Mine with the previoulsy created plot file}
+  \begin{greenbox}{Use the plot file that you created}
 \begin{verbatim}
-docker run -it \
- -e MINER_PUBLIC_SERVICE_URI=ws://panarea.hotmoka.io:8025 \
- -v miner_configuration:/home/mokamint/miner_configuration \
- mokamint/mokamint:1.3.1 mine
+MINER_PUBLIC_SERVICE_URI=ws://panarea.hotmoka.io:8025 mine
 \end{verbatim}
+(Terminate with ENTER or leave it in background with ctrl+p, ctrl+q)
   \end{greenbox}
 
   \begin{center}
@@ -1561,16 +1622,33 @@ docker run -it \
   
 \end{frame}
 
-\begin{frame}[fragile]{Check that your miner contributes to the blockchain}
+\begin{frame}[fragile]{Interact with the Mokamint node}
 
-  \begin{greenbox}{Show the topmost $20$ blocks of the blockchain}
+  \begin{greenbox}{Show the topmost $20$ block hashes of the chain and look for your key}
 \begin{verbatim}
-docker run --rm -it mokamint/mokamint:1.3.1 \
- mokamint-node chain ls 20 \
- --uri ws://panarea.hotmoka.io:8030
+mokamint-node chain ls 20 --uri ws://panarea.hotmoka.io:8030
+  | grep you key
 \end{verbatim}
   \end{greenbox}
 
+  \bigskip\pause
+  \begin{greenbox}{Show the topmost block of the blockchain}
+\begin{verbatim}
+  mokamint-node chain show head --full
+    --uri ws://panarea.hotmoka.io:8030
+\end{verbatim}
+  \end{greenbox}
+
+  \bigskip\pause
+  \begin{greenbox}{List the miners connected to the node}
+\begin{verbatim}
+mokamint-node miners ls --uri ws://panarea.hotmoka.io:8030
+\end{verbatim}
+  \end{greenbox}
+
+\bigskip
+  Exit the container at the end.
+  
 \end{frame}
 
 \section{Programming Hotmoka}
