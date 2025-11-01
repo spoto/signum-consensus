@@ -1,0 +1,9 @@
+.flattened-pom.xml
+*~
+*.log*
+modules/
+target/
+.classpath
+.project
+.settings/
+bin/

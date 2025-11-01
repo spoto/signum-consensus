@@ -1653,20 +1653,116 @@ mokamint-node miners ls --uri ws://panarea.hotmoka.io:8030
 
 \section{Programming Hotmoka}
 
-\begin{frame}\frametitle{Future work}
-
-  \begin{itemize}
-  \item formalize time-memory trade-offs and prove that Signum has no such issues
-  \item prove that the energy consumption for mining with Mokamint is almost zero
-  \item prove that the battery charge of a mobile phone is not affected by the mining app
-  \item write applications of Hotmoka smart contracts over proof of space
-  \item documentation
-  \item first mainnet: early 2026
-  \end{itemize}
+\begin{frame}
+  \frametitle{Hotmoka}
 
   \begin{center}
-    \alert{Want to help? \url{fausto.spoto@univr.it}}
+    \includegraphics[width=5cm]{pictures/hotmoka_logo}
   \end{center}
+
+  \begin{greenbox}{\url{https://github.com/Hotmoka/hotmoka}}
+    An application for Mokamint whose transactions are OO-based:
+    \begin{itemize}
+    \item install code in the node
+    \item create an object
+    \item call a method of an object
+    \item methods are implemented in Takamaka (subset of Java)
+    \item the blockchain stores the compiled Java bytecode only
+    \item see full online tutorial at the above Github page
+    \end{itemize}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}\frametitle{An OO state (hash is sha256)}
+
+  \begin{center}
+    \includegraphics[width=\textwidth,clip=false]{pictures/hotmoka-structure.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Creation of an account}
+
+  We need an account to play, already charged with some cryptocurrency:
+
+  \begin{itemize}
+  \item collect cryptocurrency by mining
+  \item ask cryptocurrency to a friend
+  \item use the faucet of the testnet
+  \item buy cryptocurrency at an exchange (not possible for Hotmoka yet)
+  \end{itemize}
+
+  Let's go for the faucet...
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Creation of an account}
+
+  \begin{greenbox}{Create a key pair}
+{\small\begin{verbatim}
+moka keys create --name fausto.pem
+\end{verbatim}}
+  \end{greenbox}
+
+  \pause
+  \bigskip
+  \begin{greenbox}{Create an account with that public key}
+{\small\begin{semiverbatim}
+moka accounts create faucet 100000000000000
+  your-key-here --uri ws://panarea.hotmoka.io:8001
+
+Adding transaction c3ca5522... done.
+A new account {\color{blue}c3ca5522...#0} has been created.
+\end{semiverbatim}}
+(That URI is the default, so we won't add it anymore)
+  \end{greenbox}
+
+  \pause
+  \bigskip
+  \begin{greenbox}{Rename the key pair with the address of the account object}
+{\small\begin{verbatim}
+mv fausto.pem address-printed-above.pem
+\end{verbatim}}
+  \end{greenbox}
+
+  \pause\bigskip
+  \begin{greenbox}{An actual Java object!}
+{\small\begin{semiverbatim}
+  moka objects show {\color{blue}c3ca5522...#0} --api
+\end{semiverbatim}}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}\frametitle{Installation of a jar in blockchain}
+
+    Each jar that gets installed in a Hotmoka node undergoes two processes:
+
+  \begin{enumerate}
+  \item Verification: absence of frequent errors
+    \begin{itemize}
+    \item non-deterministic or non-terminating library code is not used
+    \item no synchronization
+    \item no native code
+    \item no \emph{dangerous} bytecodes
+    \item no finalizers
+    \item no static fields (mostly)
+    \item code annotations are used correctly
+    \item \ldots
+    \end{itemize}
+  \item Instrumentation
+    \begin{itemize}
+    \item fields of \<Storage> classes get duplicated to spot updates
+    \item gas metering is weaved into the code
+    \item code annotations get implemented \emph{by magic}
+    \item \ldots
+    \end{itemize}
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Let us install our jar in blockchain}
 
 \end{frame}
 
