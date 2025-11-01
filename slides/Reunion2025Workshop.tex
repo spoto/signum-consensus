@@ -1697,7 +1697,7 @@ mokamint-node miners ls --uri ws://panarea.hotmoka.io:8030
 
 \end{frame}
 
-\begin{frame}[fragile]\frametitle{Creation of an account}
+\begin{frame}[fragile]\frametitle{Creation of two accounts (repeat twice)}
 
   \begin{greenbox}{Create a key pair}
 {\small\begin{verbatim}
@@ -1712,8 +1712,7 @@ moka keys create --name fausto.pem
 moka accounts create faucet 100000000000000
   your-key-here --uri ws://panarea.hotmoka.io:8001
 
-Adding transaction c3ca5522... done.
-A new account {\color{blue}c3ca5522...#0} has been created.
+{\color{red}A new account {\color{blue}c3ca5522...#0} has been created.}
 \end{semiverbatim}}
 (That URI is the default, so we won't add it anymore)
   \end{greenbox}
@@ -1735,9 +1734,31 @@ mv fausto.pem address-printed-above.pem
 
 \end{frame}
 
+\begin{frame}\frametitle{The Takamaka programming language}
+
+  Takamaka is a small, deterministic subset of Java. It uses code annotations to implement contract-based aspects:
+
+  \begin{itemize}
+  \item {\color{blue}\<@FromContract>} annotates something that can only be called by a contract,
+    not by any other code; hence, it has a {\color{blue}\<caller()>}
+  \item {\color{blue}\<@Payable>} annotates something whose execution requires to pay some
+    cryptocurrency units
+  \item {\color{blue}\<@View>} annotates something whose execution can be run for free,
+    without paying for its gas: it must not generate any update at its end
+    (\emph{pure} code)
+  \end{itemize}
+
+  \bigskip
+  Takamaka comes equipped with a {\color{blue}support library}
+  (\<io-takamaka-code>) that defines such annotations and
+  other typical classes that are useful
+  for programming smart contracts.
+
+\end{frame}
+
 \begin{frame}\frametitle{Installation of a jar in blockchain}
 
-    Each jar that gets installed in a Hotmoka node undergoes two processes:
+  Each jar that gets installed in a Hotmoka node undergoes two processes:
 
   \begin{enumerate}
   \item Verification: absence of frequent errors
@@ -1764,6 +1785,35 @@ mv fausto.pem address-printed-above.pem
 
 \begin{frame}[fragile]\frametitle{Let us install our jar in blockchain}
 
+  \begin{greenbox}{We let our account pay}
+{\small\begin{semiverbatim}
+  moka jars install {\color{blue}c3ca5522...#0} io-hotmoka-experiments-1.0.jar
+  {\color{red}The jar has been installed at {\color{blue}c710a9083787...}}
+\end{semiverbatim}}
+
+  Note: the presence of the key pair \texttt{c3ca5522...\#0.pem} in
+  our directory authorizes us to charge that operation on our account.
+  \end{greenbox}
+
 \end{frame}
+
+\begin{frame}[fragile]\frametitle{Let us create an instance of \texttt{SimplePonzi} in blockchain}
+
+  \begin{greenbox}{We let our account pay}
+{\small\begin{semiverbatim}
+  moka objects create {\color{blue}c3ca5522...}
+    io.hotmoka.experiments.SimplePonzi
+    --classpath {\color{blue}c710a9083787...}
+
+  {\color{red}A new object {\color{blue}d2976345539...#0} has been created}
+\end{semiverbatim}}
+  \end{greenbox}
+
+\end{frame}
+
+% fausto: 79a2e1776da0763aee972f8012af170e21a61e4d7d6da3b340cc990527f02f9e#0
+% alice: c3ca5522d5ea850c9dcb9dc1a204780d08826f8acda28814da59685705ea7676#0
+% jar: c710a9083787b683df47ffd04e1e1033ff0ac61c01d5ad617fb7a939be8efae4
+% simple ponzi: d2976345539a19abc40e7c357d701641931f1444b543e53a72014165ac3783d5#0
 
 \end{document}
