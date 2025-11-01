@@ -6,6 +6,11 @@
   <name>Experiments</name>
   <description>Smart contract examples for the presentations</description>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>io.hotmoka</groupId>
