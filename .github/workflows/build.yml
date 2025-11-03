@@ -25,6 +25,7 @@ jobs:
       - name: Check PDF file
         run: |
           file wtsc_2025/wtsc_2025.pdf | grep -q ' PDF '
+
       - name: Compile Reunion 2025 slides
         uses: xu-cheng/latex-action@v3
         with:
@@ -33,6 +34,16 @@ jobs:
       - name: Check PDF file
         run: |
           file slides/Reunion2025.pdf | grep -q ' PDF '
+
+      - name: Compile Reunion 2025 workshop slides
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: ./slides
+          root_file: Reunion2025Workshop.tex
+      - name: Check PDF file
+        run: |
+          file slides/Reunion2025Workshop.pdf | grep -q ' PDF '
+
       - name: Compile WTSC 2025 slides
         uses: xu-cheng/latex-action@v3
         with:
