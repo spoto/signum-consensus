@@ -1785,7 +1785,7 @@ mv fausto.pem address-printed-above.pem
 
 \begin{frame}[fragile]\frametitle{Let us install our jar in blockchain}
 
-  \begin{greenbox}{We let our account pay}
+  \begin{greenbox}{We let Fausto pay}
 {\small\begin{semiverbatim}
   moka jars install {\color{blue}c3ca5522...#0} io-hotmoka-experiments-1.0.jar
   {\color{red}The jar has been installed at {\color{blue}c710a9083787...}}
@@ -1799,7 +1799,7 @@ mv fausto.pem address-printed-above.pem
 
 \begin{frame}[fragile]\frametitle{Let us create an instance of \texttt{SimplePonzi} in blockchain}
 
-  \begin{greenbox}{We let our account pay}
+  \begin{greenbox}{We let Fausto pay}
 {\small\begin{semiverbatim}
   moka objects create {\color{blue}c3ca5522...}
     io.hotmoka.experiments.SimplePonzi
@@ -1809,6 +1809,78 @@ mv fausto.pem address-printed-above.pem
 \end{semiverbatim}}
   \end{greenbox}
 
+  \pause
+  \bigskip
+  \begin{greenbox}{Check the state of the object}
+{\small\begin{semiverbatim}
+moka object show {\color{blue}d2976345539...#0}
+\end{semiverbatim}}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Call the \texttt{invest} method of the object}
+
+  \begin{greenbox}{We let Fausto invest}
+{\small\begin{semiverbatim}
+  moka objects call {\color{blue}c3ca5522...}
+    io.hotmoka.experiments.SimplePonzi invest 1000
+    --receiver {\color{blue}d2976345539...#0}
+  moka accounts show {\color{blue}c3ca5522...}
+\end{semiverbatim}}
+  \end{greenbox}
+
+  \pause
+  \bigskip
+
+  \begin{greenbox}{We then let Alice invest and check that Fausto receives 2000}
+{\small\begin{semiverbatim}
+  moka objects call {\color{blue}79a2e177...}
+    io.hotmoka.experiments.SimplePonzi invest 2000
+    --receiver {\color{blue}d2976345539...#0}
+  moka accounts show {\color{blue}c3ca5522...}
+\end{semiverbatim}}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Call the \texttt{invest} method of the object and fail}
+
+  \begin{greenbox}{We let Fausto invest}
+{\small\begin{semiverbatim}
+  moka objects call {\color{blue}c3ca5522...}
+    io.hotmoka.experiments.SimplePonzi invest 2200
+    --receiver {\color{blue}d2976345539...#0}
+
+  {\color{red}The transaction failed with message:
+  you must invest more than 2200@SimplePonzi.java:50}
+
+Gas consumption:
+ * total: 1000000
+   * for CPU: 16187
+   * for RAM: 8503
+   * for storage: 18800
+   * {\color{red}for penalty: 956510}
+\end{semiverbatim}}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Check the current investment before investing}
+
+  \begin{greenbox}{We let Fausto invest}
+{\small\begin{semiverbatim}
+  moka objects call {\color{blue}c3ca5522...}
+    io.hotmoka.experiments.SimplePonzi getCurrentInvestment
+    --receiver {\color{blue}d2976345539...#0}
+
+{\color{red}The method returned:
+2000}
+
+(no gas has been consumed)
+\end{semiverbatim}}
+  \end{greenbox}
+  
 \end{frame}
 
 % fausto: 79a2e1776da0763aee972f8012af170e21a61e4d7d6da3b340cc990527f02f9e#0
