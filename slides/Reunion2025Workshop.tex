@@ -1756,6 +1756,20 @@ mv fausto.pem address-printed-above.pem
 
 \end{frame}
 
+\begin{frame}[fragile]\frametitle{Let us install our jar in blockchain}
+
+  \begin{greenbox}{We let Fausto pay}
+{\small\begin{semiverbatim}
+  moka jars install {\color{blue}c3ca5522...#0} io-hotmoka-experiments-1.0.jar
+  {\color{red}The jar has been installed at {\color{blue}c710a9083787...}}
+\end{semiverbatim}}
+
+  Note: the presence of the key pair \texttt{c3ca5522...\#0.pem} in
+  our directory authorizes us to charge that operation on our account.
+  \end{greenbox}
+
+\end{frame}
+
 \begin{frame}\frametitle{Installation of a jar in blockchain}
 
   Each jar that gets installed in a Hotmoka node undergoes two processes:
@@ -1780,20 +1794,6 @@ mv fausto.pem address-printed-above.pem
     \item \ldots
     \end{itemize}
   \end{enumerate}
-
-\end{frame}
-
-\begin{frame}[fragile]\frametitle{Let us install our jar in blockchain}
-
-  \begin{greenbox}{We let Fausto pay}
-{\small\begin{semiverbatim}
-  moka jars install {\color{blue}c3ca5522...#0} io-hotmoka-experiments-1.0.jar
-  {\color{red}The jar has been installed at {\color{blue}c710a9083787...}}
-\end{semiverbatim}}
-
-  Note: the presence of the key pair \texttt{c3ca5522...\#0.pem} in
-  our directory authorizes us to charge that operation on our account.
-  \end{greenbox}
 
 \end{frame}
 
@@ -1880,7 +1880,115 @@ Gas consumption:
 (no gas has been consumed)
 \end{semiverbatim}}
   \end{greenbox}
-  
+
+\end{frame}
+
+\begin{frame}\frametitle{The execution of a method (or constructor)}
+
+  \begin{greenbox}{The request specifies}
+    \begin{itemize}
+    \item payer object, receiver object and actual arguments (\emph{input})
+    \item classpath, signature of the method
+    \item nonce, chain id, gas price, gas limit
+    \item signature of the request
+    \end{itemize}
+  \end{greenbox}
+
+  \bigskip
+
+  \begin{greenbox}{The computation of the response (ie, the execution of the request)}
+    \begin{enumerate}
+    \item create a classloader from some jars in blockchain
+    \item reconstruct, from the state, RAM objects for \emph{input}
+    \item execute the method on a normal Java Virtual Machine (in RAM)
+    \item at the end, identify updates to fields of objects reachable from \emph{input}
+      or return value
+    \item pack those updates into a response (RAM objects destroyed now)
+    \item put request/response in state, expanding histories
+    \end{enumerate}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{How can Hotmoka identify updates to fields of objects?}
+
+  \begin{greenbox}{The original code}
+    \begin{semiverbatim}
+      public class C \{
+        public {\color{blue}int i;}
+        public void foo() \{
+          {\color{blue}i} = 42;
+        \}
+      \}
+    \end{semiverbatim}
+  \end{greenbox}
+
+  \begin{center}
+    No way to know if \<i> changed its value during the execution of \<foo()>
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{How can Hotmoka identify updates to fields of objects?}
+
+  \begin{greenbox}{The instrumented code}
+    \begin{semiverbatim}
+      public class C {\color{red}extends Storage} \{
+        public {\color{blue}int i, old\_i;} // aliased at method start
+        public void foo() \{
+          {\color{blue}i} = 42;
+        \}
+      \}
+    \end{semiverbatim}
+  \end{greenbox}
+
+  \begin{center}
+    \<i> changed its value during the execution of \<foo()> iff at the end \<i>$\not=$\<old\_i>
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{How can Hotmoka enforce gas limits?}
+
+  \begin{greenbox}{The original code}
+    \begin{semiverbatim}
+      public class C \{
+        public void foo() \{
+          while (...) \{
+            ...
+          \}
+        \}
+      \}
+    \end{semiverbatim}
+  \end{greenbox}
+
+  \begin{center}
+    This loop might run for very long or even forever
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{How can Hotmoka enforce gas limits?}
+
+  \begin{greenbox}{The instrumented code}
+    \begin{semiverbatim}
+      {\color{blue}static long counter;}
+      public class C \{
+        public void foo() \{
+          while (...) \{
+            {\color{blue}if (counter++ >= gaslimit)
+              throw new OutOfGasError();}
+            ...
+          \}
+        \}
+      \}
+    \end{semiverbatim}
+  \end{greenbox}
+
+  \begin{center}
+    Actual gas costs are more fine-grained
+  \end{center}
+
 \end{frame}
 
 % fausto: 79a2e1776da0763aee972f8012af170e21a61e4d7d6da3b340cc990527f02f9e#0
