@@ -85,7 +85,7 @@ public class Insurance extends Contract {
 		}
 
 		private boolean isToday() {
-			return LocalDate.of(year, month, day).equals(today());
+			return LocalDate.of(year, month, day).isEqual(today());
 		}
 
 		private boolean isTodayOrBefore() {
