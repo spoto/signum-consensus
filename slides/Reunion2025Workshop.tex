@@ -143,7 +143,7 @@
 \colorlet{verylightgray}{gray!25!white}
       
 \subtitle{InterReg workshop, Saint-Denis, R\'eunion, 5/11/2025}
-\title{Blockchain, Ecological Cryptomining, Hotmoka and Mokamint}
+\title{Blockchain, Ecological Cryptomining, Mokamint and Hotmoka}
 \institute{Universit\`a di Verona, Italy}
 \date{5/11/2025}
 
@@ -287,7 +287,7 @@
   \item[1991] Cryptographically secure chains of blocks (Haber \& Stornetta)
   \item[199x] Smart contracts (Szabo)
   \item[2008] Bitcoin (Nakamoto)
-  \item[2012] proof of stake (Peercoin)
+  \item[2012] Proof of stake (Peercoin)
   \item[2013] Ethereum (Buterin \& Wood)
   \item[2014] Proof of space (Burstcoin then Signum)
   \item[2014] Tendermint generic proof of stake engine (Kwon)
@@ -344,9 +344,10 @@
     \includegraphics[scale=0.26,clip=false]{pictures/blocks.png}
   \end{center}
 
+  Hashes are used as machine-independent backwards pointers.
   If one modifies data in block $n$, then its hash changes and consequently
   blocks $n+1$, $n+2$, \ldots
-  must be modified as well, because they use hashes as machine-independent backwards pointers
+  must be modified as well.
 
   \medskip
 
@@ -380,7 +381,7 @@
 
   \bigskip
 
-  The email client will accept the email only if its hash starts with at least seven (or more) \texttt{f}'s.
+  The email client will accept the email only if its hash starts with at least seven \texttt{f}'s.
 
   \medskip
 
@@ -601,7 +602,8 @@
 
   \bigskip
 
-  Let us dive deep inside Bitcoin to understand if we can do anything for that specific case.
+  Let us dive deep inside Bitcoin to understand if we can do anything in the specific case
+  of blockchain technology.
 
 \end{frame}
 
@@ -1132,9 +1134,9 @@
   \item[Ideal PoSp:] the computation of the answer can only be achieved by allocating
     a big data structure on disk (Ateniese et al., Dziembowski et al., Abusalah et al.)
     \medskip
-  \item[Signum's PoSp:] the computation of the answer can also be achieved without
+  \item[Signum's PoSp:] the computation of the answer can be achieved with or without
     allocating a big data structure on disk (precomputed \emph{nonces}),
-    but in that case it becomes
+    but in the latter case it becomes
     computationally so expensive (to recompute the data on-the-fly)
     that the space of explorable data, before the next block is created, is very small
   \end{description}
@@ -1162,7 +1164,7 @@
     that contains a $\nonce$ from
     a large set of nonces precomputed on disk,
     choosing the one that minimizes $\delay(\nonce,\challenge)$
-    and using as block's creator the same creator of $\nonce$
+    and using, as block's creator, the same creator of $\nonce$
   \item<4->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the smallest
     $\delay(\nonce,\challenge)$
   \end{description}
@@ -1183,7 +1185,7 @@
   \medskip
 
   Once a formalization is available, it can be used to \alert{prove} that
-  the algorithm is immune to some typical attacks and as the basis for
+  the algorithm is immune from some typical attacks and as the basis for
   a clean implementation.
 
   \bigskip
@@ -1480,8 +1482,8 @@
       \State {{\color{red}checkTransaction}(tx)}
       \State {{\color{red}deliverTransaction}(tx, groupId)}\hspace*{16ex}\textbf{[git add]}
       \EndFor
-      \State {$\finalstateid'$ $\gets$ {\color{red}endBlock}(groupId, $\nonce$)}\hspace*{8.5ex}\textbf{[git add]}
-      \State {{\color{red}commitBlock}(groupId)}\hspace*{27ex}\textbf{[git commit]}
+      \State {$\finalstateid'$ $\gets$ {\color{red}endBlock}($\nonce$, groupId)}\hspace*{8.5ex}\textbf{[git add]}
+      \State {{\color{red}commitBlock}($\finalstateid'$, groupId)}\hspace*{14.1ex}\textbf{[git commit]}
       \State \Return {$\finalstateid'$}
     \end{algorithmic}
   \end{algorithm}
@@ -1599,7 +1601,7 @@ MINER_PUBLIC_SERVICE_URI=ws://panarea.hotmoka.io:8025 mine
   \end{greenbox}
 
   \begin{center}
-    You can use a minimalistic machine (250\$):\\
+    You can use a minimalistic machine (250\$)\\
     \includegraphics[width=8cm]{pictures/my_machine}
   \end{center}
   
@@ -1651,7 +1653,7 @@ mokamint-node miners ls --uri ws://panarea.hotmoka.io:8030
   
 \end{frame}
 
-\section{Programming Hotmoka}
+\section{Experiments with Hotmoka}
 
 \begin{frame}
   \frametitle{Hotmoka}
@@ -1663,9 +1665,9 @@ mokamint-node miners ls --uri ws://panarea.hotmoka.io:8030
   \begin{greenbox}{\url{https://github.com/Hotmoka/hotmoka}}
     An application for Mokamint whose transactions are OO-based:
     \begin{itemize}
-    \item install code in the node
-    \item create an object
-    \item call a method of an object
+    \item code installations
+    \item object creation
+    \item method calls on objects
     \item methods are implemented in Takamaka (subset of Java)
     \item the blockchain stores the compiled Java bytecode only
     \item see full online tutorial at the above Github page
@@ -1790,7 +1792,7 @@ mv fausto.pem address-printed-above.pem
     \begin{itemize}
     \item fields of \<Storage> classes get duplicated to spot updates
     \item gas metering is weaved into the code
-    \item code annotations get implemented \emph{by magic}
+    \item code annotations get enforced \emph{by magic}
     \item \ldots
     \end{itemize}
   \end{enumerate}
@@ -1813,7 +1815,7 @@ mv fausto.pem address-printed-above.pem
   \bigskip
   \begin{greenbox}{Check the state of the object}
 {\small\begin{semiverbatim}
-moka object show {\color{blue}d2976345539...#0}
+moka objects show {\color{blue}d2976345539...#0}
 \end{semiverbatim}}
   \end{greenbox}
 
@@ -1868,7 +1870,7 @@ Gas consumption:
 
 \begin{frame}[fragile]\frametitle{Check the current investment before investing}
 
-  \begin{greenbox}{We let Fausto invest}
+  \begin{greenbox}{This is very cheap\ldots}
 {\small\begin{semiverbatim}
   moka objects call {\color{blue}c3ca5522...}
     io.hotmoka.experiments.SimplePonzi getCurrentInvestment
