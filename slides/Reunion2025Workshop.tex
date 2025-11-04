@@ -942,8 +942,6 @@
     
 \end{frame}
 
-\part{2}
-
 \section{The proof of stake alternative}
 
 \begin{frame}\frametitle{The proof of stake alternative to proof of work}
@@ -1150,7 +1148,91 @@
 
 \end{frame}
 
-\begin{frame}\frametitle{Signum's proof of space}
+\begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
+
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{pictures/mokamint_logo}\\
+    \url{https://github.com/Mokamint-chain/mokamint}
+  \end{center}
+
+
+  \begin{center}
+    A new open-source (Apache 2.0) blockchain engine
+    based on proof of space, similar to Signum but \alert{generic}
+    \wrt the supported \alert{application}.
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.7]
+      \draw [fill=VioletRed, thick] (0,0) rectangle +(5,1);
+      \draw (2.5,0.5) node{networking};
+      \draw [fill=VioletRed, thick] (0,1) rectangle +(5,1);
+      \draw (2.5,1.5) node{consensus};
+      \draw[<->, thick] (2.5,2) -- (2.5,3);
+      \draw (3.2,2.5) node{API};
+      \draw [fill=Yellow, thick] (0,3) rectangle +(5,1);
+      \draw (2.5,3.5) node{application};
+      \draw (5,3.5) node [right] {e.g.\ Hotmoka, IDs, Prolog\ldots};
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (5,2) -- (5,0) node [midway,right,xshift=.2cm] {Mokamint};
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Thank you}
+
+  \begin{center}
+  Do you want to know more about Mokamint and Hotmoka?
+
+  \bigskip
+
+  Come to my talk on this afternoon!
+  \end{center}
+
+\end{frame}
+
+\part{2}
+
+\section{Mokamint and Hotmoka}
+
+\begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
+
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{pictures/mokamint_logo}\\
+    \url{https://github.com/Mokamint-chain/mokamint}
+  \end{center}
+
+
+  \begin{center}
+    A new open-source (Apache 2.0) blockchain engine
+    based on proof of space, similar to Signum but \alert{generic}
+    \wrt the supported \alert{application}.
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.7]
+      \draw [fill=VioletRed, thick] (0,0) rectangle +(5,1);
+      \draw (2.5,0.5) node{networking};
+      \draw [fill=VioletRed, thick] (0,1) rectangle +(5,1);
+      \draw (2.5,1.5) node{consensus};
+      \draw[<->, thick] (2.5,2) -- (2.5,3);
+      \draw (3.2,2.5) node{API};
+      \draw [fill=Yellow, thick] (0,3) rectangle +(5,1);
+      \draw (2.5,3.5) node{application};
+      \draw (5,3.5) node [right] {e.g.\ Hotmoka, IDs, Prolog\ldots};
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (5,2) -- (5,0) node [midway,right,xshift=.2cm] {Mokamint};
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Mokamint's proof of space in detail}
 
   \visible<1->{Blocks use a $\nonce$ data structure of size $n$ and creator $\pi$.}
   \medskip
@@ -1425,42 +1507,6 @@
 
 \end{frame}
 
-\section{Mokamint and Hotmoka}
-
-\begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
-
-  \begin{center}
-    \includegraphics[width=0.4\textwidth]{pictures/mokamint_logo}\\
-    \url{https://github.com/Mokamint-chain/mokamint}
-  \end{center}
-
-
-  \begin{center}
-    A new open-source (Apache 2.0) blockchain engine
-    based on proof of space, similar to Signum but \alert{generic}
-    \wrt the supported \alert{application}.
-  \end{center}
-
-  \medskip
-
-  \begin{center}
-    \begin{tikzpicture}[scale=0.7]
-      \draw [fill=VioletRed, thick] (0,0) rectangle +(5,1);
-      \draw (2.5,0.5) node{networking};
-      \draw [fill=VioletRed, thick] (0,1) rectangle +(5,1);
-      \draw (2.5,1.5) node{consensus};
-      \draw[<->, thick] (2.5,2) -- (2.5,3);
-      \draw (3.2,2.5) node{API};
-      \draw [fill=Yellow, thick] (0,3) rectangle +(5,1);
-      \draw (2.5,3.5) node{application};
-      \draw (5,3.5) node [right] {e.g.\ Hotmoka};
-      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
-      (5,2) -- (5,0) node [midway,right,xshift=.2cm] {Mokamint};
-    \end{tikzpicture}
-  \end{center}
-
-\end{frame}
-
 \begin{frame}\frametitle{The Mokamint $\Leftrightarrow$ application API}
 
   \begin{itemize}
@@ -1716,7 +1762,7 @@ moka keys create --name fausto.pem
   \begin{greenbox}{Create an account with that public key}
 {\small\begin{semiverbatim}
 moka accounts create faucet 100000000000000
-  your-key-here --uri ws://panarea.hotmoka.io:8001
+  your-key-here --uri ws://panarea.hotmoka.io
 
 {\color{red}A new account {\color{blue}c3ca5522...#0} has been created.}
 \end{semiverbatim}}
