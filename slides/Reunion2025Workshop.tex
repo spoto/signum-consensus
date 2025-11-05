@@ -423,6 +423,63 @@
   \end{enumerate}
 \end{frame}
 
+\begin{frame}[fragile]{Bitcoin's proof of work mining is brute force}
+ 
+\begin{algorithm}[H] 
+\caption{Bitcoin's Proof of Work}
+\begin{algorithmic}[1]
+\Require{$block$, $difficulty$, $max$} 
+\Ensure{$next$ (a valid child of $block$, or null)}
+\Statex
+\State {$next$ $\gets$ null}
+\For{$nonce \gets 0$ to $max$}
+\State {$candidate$ $\gets$ valid next of block that uses $nonce$}
+\If{hash($candidate$) $\ge$ $difficulty$}
+\If{$next$ = null \textbf{or} hash($candidate$) $>$ hash($next$)}
+\State {$next$ $\gets$ $candidate$}
+\EndIf
+\EndIf
+\EndFor
+\State \Return {$next$}
+\end{algorithmic}
+\end{algorithm} 
+
+\end{frame}
+
+\begin{frame}\frametitle{The magic behind the proof of work}
+
+  \begin{greenbox}{}
+    It makes expensive the production of new blocks, in time and cost (electricity)
+    \begin{itemize}
+    \item who produces invalid blocks sees its blocks rejected by peers and wastes resources
+    \item a single node cannot dictate the history easily, since it must fight against
+      the hashing power of all other nodes together
+    \item forks become unlikely, since the probability of two nodes finding a new block at the same time is small
+    \end{itemize}
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}\frametitle{Evolution of Bitcoin's mining hardware}
+
+  \begin{center}
+    \includegraphics[scale=0.55,clip=false]{pictures/mining-hardware}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Bitcoin's difficulty over the years}
+
+  \begin{center}
+    \includegraphics[width=0.9\textwidth,clip=false]{pictures/difficulty}
+  \end{center}
+
+  \begin{center}
+    {\tiny (source: \url{https://thresh0ld.com/bitcoin-mining-difficulty-and-price-correlation})}
+  \end{center}
+    
+\end{frame}
+
 \begin{frame}\frametitle{Bitcoin's energy consumption over the years}
 
   \begin{center}
@@ -606,6 +663,260 @@
   of blockchain technology.
 
 \end{frame}
+
+\section{The proof of stake alternative}
+
+\begin{frame}\frametitle{The proof of stake alternative to proof of work}
+
+  \begin{center}
+    Jae Kwon, \emph{Tendermint, Consensus without Mining}, 2014
+  \end{center}
+
+  \begin{greenbox}{}
+    A selected set of peers (\emph{validators}) decides the next block, in
+    a round robin way or according to any other \emph{fair} policy, typically
+    based on the amount of money \emph{staked} by each validator.
+    Byzantine algorithms ensure the survival of the peer-to-peer network if
+    \emph{some} validators misbehave.
+
+    \begin{itemize}
+    \item proof of work: all peers are created equal
+    \item proof of stake: but some peers are more equal than others
+    \end{itemize}
+  \end{greenbox}
+
+  \medskip
+
+  \pause
+
+  \begin{center}
+    Pros: no CPU mining anymore, higher throughput
+  \end{center}
+
+  \begin{center}
+    Cons: more centralized, the rich become richer
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    $99\%$ of cryptocurrencies are based on proof of stake nowadays.
+  \end{center}
+
+  \pause
+
+  \begin{center}
+    \alert{Are Bitcoin and its proof of work dead then?}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{It's the economy, stupid!}
+
+  \begin{center}
+    Bitcoin (proof of work) to USD\\
+    \vspace*{1ex}
+    \includegraphics[width=\textwidth]{pictures/BTCUSD}
+  \end{center}
+
+  \medskip
+
+  \begin{overprint}
+    \onslide<2>
+    \begin{center}
+      Ethereum (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/ETHUSD}
+    \end{center}
+    \onslide<3>
+    \begin{center}
+      Solana (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/SOLUSD}
+    \end{center}
+    \onslide<4>
+    \begin{center}
+      Cardano (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/ADAUSD}
+    \end{center}
+    \onslide<5>
+    \begin{center}
+      Polygon (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/MATICUSD}
+    \end{center}
+    \centering \ldots or Fausto and Alice create a new block!
+    \onslide<6>
+    \begin{center}
+      Dogecoin (proof of stake) to USD\\
+      \vspace*{1ex}
+      \includegraphics[width=\textwidth]{pictures/DOGEUSD}
+    \end{center}
+  \end{overprint}
+
+\end{frame}
+
+\begin{frame}{Looking for the chimera}
+
+  \begin{center}
+    As decentralized as Bitcoin's proof of work, as cheap as proof of stake
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{pictures/chimera}\\
+    {\tiny Florence, Etruscan chimera, 400 BC}
+  \end{center}
+
+\end{frame}
+
+\section{The proof of space alternative}
+
+\begin{frame}{An email from \texttt{crypto42@pm.me} (September 30, 2021)}
+
+  \begin{greenbox}{}
+    Hi Fausto!
+
+    \vspace{2ex}
+
+    I have been experimenting with a blockchain called \alert{Signum: \url{https://signum.network/}}.
+    They \alert{mine with
+    disk drive files (plot files)}, which is far more at reach
+    and \alert{ecological} than GPUs or CPUs.
+
+    \vspace{1ex}
+
+    I've been trying with other developers to make their mining 100\%
+    Java based. This would open the door for end-users to easily \alert{mine directly
+    from their cellphones} or from low-powered devices fueled by \alert{green energy}.
+    Unfortunately that was beyond our skills.
+
+    \vspace{1ex}
+
+    I saw your Hotmoka smart contracts project on GitHub.
+    I wonder if disk drive mining, also on cell phones, can be achieved with Hotmoka.
+  \end{greenbox}
+
+\end{frame}
+
+\begin{frame}{What I could learn about Signum}
+
+  \begin{itemize}
+  \item very simple protocol for proof of space (PoSp)
+  \item recently, proof of space + proof of commitment
+    \begin{itemize}
+    \item[] just a factor multiplication of proof of space
+      based on the committed cryptocurrency, as an incentive
+      to buying their cryptocurrency
+    \end{itemize}
+  \item running since 2014 (as Burstcoin)
+  \item possibly the first ever smart contracts (before Ethereum!)
+  \item commercial web page: \url{https://signum.network/}
+  \item very informal documentation:
+    \url{https://wiki.signum.network}
+  \item chaotic, uncommented, monolithic code:
+    \url{https://github.com/signum-network/signum-node}
+  \item Park et al., \emph{SpaceMint: A Cryptocurrency Based on Proofs of Space},
+    Financial Cryptography 2018,
+    show that Signum originally suffered from a time/memory tradeoff
+    and suspect that it suffers from block-grinding attacks as well
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}\frametitle{Proof of space is much more than Signum}
+
+  \begin{greenbox}{}
+    \begin{itemize}
+    \item Ateniese, Bonacina, Faonio, Galesi: \emph{Proofs of Space: When Space Is of the Essence}, 2014 (DAG pebbling)
+    \item Dziembowski, Faust, Kolmogorov, Pietrzak: \emph{Proofs of Space}, 2015 (DAG pebbling) $\Rightarrow$
+      {\color{red}SpaceMint}: \url{https://github.com/kwonalbert/spacemint}
+    \item Abusalah, Alwen, Cohen, Khilko, Pietrzak, Reyzin: \emph{Beyond Hellman's Time-Memory Trade-Offs with Applications to Proofs of Space}, 2017 (proof of sequential work + proof of space) $\Rightarrow$ {\color{red}Chia}: \url{https://www.chia.net/wp-content/uploads/2022/07/ChiaGreenPaper.pdf}
+    \end{itemize}
+
+  \begin{center}
+    {\small\begin{tabular}{c|c|c|c|c|c}
+      tool & consensus & network & formalized & since & status \\\hline\hline
+      SpaceMint & no & no & yes & 2015 & discontinued\\\hline
+      Chia & yes & yes & yes & 2017 & active\\\hline
+      Signum & yes & yes & no & 2014 & active\\\hline
+    \end{tabular}}
+  \end{center}
+  \end{greenbox}
+  
+\end{frame}
+
+\begin{frame}\frametitle{Proof of space: The general idea}
+
+  \begin{description}
+  \item[Ideal PoSp:] the computation of the answer can only be achieved by allocating
+    a big data structure on disk (Ateniese et al., Dziembowski et al., Abusalah et al.)
+    \medskip
+  \item[Signum's PoSp:] the computation of the answer can be achieved with or without
+    allocating a big data structure on disk (precomputed \emph{nonces}),
+    but in the latter case it becomes
+    computationally so expensive (to recompute the data on-the-fly)
+    that the space of explorable data, before the next block is created, is very small
+  \end{description}
+
+  \bigskip
+  
+  \begin{redbox}{Time/memory trade-off}
+    The degradation of the space of explorable data should be at least linear with
+    the reduction of the precomputed data.
+  \end{redbox}
+
+\end{frame}
+
+\begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
+
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{pictures/mokamint_logo}\\
+    \url{https://github.com/Mokamint-chain/mokamint}
+  \end{center}
+
+
+  \begin{center}
+    A new open-source (Apache 2.0) blockchain engine
+    based on proof of space, similar to Signum but \alert{generic}
+    \wrt the supported \alert{application}.
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.7]
+      \draw [fill=VioletRed, thick] (0,0) rectangle +(5,1);
+      \draw (2.5,0.5) node{networking};
+      \draw [fill=VioletRed, thick] (0,1) rectangle +(5,1);
+      \draw (2.5,1.5) node{consensus};
+      \draw[<->, thick] (2.5,2) -- (2.5,3);
+      \draw (3.2,2.5) node{API};
+      \draw [fill=Yellow, thick] (0,3) rectangle +(5,1);
+      \draw (2.5,3.5) node{application};
+      \draw (5,3.5) node [right] {e.g.\ Hotmoka, IDs, Prolog\ldots};
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (5,2) -- (5,0) node [midway,right,xshift=.2cm] {Mokamint};
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Thank you}
+
+  \begin{center}
+  Do you want to know more about Mokamint and Hotmoka?
+
+  \bigskip
+
+  Come to my talk on this afternoon!
+  \end{center}
+
+\end{frame}
+
+\part{2}
 
 \section{A more technical view of Bitcoin}
 
@@ -884,317 +1195,6 @@
   \end{description}
 
 \end{frame}
-
-\begin{frame}[fragile]{Bitcoin's proof of work mining is brute force}
- 
-\begin{algorithm}[H] 
-\caption{Bitcoin's Proof of Work}
-\begin{algorithmic}[1]
-\Require{$block$, $difficulty$, $max$} 
-\Ensure{$next$ (a valid child of $block$, or null)}
-\Statex
-\State {$next$ $\gets$ null}
-\For{$nonce \gets 0$ to $max$}
-\State {$candidate$ $\gets$ valid next of block that uses $nonce$}
-\If{hash($candidate$) $\ge$ $difficulty$}
-\If{$next$ = null \textbf{or} hash($candidate$) $>$ hash($next$)}
-\State {$next$ $\gets$ $candidate$}
-\EndIf
-\EndIf
-\EndFor
-\State \Return {$next$}
-\end{algorithmic}
-\end{algorithm} 
-
-\end{frame}
-
-\begin{frame}\frametitle{The magic behind the proof of work}
-
-  \begin{greenbox}{}
-    It makes expensive the production of new blocks, in time and cost (electricity)
-    \begin{itemize}
-    \item who produces invalid blocks sees its blocks rejected by peers and wastes resources
-    \item a single node cannot dictate the history easily, since it must fight against
-      the hashing power of all other nodes together
-    \item forks become unlikely, since the probability of two nodes finding a new block at the same time is small
-    \end{itemize}
-  \end{greenbox}
-
-\end{frame}
-
-\begin{frame}\frametitle{Evolution of Bitcoin's mining hardware}
-
-  \begin{center}
-    \includegraphics[scale=0.55,clip=false]{pictures/mining-hardware}
-  \end{center}
-
-\end{frame}
-
-\begin{frame}\frametitle{Bitcoin's difficulty over the years}
-
-  \begin{center}
-    \includegraphics[width=0.9\textwidth,clip=false]{pictures/difficulty}
-  \end{center}
-
-  \begin{center}
-    {\tiny (source: \url{https://thresh0ld.com/bitcoin-mining-difficulty-and-price-correlation})}
-  \end{center}
-    
-\end{frame}
-
-\section{The proof of stake alternative}
-
-\begin{frame}\frametitle{The proof of stake alternative to proof of work}
-
-  \begin{center}
-    Jae Kwon, \emph{Tendermint, Consensus without Mining}, 2014
-  \end{center}
-
-  \begin{greenbox}{}
-    A selected set of peers (\emph{validators}) decides the next block, in
-    a round robin way or according to any other \emph{fair} policy, typically
-    based on the amount of money \emph{staked} by each validator.
-    Byzantine algorithms ensure the survival of the peer-to-peer network if
-    \emph{some} validators misbehave.
-
-    \begin{itemize}
-    \item proof of work: all peers are created equal
-    \item proof of stake: but some peers are more equal than others
-    \end{itemize}
-  \end{greenbox}
-
-  \medskip
-
-  \pause
-
-  \begin{center}
-    Pros: no CPU mining anymore, higher throughput
-  \end{center}
-
-  \begin{center}
-    Cons: more centralized, the rich become richer
-  \end{center}
-
-  \medskip
-
-  \begin{center}
-    $99\%$ of cryptocurrencies are based on proof of stake nowadays.
-  \end{center}
-
-  \pause
-
-  \begin{center}
-    \alert{Are Bitcoin and its proof of work dead then?}
-  \end{center}
-
-\end{frame}
-
-\begin{frame}{It's the economy, stupid!}
-
-  \begin{center}
-    Bitcoin (proof of work) to USD\\
-    \vspace*{1ex}
-    \includegraphics[width=\textwidth]{pictures/BTCUSD}
-  \end{center}
-
-  \medskip
-
-  \begin{overprint}
-    \onslide<2>
-    \begin{center}
-      Ethereum (proof of stake) to USD\\
-      \vspace*{1ex}
-      \includegraphics[width=\textwidth]{pictures/ETHUSD}
-    \end{center}
-    \onslide<3>
-    \begin{center}
-      Solana (proof of stake) to USD\\
-      \vspace*{1ex}
-      \includegraphics[width=\textwidth]{pictures/SOLUSD}
-    \end{center}
-    \onslide<4>
-    \begin{center}
-      Cardano (proof of stake) to USD\\
-      \vspace*{1ex}
-      \includegraphics[width=\textwidth]{pictures/ADAUSD}
-    \end{center}
-    \onslide<5>
-    \begin{center}
-      Polygon (proof of stake) to USD\\
-      \vspace*{1ex}
-      \includegraphics[width=\textwidth]{pictures/MATICUSD}
-    \end{center}
-    \centering \ldots or Fausto and Alice create a new block!
-    \onslide<6>
-    \begin{center}
-      Dogecoin (proof of stake) to USD\\
-      \vspace*{1ex}
-      \includegraphics[width=\textwidth]{pictures/DOGEUSD}
-    \end{center}
-  \end{overprint}
-
-\end{frame}
-
-\begin{frame}{Looking for the chimera}
-
-  \begin{center}
-    As decentralized as Bitcoin's proof of work, as cheap as proof of stake
-  \end{center}
-
-  \medskip
-
-  \begin{center}
-    \includegraphics[width=0.7\textwidth]{pictures/chimera}\\
-    {\tiny Florence, Etruscan chimera, 400 BC}
-  \end{center}
-
-\end{frame}
-
-\section{The proof of space alternative}
-
-\begin{frame}{An email from \texttt{crypto42@pm.me} (September 30, 2021)}
-
-  \begin{greenbox}{}
-    Hi Fausto!
-
-    \vspace{2ex}
-
-    I have been experimenting with a blockchain called \alert{Signum: \url{https://signum.network/}}.
-    They \alert{mine with
-    disk drive files (plot files)}, which is far more at reach
-    and \alert{ecological} than GPUs or CPUs.
-
-    \vspace{1ex}
-
-    I've been trying with other developers to make their mining 100\%
-    Java based. This would open the door for end-users to easily \alert{mine directly
-    from their cellphones} or from low-powered devices fueled by \alert{green energy}.
-    Unfortunately that was beyond our skills.
-
-    \vspace{1ex}
-
-    I saw your Hotmoka smart contracts project on GitHub.
-    I wonder if disk drive mining, also on cell phones, can be achieved with Hotmoka.
-  \end{greenbox}
-
-\end{frame}
-
-\begin{frame}{What I could learn about Signum}
-
-  \begin{itemize}
-  \item very simple protocol for proof of space (PoSp)
-  \item recently, proof of space + proof of commitment
-    \begin{itemize}
-    \item[] just a factor multiplication of proof of space
-      based on the committed cryptocurrency, as an incentive
-      to buying their cryptocurrency
-    \end{itemize}
-  \item running since 2014 (as Burstcoin)
-  \item possibly the first ever smart contracts (before Ethereum!)
-  \item commercial web page: \url{https://signum.network/}
-  \item very informal documentation:
-    \url{https://wiki.signum.network}
-  \item chaotic, uncommented, monolithic code:
-    \url{https://github.com/signum-network/signum-node}
-  \item Park et al., \emph{SpaceMint: A Cryptocurrency Based on Proofs of Space},
-    Financial Cryptography 2018,
-    show that Signum originally suffered from a time/memory tradeoff
-    and suspect that it suffers from block-grinding attacks as well
-  \end{itemize}
-
-\end{frame}
-
-\begin{frame}\frametitle{Proof of space is much more than Signum}
-
-  \begin{greenbox}{}
-    \begin{itemize}
-    \item Ateniese, Bonacina, Faonio, Galesi: \emph{Proofs of Space: When Space Is of the Essence}, 2014 (DAG pebbling)
-    \item Dziembowski, Faust, Kolmogorov, Pietrzak: \emph{Proofs of Space}, 2015 (DAG pebbling) $\Rightarrow$
-      {\color{red}SpaceMint}: \url{https://github.com/kwonalbert/spacemint}
-    \item Abusalah, Alwen, Cohen, Khilko, Pietrzak, Reyzin: \emph{Beyond Hellman's Time-Memory Trade-Offs with Applications to Proofs of Space}, 2017 (proof of sequential work + proof of space) $\Rightarrow$ {\color{red}Chia}: \url{https://www.chia.net/wp-content/uploads/2022/07/ChiaGreenPaper.pdf}
-    \end{itemize}
-
-  \begin{center}
-    {\small\begin{tabular}{c|c|c|c|c|c}
-      tool & consensus & network & formalized & since & status \\\hline\hline
-      SpaceMint & no & no & yes & 2015 & discontinued\\\hline
-      Chia & yes & yes & yes & 2017 & active\\\hline
-      Signum & yes & yes & no & 2014 & active\\\hline
-    \end{tabular}}
-  \end{center}
-  \end{greenbox}
-  
-\end{frame}
-
-\begin{frame}\frametitle{Proof of space: The general idea}
-
-  \begin{description}
-  \item[Ideal PoSp:] the computation of the answer can only be achieved by allocating
-    a big data structure on disk (Ateniese et al., Dziembowski et al., Abusalah et al.)
-    \medskip
-  \item[Signum's PoSp:] the computation of the answer can be achieved with or without
-    allocating a big data structure on disk (precomputed \emph{nonces}),
-    but in the latter case it becomes
-    computationally so expensive (to recompute the data on-the-fly)
-    that the space of explorable data, before the next block is created, is very small
-  \end{description}
-
-  \bigskip
-  
-  \begin{redbox}{Time/memory trade-off}
-    The degradation of the space of explorable data should be at least linear with
-    the reduction of the precomputed data.
-  \end{redbox}
-
-\end{frame}
-
-\begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
-
-  \begin{center}
-    \includegraphics[width=0.4\textwidth]{pictures/mokamint_logo}\\
-    \url{https://github.com/Mokamint-chain/mokamint}
-  \end{center}
-
-
-  \begin{center}
-    A new open-source (Apache 2.0) blockchain engine
-    based on proof of space, similar to Signum but \alert{generic}
-    \wrt the supported \alert{application}.
-  \end{center}
-
-  \medskip
-
-  \begin{center}
-    \begin{tikzpicture}[scale=0.7]
-      \draw [fill=VioletRed, thick] (0,0) rectangle +(5,1);
-      \draw (2.5,0.5) node{networking};
-      \draw [fill=VioletRed, thick] (0,1) rectangle +(5,1);
-      \draw (2.5,1.5) node{consensus};
-      \draw[<->, thick] (2.5,2) -- (2.5,3);
-      \draw (3.2,2.5) node{API};
-      \draw [fill=Yellow, thick] (0,3) rectangle +(5,1);
-      \draw (2.5,3.5) node{application};
-      \draw (5,3.5) node [right] {e.g.\ Hotmoka, IDs, Prolog\ldots};
-      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
-      (5,2) -- (5,0) node [midway,right,xshift=.2cm] {Mokamint};
-    \end{tikzpicture}
-  \end{center}
-
-\end{frame}
-
-\begin{frame}\frametitle{Thank you}
-
-  \begin{center}
-  Do you want to know more about Mokamint and Hotmoka?
-
-  \bigskip
-
-  Come to my talk on this afternoon!
-  \end{center}
-
-\end{frame}
-
-\part{2}
 
 \section{Mokamint and Hotmoka}
 
