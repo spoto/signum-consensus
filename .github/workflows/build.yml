@@ -51,7 +51,7 @@ jobs:
           root_file: SaoLuis2025Course.tex
       - name: Check PDF file
         run: |
-          file slides/SaoLsui2025Course.pdf | grep -q ' PDF '
+          file slides/SaoLuis2025Course.pdf | grep -q ' PDF '
 
       - name: Compile WTSC 2025 slides
         uses: xu-cheng/latex-action@v3
