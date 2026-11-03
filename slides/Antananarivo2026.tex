@@ -64,6 +64,13 @@
   \usefonttheme[onlysmall]{structurebold}
 }
 
+\colorlet{verylightviolet}{violet!20!white}
+\colorlet{verylightred}{red!20!white}
+
+\newcommand{\db}{\includegraphics[width=1.3cm]{pictures/db}}
+\newcommand{\computer}{\includegraphics[width=1.3cm]{pictures/computer}}
+\newcommand{\phone}{\includegraphics[width=1.3cm]{pictures/phone}}
+
 \newcommand{\wrt}{\textit{wrt.\ }}
 \newcommand{\ie}{, \textit{ie.}, }
 
@@ -126,7 +133,6 @@
 \newcommand{\NonGenesisBlocks}{{\mathsf{NonGenesisBlocks}}}
 \newcommand{\Deadlines}{{\mathsf{Deadlines}}}
 
-\newcommand{\computer}{\includegraphics[width=1.3cm]{pictures/computer}}
 \newcommand{\leftArrow}{\includegraphics[width=0.6cm]{pictures/left_arrow}}
 \newcommand{\signature}{\includegraphics[width=0.3cm]{pictures/signature}}
 \newcommand{\leftplug}{\includegraphics[width=0.7cm]{pictures/plug_left}}
@@ -380,7 +386,8 @@
   \end{description}
 
   \bigskip
-  \visible<5->{Bitcoin's Proof of Work (PoW): best means \emph{with the smallest hash}}
+
+  \visible<5->{Bitcoin's Proof of Work (PoW): best means \emph{with some arbitrary data (nonce) that minimizes the hash of the block}}
 
 \end{frame}
 
@@ -396,25 +403,58 @@
 
 \end{frame}
 
-\begin{frame}\frametitle{Mokamint's proof of space}
+\begin{frame}{Blockchain mining as a competitive puzzle}
 
-  \visible<1->{Blocks use a $\nonce$ data structure of size $n$ and creator $\pi$}
-  \medskip
+  Mining of a \textbf{next} block on top of a \textbf{block}:
+  \quad\begin{tikzpicture}[scale=0.5,>=Stealth]
+    \draw (0,1.5) rectangle +(2,1) [fill=alicecolor];
+    \draw[->] (1,1.5) -- +(0,-0.5);
+    \draw (0,0) rectangle +(2,1) [fill=pink!70!white];
+    \draw (1,0) node[above] {\textbf{block}};
+    \draw (1,1.5) node[above] {\textbf{next}};
+  \end{tikzpicture}
 
   \begin{description}
-  \item<2->[{\color{red}challenge:}] given a $\challenge$
-    derived from \textbf{block}, find a valid \textbf{next} of \textbf{block}
-    with a $\nonce$ data structure for the same creator of the block,
-    such that $\delay(\nonce,\challenge)$ is as smaller as possible
-  \item<3->[{\color{red}answer:}] reply with a valid \textbf{next} of \textbf{block}
-    that contains a $\nonce$ from
-    a large set of nonces precomputed on disk (the \alert{plot}),
-    choosing the one that minimizes $\delay(\nonce,\challenge)$
-    and using as block's creator the same creator of $\nonce$
-  \item<4->[{\color{red}competition:}] in case of more \textbf{next}, select the one with the smallest
-    $\delay(\nonce,\challenge)$
+  \item[{\color{red}challenge:}] derive (deterministically) a challenge from the \textbf{block}
+  \item[{\color{red}answer:}] send all peers a \textbf{next} that satisfies the challenge
+  \item[{\color{red}competition:}] in case of more \textbf{next}, select a \emph{best} one
   \end{description}
 
+  \bigskip
+
+  Bitcoin's Proof of Work (PoW): best means \emph{with some arbitrary data (nonce) that minimizes the hash of the block}
+
+  \pause
+  \bigskip
+
+  Mokamint's Proof of Space (PoSp): best means \emph{with some data (nonce) from a precomputed set (plot) that minimizes a delay function}
+
+\end{frame}
+
+\begin{frame}\frametitle{Proof of Work vs.\ Proof of Space}
+
+  \begin{greenbox}{Mining for Proof of Work}
+    \begin{itemize}
+    \item fully decentralized, high computational cost, minimal disk usage
+    \item efficient code already exists (Bitcoin)
+    \item remote mining is hard (large bandwidth)
+    \item it needs significant investment, energy, good networking
+    \item extremely unlikely in a poor country
+    \end{itemize}
+  \end{greenbox}
+
+  \pause
+  \medskip
+
+  \begin{greenbox}{Mining for Proof of Space}
+    \begin{itemize}
+    \item fully decentralized, minimal computational cost, high disk usage
+    \item only vertical undocumented code exist
+    \item remote mining is easy (minimal bandwidth)
+    \item it needs no investment, almost no energy, minimal bandwidth
+    \item possible also in poor countries
+    \end{itemize}
+  \end{greenbox}
 \end{frame}
 
 \begin{frame}{Mokamint (Fausto Spoto, 2023--2025)}
@@ -424,10 +464,9 @@
     \url{https://github.com/Mokamint-chain/mokamint}
   \end{center}
 
-
   \begin{center}
     A new open-source (Apache 2.0) blockchain based on proof of space, \alert{generic}
-    wrt.\ the supported \alert{application}.
+    wrt.\ the supported \alert{application}
   \end{center}
 
   \medskip
@@ -450,9 +489,41 @@
 
 \end{frame}
 
+\begin{frame}{Hotmoka (Fausto Spoto et al., 2019--2026)}
+
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{pictures/hotmoka_logo}\\
+    \url{https://github.com/Hotmoka/hotmoka}
+  \end{center}
+
+  \begin{center}
+    An open-source (Apache 2.0) software layer for the execution of \alert{smart contracts} written in a subset of Java
+  \end{center}
+
+  \medskip
+
+  \begin{center}
+    \begin{tikzpicture}[scale=0.7]
+      \draw [fill=VioletRed, thick] (0,0) rectangle +(5,1);
+      \draw (2.5,0.5) node{networking};
+      \draw [fill=VioletRed, thick] (0,1) rectangle +(5,1);
+      \draw (2.5,1.5) node{consensus};
+      \draw[<->, thick] (2.5,2) -- (2.5,3);
+      \draw (3.2,2.5) node{API};
+      \draw [fill=Yellow, thick] (0,3) rectangle +(5,1);
+      \draw (2.5,3.5) node{application};
+      \draw (5,3.5) node [right] {Hotmoka};
+      \draw [decorate,decoration={brace,amplitude=4pt},thick,xshift=0.3cm,yshift=0pt]
+      (5,2) -- (5,0) node [midway,right,xshift=.2cm] {Mokamint (or Tendermint)};
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
 \begin{frame}[fragile]{The Mokamint+Hotmoka blockchain}
 
-  Currently composed of seven peers:
+  Currently composed of six peers
+  \medskip
 
   \begin{greenbox}{\texttt{mokamint-node peers ls --uri ws://lipari.hotmoka.io:8030}}
 \begin{verbatim}
@@ -466,6 +537,8 @@ ws://157.90.103.251:8032    1000  connected
 
 \end{frame}
 
+\medskip
+
 \begin{frame}[fragile]{The Mokamint+Hotmoka blockchain}
 
   \begin{greenbox}{\texttt{mokamint-node chain ls 4 from 0 --uri ws://lipari.hotmoka.io:8030}}
@@ -476,7 +549,10 @@ ws://157.90.103.251:8032    1000  connected
 0: ebc...d  2026-03-21 15:00:27  HdP...c    ---                     
 \end{verbatim}
   \end{greenbox}
-  \medskip
+
+  \pause
+  \bigskip
+
   \begin{greenbox}{\texttt{mokamint-node chain ls 4 --uri ws://lipari.hotmoka.io:8030}}
 \begin{verbatim}
 968584: c16...5  2026-11-02 15:47:59  31g...o  CfY...7
@@ -485,6 +561,91 @@ ws://157.90.103.251:8032    1000  connected
 968581: 428...a  2026-11-02 15:46:46  31g...o  CfY...7
 \end{verbatim}
   \end{greenbox}
+\end{frame}
+
+\begin{frame}\frametitle{Miners as mobile applications}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=1]
+      \draw [fill=verylightviolet,thick] (-0.5,0) rectangle +(4,1.5);
+      \draw (1.5,1.1) node {blockchain peer};
+      \draw (1.5,0.5) node {\textbf{Mokamint}};
+      \draw (1.5,2.2) node[scale=0.7] {\computer};
+      \draw (-1.5,0.8) node[scale=0.7] {\db};
+
+      \draw [fill=verylightred,thick] (7,0.15) rectangle +(3,1.2);
+      \draw (8.5,1) node {miner(s)};
+      \draw (8.5,0.5) node {\textbf{Mokaminter}};
+      \draw (8.5,2.1) node[scale=0.7] {\phone};
+
+      \draw[->, thick] (3.5,1.0) -- (7,1.0);
+      \draw (5.25,1.25) node {{\small challenges}};
+
+      \draw[<-, thick] (3.5,0.5) -- (7,0.5);
+      \draw (5.25,0.25) node {{\small answers (nonces)}};
+
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{center}
+    \alert{Can we do it for PoSp (Mokamint, at least) ?}
+  \end{center}
+
+  \pause
+
+  \begin{itemize}
+  \item yes, since PoSp uses almost no CPU during the mining phase
+    \begin{itemize}
+    \item this preserves the battery of the device
+    \end{itemize}
+  \item yes, since challenges are a around $64$ bytes long and nonces can be compacted into
+    \emph{deadlines} of around $200$ bytes
+    \begin{itemize}
+    \item this limits the bandwith needed during mining
+    \end{itemize}
+  \item yes, average mobile devices have around $256~GB$ of SSD, compared to
+    an average of $1000~GB$ of SSD of desktop computers
+    \begin{itemize}
+    \item mining can be competitive on a mobile device
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}\frametitle{5G coverage in Brazil}
+  \begin{center}
+    \includegraphics[width=5.6cm]{pictures/5g}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Mokaminter: mobile mining on Android}
+
+  \begin{center}
+    \includegraphics[width=5.6cm]{pictures/mokaminter}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}\frametitle{Mokaminter: crypto (mokas) earned after 24h of mining}
+
+  \begin{center}
+    \hspace*{-1.5ex}\begin{tabular}{r|r|r|c|c|c}
+      {\small crypto} & disk & {\small CPU} & model & kind & region\\\hline\hline
+      276 & 0.17MB & 5\% & {\small Motorola edge 40 neo} & phone & Italy\\\hline
+      310 & 3MB & 2\% & {\small Poco F4} & phone & Italy\\\hline
+      138 & 0MB & 0\% & {\small Samsung Galaxy S24} & phone & Brazil \\\hline
+       68 & 0.49MB & 0\% & {\small Samsung Galaxy S25 ultra} & phone & Italy\\\hline
+      103 & 6.1MB & 0\% & {\small Samsung Galaxy Tab S11} & tablet & Italy\\\hline
+      310 & 0MB & 6\% & {\small Xiaomi 11 Lite 5G NE} & phone & Italy\\\hline
+       68 & 4.77MB & 5\% & {\small Samsung Galaxy Tab A9+} & tablet & Spain\\\hline
+      103 & 0MB & 6\% & {\small Redmi Note 8T} & phone & Italy\\\hline
+      413 & 3.18MB & 4\% & {\small Lenovo Tab M11 TB330XU} & tablet & Italy\\\hline
+      103 & 1.06MB & 1\% & {\small Samsung Galaxy Tab S6 Lite} & tablet & Italy\\\hline
+       68 & 0.13MB & 0\% & {\small Motorola edge 40 neo} & phone & La R\'eunion\\\hline
+      170 & 2.20MB & 6\% & {\small Motorola edge 40 neo} & phone & Madagascar
+    \end{tabular}
+  \end{center}
+
 \end{frame}
 
 \begin{frame}\frametitle{Take part in the evaluation of Mokaminter}
